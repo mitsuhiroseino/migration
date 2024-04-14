@@ -1,2 +1,2 @@
-export { default } from './File';
+export { default } from './Boilerplate';
 export type * from './types';

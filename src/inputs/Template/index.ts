@@ -1,2 +1,2 @@
-export { default } from './File';
+export { default } from './Template';
 export type * from './types';
