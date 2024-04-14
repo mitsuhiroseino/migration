@@ -13,8 +13,8 @@ import { FileInputConfig } from './types';
  * @param params 1繰り返し毎のパラメーター
  */
 async function* File(config: FileInputConfig, params: IterationParams): InputGenerator<Content> {
-  const { targetPath } = config;
-  const rootPath: string = finishDynamicValue(targetPath, params, config);
+  const { inputPath } = config;
+  const rootPath: string = finishDynamicValue(inputPath, params, config);
   // ファイルの読み込み
   yield* readFiles(rootPath, path.basename(rootPath), config);
 }

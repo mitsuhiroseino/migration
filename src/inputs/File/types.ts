@@ -6,7 +6,7 @@ export type FileInputConfig = InputConfigBase<typeof INPUT_TYPE.FILE> & {
   /**
    * 入力元ファイル・ディレクトリのパス
    */
-  targetPath: VariableString;
+  inputPath: VariableString;
 
   /**
    * 処理対象がディレクトリの場合にサブディレクトリは処理しない
