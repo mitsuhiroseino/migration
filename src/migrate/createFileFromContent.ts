@@ -1,8 +1,9 @@
+import { DEFAULT_TEXT_ENCODING } from '../constants';
 import { IterationParams } from '../types';
 import applyIf from '../utils/applyIf';
 import isMatch from '../utils/isMatch';
 import writeAnyFile from '../utils/writeAnyFile';
-import { DEFAULT_TEXT_ENCODING, MIGRATION_ITEM_STATUS } from './constants';
+import { MIGRATION_ITEM_STATUS } from './constants';
 import setSystemParams from './helpers/setSystemParams';
 import operateContent from './operateContent';
 import { MigrationIterationResult, MigrationJobConfig } from './types';

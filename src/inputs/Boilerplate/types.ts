@@ -5,5 +5,8 @@ import { InputConfigBase } from '../types';
  * templateの簡易的なもの
  */
 export type BoilerplateInputConfig = InputConfigBase<typeof INPUT_TYPE.BOILERPLATE> & {
-  text: string;
+  /**
+   * ボイラープレートとして使いまわすスケルトン
+   */
+  skeleton: string;
 };

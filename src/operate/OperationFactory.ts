@@ -1,7 +1,8 @@
 import { CONTENT_TYPE } from '../constants';
+import { ContentType } from '../types';
 import Factory from '../utils/Factory';
 import asArray from '../utils/asArray';
-import { ContentType, Operation } from './types';
+import { Operation } from './types';
 
 class OperationFactory extends Factory<Operation<any, any>> {
   /**

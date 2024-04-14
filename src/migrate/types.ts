@@ -1,4 +1,5 @@
 import { Options } from 'prettier';
+import { MIGRATION_STATUS } from '../constants';
 import { InputConfig } from '../inputs';
 import { OperationConfig, OperationResult } from '../operate';
 import {
@@ -11,7 +12,7 @@ import {
 } from '../types';
 import { Condition } from '../utils/isMatch';
 import { ReplaceWithConfigsConfig, Replacer } from '../utils/replaceWithConfigs';
-import { MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from './constants';
+import { MIGRATION_ITEM_STATUS } from './constants';
 import { EntryType } from './helpers/getFsGenerator';
 
 /**

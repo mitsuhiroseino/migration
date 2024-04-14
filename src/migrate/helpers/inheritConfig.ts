@@ -1,7 +1,6 @@
 import isString from 'lodash/isString';
-
+import { INHERITED_CONFIGS } from '../../constants';
 import { OperationConfig } from '../../operate';
-import { INHERITED_CONFIGS } from '../constants';
 import { CommonConfig } from '../types';
 
 /**
@@ -13,7 +12,7 @@ import { CommonConfig } from '../types';
 export default function inheritConfig<C extends CommonConfig<OC>, OC extends OperationConfig>(
   config: C,
   baseConfig: any,
-  mapping: { [baseConfigName: string]: string | boolean } = INHERITED_CONFIGS
+  mapping: { [baseConfigName: string]: string | boolean } = INHERITED_CONFIGS,
 ): C {
   const cfg = { ...config };
   // mappingにあるプロパティが未設定の場合はbaseConfigから引き継ぐ

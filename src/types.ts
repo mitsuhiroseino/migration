@@ -1,6 +1,12 @@
 import { Options } from 'prettier';
+import { CONTENT_TYPE } from './constants';
 import { DynamicPattern, ReplaceOptions } from './utils/replace';
 import { ReplacePlaceholdersOptions, ReplacementValues } from './utils/replacePlaceholders';
+
+/**
+ * コンテンツの種別
+ */
+export type ContentType = (typeof CONTENT_TYPE)[keyof typeof CONTENT_TYPE];
 
 /**
  * ファイルの内容の型

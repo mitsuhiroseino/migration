@@ -1,6 +1,6 @@
+import { MIGRATION_STATUS } from '../constants';
 import asArray from '../utils/asArray';
 import executeAsyncFunctions from '../utils/executeAsyncFunctions';
-import { MIGRATION_STATUS } from './constants';
 import executeTask from './executeTask';
 import assignDefaultConfig from './helpers/assignDefaultConfig';
 import inheritConfig from './helpers/inheritConfig';

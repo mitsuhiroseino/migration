@@ -1,5 +1,4 @@
 import { compile } from 'handlebars';
-
 import { OPERATION_TYPE } from '../constants';
 import { OperationConfigBase } from '../types';
 

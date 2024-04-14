@@ -1,5 +1,4 @@
-import { CONTENT_TYPE } from '../constants';
-import { Content, FormattingConfig, InputOputputConfig, LogConfig, ReplacementConfig } from '../types';
+import { Content, ContentType, FormattingConfig, InputOputputConfig, LogConfig, ReplacementConfig } from '../types';
 import { Condition } from '../utils/isMatch';
 import { OPERATION_TYPE } from './constants';
 
@@ -9,11 +8,6 @@ export { default as OperationConfig } from './OperationConfig';
  * コンテンツを操作する際の種別
  */
 export type OperationType = (typeof OPERATION_TYPE)[keyof typeof OPERATION_TYPE];
-
-/**
- * コンテンツの種別
- */
-export type ContentType = (typeof CONTENT_TYPE)[keyof typeof CONTENT_TYPE];
 
 /**
  * 操作の設定

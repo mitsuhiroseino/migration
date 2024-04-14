@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
+import { DEFAULT_TEXT_ENCODING } from '../constants';
 import { IterationParams } from '../types';
 import finishDynamicValue from '../utils/finishDynamicValue';
-import { DEFAULT_TEXT_ENCODING } from './constants';
 import createFileFromContent from './createFileFromContent';
 import manageFile from './manageFile';
 import { MigrationItemStatus, MigrationIterationResult, MigrationJobConfig } from './types';
