@@ -2,7 +2,7 @@ import { CONTENT_TYPE } from '../../constants';
 import replace from '../../utils/replace';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation, OperationParams } from '../types';
+import { Operation } from '../types';
 import { UnbomConfig } from './types';
 
 /**
@@ -13,7 +13,7 @@ import { UnbomConfig } from './types';
  * @param options オプション
  * @returns 処理結果
  */
-const Unbom: Operation<string, UnbomConfig> = async (content: string, config: UnbomConfig, params: OperationParams) => {
+const Unbom: Operation<string, UnbomConfig> = async (content, config, params) => {
   // 置換の実行
   return replace(content, /^\ufeff/, '');
 };

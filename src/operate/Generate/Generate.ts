@@ -3,7 +3,7 @@ import helpers from 'handlebars-helpers';
 import { CONTENT_TYPE } from '../../constants';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation, OperationParams } from '../types';
+import { Operation } from '../types';
 import { GenerateConfig } from './types';
 
 helpers();
@@ -15,11 +15,7 @@ helpers();
  * @param params 1繰り返し毎のパラメーター
  * @returns 処理結果
  */
-const Generate: Operation<string, GenerateConfig> = async (
-  content: string,
-  config: GenerateConfig,
-  params: OperationParams,
-) => {
+const Generate: Operation<string, GenerateConfig> = async (content, config, params) => {
   let { operationId: opeId, type, filter, ...compileOptions } = config;
   const template = Handlebars.compile(content, compileOptions);
   // 実行

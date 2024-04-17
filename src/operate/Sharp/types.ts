@@ -1,5 +1,6 @@
 import SharpLib from 'sharp';
 import { Content } from '../../types';
+import { FactoriableConfig } from '../../utils/Factory';
 import { OPERATION_TYPE } from '../constants';
 import { OperationConfigBase, OperationParams } from '../types';
 import SharpManipulationConfig from './SharpManipulationConfig';
@@ -61,11 +62,7 @@ export type SharpConfig = OperationConfigBase<typeof OPERATION_TYPE.SHARP> & {
   /**
    * 画像に対する操作
    */
-  manipulations:
-    | SharpManipulationConfigBase
-    | SharpManipulationConfigBase[]
-    | SharpManipulationConfig
-    | SharpManipulationConfig[];
+  manipulations: (SharpManipulationConfig | SharpManipulationConfigBase)[];
 
   // 出力系オプション
 
@@ -134,12 +131,7 @@ export type SharpConfig = OperationConfigBase<typeof OPERATION_TYPE.SHARP> & {
 /**
  * 画像に対する操作
  */
-export type SharpManipulationConfigBase<T = SharpManipulationType> = {
-  /**
-   * 画像操作種別
-   */
-  type: T;
-};
+export type SharpManipulationConfigBase<T = SharpManipulationType> = FactoriableConfig<T>;
 
 /**
  * 画像操作関数

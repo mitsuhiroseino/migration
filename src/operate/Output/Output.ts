@@ -2,9 +2,11 @@ import fs from 'fs-extra';
 import path from 'path';
 import { Content } from '../../types';
 import finishDynamicValue from '../../utils/finishDynamicValue';
+import writeFile from '../../utils/writeFile';
+import writeText from '../../utils/writeText';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation, OperationParams } from '../types';
+import { Operation } from '../types';
 import { OutputConfig } from './types';
 
 /**
@@ -14,18 +16,14 @@ import { OutputConfig } from './types';
  * @param params 1繰り返し毎のパラメーター
  * @returns 処理結果
  */
-const Output: Operation<Content, OutputConfig> = async (
-  content: Content,
-  config: OutputConfig,
-  params: OperationParams,
-) => {
+const Output: Operation<Content, OutputConfig> = async (content, config, params) => {
   const {
     outputPath,
     preserveOutputPath,
     paramName = '_resource',
     preserveParamName,
     binary,
-    encoding = 'utf8',
+    encoding,
     ...rest
   } = config;
 
@@ -46,7 +44,11 @@ const Output: Operation<Content, OutputConfig> = async (
 
   // ファイルの出力
   const resource = params[prmsName];
-  await fs.writeFile(outputFilePath, resource, binary ? null : ({ encoding } as any));
+  if (binary) {
+    await writeFile(outputFilePath, resource);
+  } else {
+    await writeText(outputFilePath, resource, { encoding });
+  }
 
   return content;
 };

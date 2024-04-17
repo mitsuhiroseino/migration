@@ -9,7 +9,7 @@ import isString from 'lodash/isString';
  * - 正規表現の場合: 正規表現のメソッドtestで戻り値がtrue
  * - 関数の場合: 戻り値がtrue
  */
-export type Condition<O = any> = string | RegExp | ((value: any, options?: O) => boolean);
+export type Condition<V = any, O = any> = string | RegExp | ((value: V, options?: O) => boolean);
 
 /**
  * 値が条件に一致しているか判定する

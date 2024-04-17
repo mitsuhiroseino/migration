@@ -1,4 +1,13 @@
-import { Content, ContentType, FormattingConfig, InputOputputConfig, LogConfig, ReplacementConfig } from '../types';
+import {
+  Content,
+  ContentType,
+  FormattingConfig,
+  InputOputputConfig,
+  LogConfig,
+  Optional,
+  ReplacementConfig,
+} from '../types';
+import { FactoriableConfig } from '../utils/Factory';
 import { Condition } from '../utils/isMatch';
 import { OPERATION_TYPE } from './constants';
 
@@ -15,16 +24,12 @@ export type OperationType = (typeof OPERATION_TYPE)[keyof typeof OPERATION_TYPE]
 export type OperationConfigBase<T = OperationType> = FormattingConfig &
   InputOputputConfig &
   ReplacementConfig &
-  LogConfig & {
+  LogConfig &
+  FactoriableConfig<T> & {
     /**
      * ID
      */
     operationId?: string;
-
-    /**
-     * 操作種別
-     */
-    type?: T;
 
     /**
      * 下記の条件に当てはまったコンテンツのみ処理を行う
@@ -39,15 +44,11 @@ export type OperationConfigBase<T = OperationType> = FormattingConfig &
 /**
  * 子要素を持つ操作のコンフィグ
  */
-export type ParentOperationConfigBase<
-  T = OperationType,
-  C = Content,
-  OC = OperationConfigBase,
-> = OperationConfigBase<T> & {
+export type ParentOperationConfig<C = Content> = {
   /**
    * 子操作
    */
-  operations: OC | OC[] | ((content: C, params: OperationParams) => Promise<OC | OC[]>);
+  operations: OperationConfigBase[] | ((content: C, params: OperationParams) => Promise<OperationConfigBase[]>);
 };
 
 /**
@@ -70,20 +71,13 @@ export type OperationParams = {
  */
 export type OperationResult<C = Content, OC = OperationConfigBase> = { content: C; results: OC[] };
 
+export type TypedOperationConfig = OperationConfigBase<OperationConfigBase['type'] | string>;
+
 /**
  * 内容に対する操作
  */
-export type Operation<
-  C = Content,
-  S extends OperationConfigBase<OperationConfigBase['operationId']> = OperationConfigBase<
-    OperationConfigBase['operationId']
-  >,
-> = (content: C, config: S, params: OperationParams) => Promise<C | Content>;
-
-/**
- * 子要素を持つ操作
- */
-export type ParentOperation<C = Content, S extends ParentOperationConfigBase = ParentOperationConfigBase> = Operation<
-  C,
-  S
->;
+export type Operation<C extends Content = Content, S extends TypedOperationConfig = TypedOperationConfig> = (
+  content: C,
+  config: Optional<S, 'type'>,
+  params: OperationParams,
+) => Promise<C | Content>;

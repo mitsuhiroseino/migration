@@ -1,7 +1,7 @@
 import { CONTENT_TYPE } from '../../constants';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation, OperationParams } from '../types';
+import { Operation } from '../types';
 import { FormatConfig } from './types';
 
 /**
@@ -11,11 +11,7 @@ import { FormatConfig } from './types';
  * @param params 1繰り返し毎のパラメーター
  * @returns 処理結果
  */
-const Format: Operation<string, FormatConfig> = async (
-  content: string,
-  config: FormatConfig,
-  params: OperationParams,
-) => {
+const Format: Operation<string, FormatConfig> = async (content, config, params) => {
   const { formatter, formatterOptions } = config;
   return await formatter(content, formatterOptions);
 };

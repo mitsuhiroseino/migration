@@ -1,8 +1,8 @@
 import { Content } from '../../types';
 import OperationFactory from '../OperationFactory';
-import ParentOperationBase from '../ParentOperationBase';
+import ParentOperation from '../ParentOperation';
 import { OPERATION_TYPE } from '../constants';
-import { OperationParams, ParentOperation } from '../types';
+import { Operation } from '../types';
 import { BundleConfig } from './types';
 
 /**
@@ -13,12 +13,8 @@ import { BundleConfig } from './types';
  * @param params 1繰り返し毎のパラメーター
  * @returns 処理結果
  */
-const Bundle: ParentOperation<Content, BundleConfig> = async (
-  content: Content,
-  config: BundleConfig<Content>,
-  params: OperationParams
-) => {
-  return await ParentOperationBase(content, config, params);
+const Bundle: Operation<Content, BundleConfig<Content>> = async (content, config, params) => {
+  return await ParentOperation(content, config, params);
 };
 export default Bundle;
 OperationFactory.register(OPERATION_TYPE.BUNDLE, Bundle);

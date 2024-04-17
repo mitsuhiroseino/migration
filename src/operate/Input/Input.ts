@@ -5,7 +5,7 @@ import isExistingFile from '../../utils/isExistingFile';
 import OperationFactory from '../OperationFactory';
 import Params from '../Params';
 import { OPERATION_TYPE } from '../constants';
-import { OperationParams, ParentOperation } from '../types';
+import { Operation, OperationParams } from '../types';
 import { InputConfig } from './types';
 
 /**
@@ -15,11 +15,7 @@ import { InputConfig } from './types';
  * @param params 1繰り返し毎のパラメーター
  * @returns 処理結果
  */
-const Input: ParentOperation<Content, InputConfig> = async (
-  content: Content,
-  config: InputConfig<Content>,
-  params: OperationParams,
-) => {
+const Input: Operation<Content, InputConfig<Content>> = async (content, config, params) => {
   const {
     type,
     inputPath,

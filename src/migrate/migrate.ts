@@ -4,7 +4,7 @@ import executeAsyncFunctions from '../utils/executeAsyncFunctions';
 import executeTask from './executeTask';
 import assignDefaultConfig from './helpers/assignDefaultConfig';
 import inheritConfig from './helpers/inheritConfig';
-import { MigrationConfig, MigrationResult, MigrationStatus, MigrationTaskResult } from './types';
+import { MigrationConfig, MigrationResult, MigrationTaskConfig, MigrationTaskResult } from './types';
 
 /**
  * 移行の設定に従いテキストファイルの移行を行う
@@ -17,7 +17,7 @@ export default async function migrate<C extends MigrationConfig>(config: C): Pro
   const cfg = assignDefaultConfig(config);
   const { tasks } = cfg;
   for (const task of asArray(tasks)) {
-    const taskConfig = inheritConfig(task, cfg);
+    const taskConfig: MigrationTaskConfig = inheritConfig(task, cfg);
     // タスク実行用の関数を作成
     taskFns.push(async () => await executeTask(taskConfig));
   }

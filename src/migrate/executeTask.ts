@@ -3,7 +3,7 @@ import asArray from '../utils/asArray';
 import executeAsyncFunctions from '../utils/executeAsyncFunctions';
 import executeJob from './executeJob';
 import inheritConfig from './helpers/inheritConfig';
-import { MigrationJobResult, MigrationTaskConfig, MigrationTaskResult } from './types';
+import { MigrationJobConfig, MigrationJobResult, MigrationTaskConfig, MigrationTaskResult } from './types';
 
 /**
  * 以降の設定に従いファイルの移行を行う
@@ -18,7 +18,7 @@ export default async function executeTask(config: MigrationTaskConfig): Promise<
   const jobConfigs = asArray(jobs);
   for (const jobConfig of jobConfigs) {
     // ジョブ毎の処理
-    const jobCfg = inheritConfig(jobConfig, config);
+    const jobCfg: MigrationJobConfig = inheritConfig(jobConfig, config);
     // ジョブ実行用の関数を作成
     jobFns.push(async () => await executeJob(jobCfg));
   }

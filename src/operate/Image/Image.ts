@@ -4,7 +4,7 @@ import asArray from '../../utils/asArray';
 import throwError from '../../utils/throwError';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation, OperationParams } from '../types';
+import { Operation } from '../types';
 import ImageManipulationFactory from './ImageManipulationFactory';
 import { ImageConfig } from './types';
 
@@ -15,7 +15,7 @@ import { ImageConfig } from './types';
  * @param params 1繰り返し毎のパラメーター
  * @returns 処理結果
  */
-const Image: Operation<Buffer, ImageConfig> = async (content: Buffer, config: ImageConfig, params: OperationParams) => {
+const Image: Operation<Buffer, ImageConfig> = async (content, config, params) => {
   const { manipulations, mime } = config;
   let jimp = await Jimp.read(content);
 

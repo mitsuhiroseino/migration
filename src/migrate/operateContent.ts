@@ -27,7 +27,7 @@ export default async function operateContent<OC extends OperationConfig>(
     operations,
     finalize,
   } = config;
-  const { _outputPath } = params;
+  const { _inputPath, _outputPath } = params;
 
   // 任意の前処理
   if (initialize) {
@@ -42,7 +42,7 @@ export default async function operateContent<OC extends OperationConfig>(
   if (preFormatting && isString(content)) {
     // 処理開始前のフォーマットあり
     try {
-      content = await format(content, preFormatting as typeof formatterOptions);
+      content = await format(content, { ...(preFormatting as typeof formatterOptions), filepath: _inputPath });
     } catch (e) {
       catchError(e, 'Error in pre-formatting', config);
       return content;
@@ -53,7 +53,9 @@ export default async function operateContent<OC extends OperationConfig>(
   if (operations) {
     // 操作
     try {
-      const operateConfigs = asArray(operations).map((operation) => inheritConfig(operation, config));
+      const operateConfigs: OperationConfig[] = asArray(operations).map((operation) =>
+        inheritConfig(operation, config),
+      );
       migrated = await operate(content, operateConfigs, params);
     } catch (e) {
       catchError(e, 'Error in operation', config);
@@ -66,7 +68,10 @@ export default async function operateContent<OC extends OperationConfig>(
   if (postFormatting && isString(migrated.content)) {
     // 処理終了後のフォーマットあり
     try {
-      migrated.content = await format(migrated.content, postFormatting as typeof formatterOptions);
+      migrated.content = await format(migrated.content, {
+        ...(postFormatting as typeof formatterOptions),
+        filepath: _outputPath,
+      });
     } catch (e) {
       catchError(e, 'Error in post-formatting', config);
       return migrated.content;

@@ -1,7 +1,13 @@
 import { Options } from 'prettier';
-import { CONTENT_TYPE } from './constants';
+import { CONTENT_TYPE, ITEM_TYPE } from './constants';
+import { Condition } from './utils/isMatch';
 import { DynamicPattern, ReplaceOptions } from './utils/replace';
 import { ReplacePlaceholdersOptions, ReplacementValues } from './utils/replacePlaceholders';
+
+/**
+ * 要素の種別
+ */
+export type ItemType = (typeof ITEM_TYPE)[keyof typeof ITEM_TYPE];
 
 /**
  * コンテンツの種別
@@ -100,6 +106,20 @@ export type LogConfig = {
 };
 
 /**
+ * フィルタリング可能な入力の設定
+ */
+export type FilterableConfig<V = any> = {
+  /**
+   * 下記の条件に当てはまった対象のみ処理対象とする
+   * 未指定の場合は全てが処理対象
+   * - 文字列で指定した場合は、対象が文字列と部分一致するもの
+   * - 正規表現の場合は、対象が正規表現のtestでtrueになったもの
+   * - 関数の場合は、戻り値がtrueだったもの
+   */
+  filter?: Condition<V, IterationParams>;
+};
+
+/**
  * 動的に変更される文字列
  */
 export type VariableString<O extends ReplaceOptions = ReplaceOptions> = string | DynamicPattern<O>;
@@ -114,14 +134,33 @@ export type MigrationParams = ReplacementValues;
  * _で始まるプロパティはシステム側で自動的に設定するもの
  * それ以外はMigrationConfigのiteratorで返された値
  */
-export type IterationParams = MigrationParams & {
-  /**
-   * ファイルの読み込み元パス
-   */
-  _inputPath?: string;
+export type IterationParams<
+  AP = AssignedParams<{
+    /**
+     * ファイルの読み込み元パス
+     */
+    inputPath?: string;
 
-  /**
-   * ファイルの出力先パス
-   */
-  _outputPath?: string;
+    /**
+     * ファイルの出力先パス
+     */
+    outputPath?: string;
+  }>,
+> = AP & MigrationParams;
+
+/**
+ * 処理内で設定されるパラメーター
+ */
+export type AssignedParams<I> = {
+  [K in keyof I as `_${string & K}`]: I[K];
 };
+
+/**
+ * 指定のプロパティをオプショナルにするユーティリティ型
+ */
+export type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
+
+/**
+ * 指定のプロパティを必須にするユーティリティ型
+ */
+export type Essential<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;

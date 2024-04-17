@@ -1,19 +1,16 @@
-import fs from 'fs-extra';
+import isString from 'lodash/isString';
+import { INPUT_TYPE, InputConfig, InputFactory } from '../io/inputs';
+import { OUTPUT_TYPE, OutputConfig, OutputFactory } from '../io/outputs';
 import { IterationParams } from '../types';
 import applyIf from '../utils/applyIf';
-import finishDynamicValue from '../utils/finishDynamicValue';
 import propagateError from '../utils/propagateError';
-import throwError from '../utils/throwError';
-import copyItem from './copyItem';
-import createFileFromContent from './createFileFromContent';
-import createItem from './createItem';
-import setSystemParams from './helpers/setSystemParams';
-import processItem from './processItem';
-import processNull from './processNull';
+import assignParams from './helpers/assignParams';
+import inheritConfig from './helpers/inheritConfig';
+import operateContent from './operateContent';
 import { MigrationIterationResult, MigrationJobConfig } from './types';
 
 /**
- * 繰り返し処理1回文の処理を行う
+ * 繰り返し処理1回分の処理を行う
  * @param config 移行対象の設定
  * @param params 繰り返し毎のパラメーター
  */
@@ -21,61 +18,61 @@ export default async function executeIteration(
   config: MigrationJobConfig,
   params: IterationParams,
 ): Promise<MigrationIterationResult | null> {
-  const { inputPath, outputPath, template, templatePath, copy, onIterationStart, onIterationEnd } = config;
+  const { input, output, copy, onIterationStart, onIterationEnd, onItemStart, onItemEnd, ...rest } = config;
 
   applyIf(onIterationStart, [config, params]);
 
-  const outputFilePath: string = finishDynamicValue(outputPath, params, config);
-  let newParams = setSystemParams(params, { outputPath: outputFilePath });
-  let result: MigrationIterationResult = null;
+  // 入力設定取得
+  const inputCfg = isString(input) ? { type: INPUT_TYPE.FILE, inputPath: input } : input || { type: INPUT_TYPE.NOOP };
+  const inputConfig: InputConfig = inheritConfig({ copy, ...inputCfg }, config);
+  // 出力設定取得
+  const outputCfg = isString(output)
+    ? { type: OUTPUT_TYPE.FILE, outputPath: output }
+    : output || { type: OUTPUT_TYPE.NOOP };
+  const outputConfig: OutputConfig = inheritConfig({ copy, ...outputCfg }, config);
 
-  if (inputPath == null && template == null && templatePath == null) {
-    // 入力が無い場合
-    result = await processNull(outputFilePath, config, newParams);
-  } else {
-    // 入力が有る場合
-    if (template != null) {
-      // ファイルを作成
-      const content: string = finishDynamicValue(template, newParams, config);
-      // テンプレートの場合は事前フォーマットをoffにする
-      const cfgs = { ...config, preFormatting: false };
+  // コピー可否判定
+  if (copy && inputConfig.type !== outputConfig.type) {
+    throw new Error('コピーの場合はinputとoutputの種別が同じである必要がある');
+  }
+
+  // 入力処理
+  const inputGenerator = InputFactory.get(inputConfig);
+  const inputItems = await inputGenerator(inputConfig, params);
+  // 出力処理
+  const outputCreater = OutputFactory.get(outputConfig);
+  const outputFn = outputCreater(outputConfig);
+  // 処理結果
+  const iterationResult: MigrationIterationResult = { results: [] };
+
+  try {
+    // 入力を回す
+    for await (const inputItem of inputItems) {
+      let newParams = params;
       try {
-        result = await createFileFromContent(content, outputFilePath, cfgs, newParams);
+        // 入力時の結果をパラメーターにマージ
+        newParams = assignParams(newParams, inputItem.result);
+        applyIf(onItemStart, [config, newParams]);
+
+        // コンテンツを処理
+        const content = await operateContent(inputItem.content, rest, newParams);
+
+        // 出力処理
+        const outputItem = await outputFn(content, newParams);
+        newParams = assignParams(newParams, outputItem.result);
+
+        // 要素の処理結果
+        const result = { ...inputItem.result, ...outputItem.result, status: outputItem.status };
+        iterationResult.results.push(result);
+        applyIf(onItemEnd, [result, config, newParams]);
       } catch (error) {
-        throw propagateError(error, ': tempalate');
-      }
-    } else if (templatePath != null) {
-      // テンプレートファイルを読み込んで生成
-      const tplPath: string = finishDynamicValue(templatePath, newParams, config);
-      newParams = setSystemParams(newParams, { inputPath: tplPath });
-      const availablePath = await fs.exists(tplPath);
-      if (availablePath) {
-        // テンプレートの場合は事前フォーマットをoffにする
-        const cfgs = { ...config, preFormatting: false };
-        result = await createItem(tplPath, outputFilePath, cfgs, newParams);
-      } else {
-        // 処理対象なし
-        throwError(`"${tplPath}" does not exist.`, config);
-      }
-    } else if (inputPath != null) {
-      // 移行元を処理
-      const inputItemPath: string = finishDynamicValue(inputPath, newParams, config);
-      newParams = setSystemParams(newParams, { inputPath: inputItemPath });
-      const availablePath = await fs.exists(inputItemPath);
-      if (availablePath) {
-        if (copy) {
-          // コピー
-          result = await copyItem(inputItemPath, outputFilePath, config, newParams);
-        } else {
-          // 移行
-          result = await processItem(inputItemPath, outputFilePath, config, newParams);
-        }
-      } else {
-        // 処理対象なし
-        throwError(`"${inputItemPath}" does not exist.`, config);
+        throw propagateError(error, `: ${newParams._inputItem}`);
       }
     }
+  } catch (error) {
+    throw error;
   }
-  applyIf(onIterationEnd, [result, config, params]);
-  return result;
+
+  applyIf(onIterationEnd, [iterationResult, config, params]);
+  return iterationResult;
 }

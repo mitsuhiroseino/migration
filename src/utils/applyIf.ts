@@ -5,7 +5,7 @@
  */
 export default function applyIf<A extends unknown[], R>(
   fn: ((...args: A) => R) | null | undefined,
-  args?: A
+  args?: A,
 ): R | undefined {
   if (fn) {
     return fn.apply(null, (args || []) as A);

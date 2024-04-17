@@ -2,32 +2,28 @@ import fs from 'fs-extra';
 import isBuffer from 'lodash/isBuffer';
 import isString from 'lodash/isString';
 import path from 'path';
+import writeFile, { WriteFileOptions } from './writeFile';
+import writeJson, { WriteJsonOptions } from './writeJson';
+import writeText, { WriteTextOptions } from './writeText';
 
-export type WriteAnyFileOptions = {
-  // writeFile、writeJson共通のオプション
-  encoding?: BufferEncoding | null | undefined;
-  mode?: string | number | undefined;
-  flag?: string | undefined;
+export type WriteAnyFileOptions = WriteFileOptions &
+  WriteJsonOptions &
+  WriteTextOptions & {
+    /**
+     * 内容がnullの場合はスキップ
+     */
+    skipNullContent?: boolean;
 
-  // writeFileのオプション
-  signal?: AbortSignal | undefined;
-  flush?: boolean | undefined;
+    /**
+     * 親ディレクトリのあることが保証されている
+     */
+    ensured?: boolean;
 
-  // writeJsonのオプション
-  EOL?: string | undefined;
-  spaces?: string | number | undefined;
-  replacer?: ((key: string, value: any) => any) | undefined;
-
-  /**
-   * 内容がnullの場合はスキップ
-   */
-  skipNullContent?: boolean;
-
-  /**
-   * 親ディレクトリのあることが保証されている
-   */
-  ensured?: boolean;
-};
+    /**
+     * バイナリで出力する
+     */
+    binary?: boolean;
+  };
 
 /**
  * ファイルを出力する
@@ -41,7 +37,7 @@ export default async function writeAnyFile(
   content: string | NodeJS.ArrayBufferView | null | undefined,
   options: WriteAnyFileOptions = {},
 ): Promise<boolean> {
-  const { skipNullContent, ensured, ...rest } = options;
+  const { skipNullContent, ensured, binary, ...rest } = options;
   if (content == null) {
     if (skipNullContent) {
       // contentがnullの場合でも処理は継続
@@ -58,18 +54,15 @@ export default async function writeAnyFile(
     }
 
     // contentの型に合わせた出力
-    if (isString(content)) {
-      // テキストファイルを出力
-      const { encoding = 'utf8', mode, flag, signal, flush } = rest;
-      fs.writeFile(filePath, content, { encoding, mode, flag, signal, flush });
-    } else if (isBuffer(content)) {
+    if (isBuffer(content) || binary) {
       // バイナリファイルを出力
-      const { mode, flag, signal, flush } = rest;
-      fs.writeFile(filePath, content, { mode, flag, signal, flush });
+      await writeFile(filePath, content, rest);
+    } else if (isString(content)) {
+      // テキストファイルを出力
+      await writeText(filePath, content, rest);
     } else {
       // JSONファイルを出力
-      const { encoding = 'utf8', mode, flag, EOL, spaces, replacer } = rest;
-      await fs.writeJson(filePath, content, { encoding, mode, flag, EOL, spaces, replacer });
+      await writeJson(filePath, content, rest);
     }
 
     return true;

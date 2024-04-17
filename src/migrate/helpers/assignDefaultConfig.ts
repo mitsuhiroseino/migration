@@ -1,4 +1,4 @@
-import { DEFAULT_CONFIGS } from '../constants';
+import { DEFAULT_CONFIGS } from '../../constants';
 import { MigrationConfig } from '../types';
 
 /**

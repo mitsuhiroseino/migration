@@ -1,7 +1,7 @@
 import { CONTENT_TYPE } from '../../constants';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation, OperationParams } from '../types';
+import { Operation } from '../types';
 import { PARSER } from './constants';
 import { ParseConfig } from './types';
 
@@ -13,7 +13,7 @@ import { ParseConfig } from './types';
  * @param options オプション
  * @returns 処理結果
  */
-const Parse: Operation<string, ParseConfig> = async (content: string, config: ParseConfig, params: OperationParams) => {
+const Parse: Operation<string, ParseConfig> = async (content, config, params) => {
   const { parser = 'json', args } = config;
   return PARSER[parser](content, args);
 };

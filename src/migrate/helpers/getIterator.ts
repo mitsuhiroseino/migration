@@ -1,8 +1,6 @@
 import isPlainObject from 'lodash/isPlainObject';
-import isString from 'lodash/isString';
 import { IterationParams } from '../../types';
 import { MigrationJobConfig } from '../types';
-import getFsGenerator from './getFsGenerator';
 
 /**
  * イテレーターを取得する

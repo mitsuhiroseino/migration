@@ -1,3 +1,12 @@
+import isString from 'lodash/isString';
+
+export type FactoriableConfig<T> = {
+  /**
+   * 種別
+   */
+  type: T;
+};
+
 /**
  * 簡易ファクトリー
  */
@@ -23,7 +32,10 @@ class Factory<P> {
    * @param type 製品種別
    * @returns
    */
-  get(type: string): P {
+  get<T extends string>(type: T | FactoriableConfig<T>): P {
+    if (!isString(type)) {
+      type = type.type;
+    }
     return this._products[type];
   }
 }

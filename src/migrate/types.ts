@@ -1,19 +1,10 @@
 import { Options } from 'prettier';
-import { MIGRATION_STATUS } from '../constants';
-import { InputConfig } from '../inputs';
+import { MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
+import { CommonInputResult, CommonOutputResult } from '../io';
+import { InputConfig } from '../io/inputs';
+import { OutputConfig } from '../io/outputs';
 import { OperationConfig, OperationResult } from '../operate';
-import {
-  FormattingConfig,
-  InputOputputConfig,
-  IterationParams,
-  LogConfig,
-  ReplacementConfig,
-  VariableString,
-} from '../types';
-import { Condition } from '../utils/isMatch';
-import { ReplaceWithConfigsConfig, Replacer } from '../utils/replaceWithConfigs';
-import { MIGRATION_ITEM_STATUS } from './constants';
-import { EntryType } from './helpers/getFsGenerator';
+import { FormattingConfig, InputOputputConfig, IterationParams, LogConfig, ReplacementConfig } from '../types';
 
 /**
  * 移行の設定
@@ -31,7 +22,7 @@ export type MigrationConfig<OC = OperationConfig, FO = Options> = CommonConfig<O
     /**
      * タスクの設定
      */
-    tasks: MigrationTaskConfig<OC, FO> | MigrationTaskConfig<OC, FO>[];
+    tasks: MigrationTaskConfig<OC, FO>[];
 
     /**
      * タスクを並列で実行する
@@ -55,7 +46,7 @@ export type MigrationTaskConfig<OC = OperationConfig, FO = Options> = CommonConf
     /**
      * ジョブの設定
      */
-    jobs: MigrationJobConfig<OC, FO> | MigrationJobConfig<OC, FO>[];
+    jobs: MigrationJobConfig<OC, FO>[];
 
     /**
      * ジョブを並列で実行する
@@ -77,60 +68,15 @@ export type MigrationJobConfig<OC = OperationConfig, FO = Options> = CommonConfi
 
     /**
      * 入力の設定
+     * 文字列を設定した場合はFileとして扱う
      */
-    input?: InputConfig;
+    input?: InputConfig | string;
 
     /**
-     * 移行元のディレクトリまたはファイルのパス
-     * 既存のファイルをコピー&編集して移行する場合に指定
+     * 出力の設定
+     * 文字列を設定した場合はFileとして扱う
      */
-    inputPath?: VariableString<IterationParams>;
-
-    /**
-     * 移行先へ保存するファイルのテンプレートのディレクトリまたはファイルのパス
-     * 新規のファイルを作成する場合にパスを指定
-     */
-    templatePath?: VariableString<IterationParams>;
-
-    /**
-     * 移行先へ保存するファイルのテンプレート
-     * 新規のファイルを作成する場合にファイルの内容そのものを指定
-     */
-    template?: VariableString<IterationParams>;
-
-    /**
-     * 移行先のディレクトリまたはファイルのパス
-     */
-    outputPath: VariableString<IterationParams>;
-
-    /**
-     * 移行先ファイル名
-     * 移行先の指定がディレクトリの場合にその配下のファイルの名称を変更する場合に指定する
-     */
-    itemName?:
-      | ReplaceWithConfigsConfig<IterationParams>
-      | ReplaceWithConfigsConfig<IterationParams>[]
-      | Replacer<IterationParams>
-      | Replacer<IterationParams>[];
-
-    /**
-     * 処理対象がディレクトリの場合にサブディレクトリは処理しない
-     */
-    ignoreSubDir?: boolean;
-
-    /**
-     * ファイルをバイナリ形式で読み込んで処理する
-     */
-    binary?: boolean;
-
-    /**
-     * 下記の条件に当てはまったファイル・ディレクトリのみ処理対象とする
-     * 未指定の場合は全てのファイル・ディレクトリが処理対象
-     * - 文字列で指定した場合はパスが部分一致するもの
-     * - 正規表現の場合はパスがtestでtrueになったもの
-     * - 関数の場合は戻り値がtrueだったもの
-     */
-    filter?: Condition<IterationParams>;
+    output?: OutputConfig | string;
 
     /**
      * ファイルのコピーのみ行う
@@ -156,7 +102,7 @@ export type MigrationJobConfig<OC = OperationConfig, FO = Options> = CommonConfi
     /**
      * 操作の設定
      */
-    operations?: OC | OC[];
+    operations?: OC[];
 
     /**
      * フォーマットも含む編集処理後に実行される任意の処理
@@ -234,25 +180,21 @@ export type MigrationJobResult = {
  */
 export type MigrationIterationResult = {
   /**
-   * 移行元のファイルパス
+   * 要素毎の処理結果
    */
-  inputPath?: string;
-
-  /**
-   * 移行先のファイルパス
-   */
-  outputPath?: string;
-
-  /**
-   * 処理対象の種別
-   */
-  itemType?: 'dir' | 'file';
-
-  /**
-   * 処理ステータス
-   */
-  status: MigrationItemStatus;
+  results: MigrationItemResult[];
 };
+
+/**
+ * 要素の処理結果
+ */
+export type MigrationItemResult = CommonInputResult &
+  CommonOutputResult & {
+    /**
+     * 処理ステータス
+     */
+    status: MigrationItemStatus;
+  };
 
 /**
  * タスク用のイベントハンドラー
@@ -321,42 +263,25 @@ type MigrationIterationEvents<OC = OperationConfig, FO = Options> = {
 };
 
 /**
- * ファイル、ディレクトリ処理用のイベントハンドラー
+ * 要素処理用のイベントハンドラー
  */
 type MigrationItemEvents<OC = OperationConfig, FO = Options> = {
   /**
-   * ファイル処理開始時のハンドラー
+   * 要素処理開始時のハンドラー
    * @param config イテレーション設定
    * @param params イテレーションパラメーター
    * @returns
    */
-  onFileStart?: (config: MigrationJobConfig<OC, FO>, params: IterationParams) => void;
+  onItemStart?: (config: MigrationJobConfig<OC, FO>, params: IterationParams) => void;
 
   /**
-   * ファイル処理終了時のハンドラー
+   * 要素処理終了時のハンドラー
    * @param result イテレーション処理結果
    * @param config イテレーション設定
    * @param params イテレーションパラメーター
    * @returns
    */
-  onFileEnd?: (result: MigrationIterationResult, config: MigrationJobConfig<OC, FO>, params: IterationParams) => void;
-
-  /**
-   * ディレクトリ処理開始時のハンドラー
-   * @param config イテレーション設定
-   * @param params イテレーションパラメーター
-   * @returns
-   */
-  onDirStart?: (config: MigrationJobConfig<OC, FO>, params: IterationParams) => void;
-
-  /**
-   * ディレクトリ処理終了時のハンドラー
-   * @param result イテレーション処理結果
-   * @param config イテレーション設定
-   * @param params イテレーションパラメーター
-   * @returns
-   */
-  onDirEnd?: (result: MigrationIterationResult, config: MigrationJobConfig<OC, FO>, params: IterationParams) => void;
+  onItemEnd?: (result: MigrationItemResult, config: MigrationJobConfig<OC, FO>, params: IterationParams) => void;
 };
 
 export type CommonConfig<OC = OperationConfig, FO = Options> = FormattingConfig<FO> &
@@ -372,17 +297,5 @@ type IterationConfig<OC = OperationConfig, FO = Options> = {
   iteration?:
     | ((config: MigrationJobConfig<OC, FO>) => Generator<IterationParams>)
     | IterationParams[]
-    | IterationParams
-    | string;
-
-  /**
-   * iterationに文字列形式のディレクトリのパスを指定した場合にのみ有効
-   * パスの取得対象のエントリー種別
-   *
-   * - 未指定: ファイルのみ
-   * - file: ファイルのみ
-   * - dir: ディレクトリのみ
-   * - both: ファイル、ディレクトリ
-   */
-  entryType?: EntryType;
+    | IterationParams;
 };

@@ -6,7 +6,7 @@ import { OperationParams } from '../types';
 /**
  * ファイルを入力して内容をparamsに設定する操作
  */
-export type InputConfig<C = Content> = Omit<ParamsConfig<C>, 'type' | 'createDiff'> & {
+export type InputConfig<C extends Content = Content> = Omit<ParamsConfig<C>, 'type' | 'createDiff'> & {
   /**
    * 操作種別
    */

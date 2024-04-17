@@ -1,6 +1,7 @@
+import isString from 'lodash/isString';
 import { CONTENT_TYPE } from '../constants';
 import { ContentType } from '../types';
-import Factory from '../utils/Factory';
+import Factory, { FactoriableConfig } from '../utils/Factory';
 import asArray from '../utils/asArray';
 import { Operation } from './types';
 
@@ -32,7 +33,10 @@ class OperationFactory extends Factory<Operation<any, any>> {
    * @param contentType 処理対象のコンテンツ種別
    * @returns
    */
-  get(type: string, contentType?: ContentType): Operation<any, any> {
+  get<T extends string>(type: T | FactoriableConfig<T>, contentType?: ContentType): Operation<any, any> {
+    if (!isString(type)) {
+      type = type.type;
+    }
     const cType = this._contentTypes[type];
     if (cType && (contentType == null || cType[contentType] || cType[CONTENT_TYPE.ANY])) {
       return super.get(type);

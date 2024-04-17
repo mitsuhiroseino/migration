@@ -1,5 +1,4 @@
 import fs from 'fs-extra';
-import path from 'path';
 import Image, { IMAGE_MANIPULATION_TYPE } from 'src/operate/Image';
 
 describe('Image', () => {
@@ -13,7 +12,7 @@ describe('Image', () => {
           width: 80,
         },
       },
-      {}
+      {},
     );
     fs.writeFileSync('./src/__test__/__resources__/result.jpg', result);
 

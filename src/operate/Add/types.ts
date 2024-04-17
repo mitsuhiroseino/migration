@@ -9,12 +9,12 @@ export type AddConfig = OperationConfigBase<typeof OPERATION_TYPE.ADD> & {
   /**
    * 追加する位置のアンカー
    */
-  patterns?: FlexiblePattern | FlexiblePattern[];
+  pattern?: FlexiblePattern;
 
   /**
-   * patternsの要素のプレイスホルダーを置換するなどの前処理を行わない
+   * patternの要素のプレイスホルダーを置換するなどの前処理を行わない
    */
-  preservePatterns?: boolean;
+  preservePattern?: boolean;
 
   /**
    * 追加する文字列

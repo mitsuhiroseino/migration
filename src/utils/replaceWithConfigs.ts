@@ -16,12 +16,12 @@ export type ReplaceWithConfigsConfig<O extends ReplaceOptions = ReplaceOptions> 
   /**
    * パターン
    */
-  patterns: FlexiblePattern | FlexiblePattern[];
+  pattern: FlexiblePattern;
 
   /**
-   * patternsの要素のプレイスホルダーを置換するなどの前処理を行わない
+   * patternの要素のプレイスホルダーを置換するなどの前処理を行わない
    */
-  preservePatterns?: boolean;
+  preservePattern?: boolean;
 
   /**
    * 置換後の文字列
@@ -36,7 +36,7 @@ export type ReplaceWithConfigsConfig<O extends ReplaceOptions = ReplaceOptions> 
   /**
    * 条件に当てはまったもののみ処理対象とする
    */
-  filter?: Condition<O>;
+  filter?: Condition<string, O>;
 };
 
 /**
@@ -71,11 +71,11 @@ function createReplacer(config: ReplaceWithConfigsConfig | Replacer): Replacer {
     return config;
   } else {
     // ReplaceByConfigsConfigの場合
-    let { patterns, preservePatterns, replacement = '', preserveReplacement, filter, ...prepareValueOptions } = config;
+    let { pattern, preservePattern, replacement = '', preserveReplacement, filter, ...prepareValueOptions } = config;
     // パターン用の前準備の設定
-    const patternsOpations = {
-      preserveString: preservePatterns,
-      preserveFunction: preservePatterns,
+    const patternOpations = {
+      preserveString: preservePattern,
+      preserveFunction: preservePattern,
       ...prepareValueOptions,
     };
     // 置換後文字列用の前準備の設定
@@ -91,11 +91,9 @@ function createReplacer(config: ReplaceWithConfigsConfig | Replacer): Replacer {
       const rep: string = finishDynamicValue(replacement, options, replacementOpations);
       let result = str;
       if (isMatch(str, filter, options)) {
-        for (const pattern of asArray(patterns)) {
-          // パターンの作成
-          const ptn: StaticPattern = finishDynamicValue(pattern, options, patternsOpations);
-          result = replace(result, ptn, rep, options);
-        }
+        // パターンの作成
+        const ptn: StaticPattern = finishDynamicValue(pattern, options, patternOpations);
+        result = replace(result, ptn, rep, options);
       }
       return result;
     };

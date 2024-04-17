@@ -4,7 +4,7 @@ import asArray from '../../utils/asArray';
 import throwError from '../../utils/throwError';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation, OperationParams } from '../types';
+import { Operation } from '../types';
 import GmManipulationFactory from './GmManipulationFactory';
 import { GmConfig } from './types';
 
@@ -16,7 +16,7 @@ import { GmConfig } from './types';
  * @param params 1繰り返し毎のパラメーター
  * @returns 処理結果
  */
-const Gm: Operation<Buffer, GmConfig> = async (content: Buffer, config: GmConfig, params: OperationParams) => {
+const Gm: Operation<Buffer, GmConfig> = async (content, config, params) => {
   const { manipulations, fileFormat } = config;
   let state = gm(content);
 

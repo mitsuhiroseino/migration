@@ -1,4 +1,6 @@
 import prettier, { Options } from 'prettier';
+export * from './io/inputs/constants';
+export * from './io/outputs/constants';
 
 /**
  * コンテンツの種別
@@ -71,8 +73,8 @@ export const INHERITED_CONFIGS = {
   onTargetEnd: true,
   onIterationStart: true,
   onIterationEnd: true,
-  onFileStart: true,
-  onFileEnd: true,
+  onItemStart: true,
+  onItemEnd: true,
 };
 
 /**
@@ -107,3 +109,58 @@ export const DEFAULT_CONFIGS = {
   formatterOptions: DEFAULT_FORMATTER_OPTIONS,
   replacementBracket: DEFAULT_BRACKET,
 };
+
+/**
+ * 要素の抽象的な分類
+ */
+export const ITEM_TYPE = {
+  /**
+   * 子要素を持つ要素
+   */
+  NODE: 'node',
+
+  /**
+   * 子要素を持たない要素
+   */
+  LEAF: 'leaf',
+} as const;
+
+/**
+ * 1ファイルorディレクトリ毎の処理結果
+ */
+export const MIGRATION_ITEM_STATUS = {
+  /**
+   * コピー
+   */
+  COPIED: 'copied',
+
+  /**
+   * 変換
+   */
+  CONVERTED: 'converted',
+
+  /**
+   * 新規作成
+   */
+  CREATED: 'created',
+
+  /**
+   * 処理済
+   */
+  PROCESSED: 'processed',
+
+  /**
+   * スキップ
+   */
+  SKIPPED: 'skipped',
+
+  /**
+   * 処理対象なし
+   */
+  NONE: 'none',
+
+  /**
+   * 未処理
+   */
+  PENDING: 'pending',
+} as const;

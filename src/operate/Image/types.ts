@@ -1,4 +1,5 @@
 import Jimp from 'jimp';
+import { FactoriableConfig } from '../../utils/Factory';
 import { OPERATION_TYPE } from '../constants';
 import { OperationConfigBase } from '../types';
 import ImageManipulationConfig from './ImageManipulationConfig';
@@ -23,11 +24,7 @@ export type ImageConfig = OperationConfigBase<typeof OPERATION_TYPE.IMAGE> & {
   /**
    * 画像に対する操作
    */
-  manipulations:
-    | ImageManipulationConfigBase
-    | ImageManipulationConfigBase[]
-    | ImageManipulationConfig
-    | ImageManipulationConfig[];
+  manipulations: (ImageManipulationConfig | ImageManipulationConfigBase)[];
 
   /**
    * 出力時のファイル形式
@@ -35,9 +32,7 @@ export type ImageConfig = OperationConfigBase<typeof OPERATION_TYPE.IMAGE> & {
   mime?: string;
 };
 
-export type ImageManipulationConfigBase<T = ImageManipulationType> = {
-  type: T;
-};
+export type ImageManipulationConfigBase<T = ImageManipulationType> = FactoriableConfig<T>;
 
 /**
  * 画像操作関数

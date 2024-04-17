@@ -1,5 +1,4 @@
 import fs from 'fs-extra';
-import path from 'path';
 import Bundle from 'src/operate/Bundle';
 
 describe('Bundle', () => {
@@ -13,7 +12,7 @@ describe('Bundle', () => {
           inputEncoding: 'base64',
         },
       },
-      {}
+      {},
     );
     fs.writeFileSync('./src/__test__/__resources__/result.jpg', result);
 

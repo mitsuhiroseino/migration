@@ -1,4 +1,5 @@
 import { VariableString } from '../../types';
+import {} from '../../utils/writeAnyFile';
 import { OPERATION_TYPE } from '../constants';
 import { OperationConfigBase, OperationParams } from '../types';
 
@@ -36,5 +37,5 @@ export type OutputConfig = OperationConfigBase<typeof OPERATION_TYPE.OUTPUT> & {
    * テキストファイルを書き込む際のエンコーディング
    * デフォルトは'utf8'
    */
-  encoding?: string;
+  encoding?: BufferEncoding;
 };

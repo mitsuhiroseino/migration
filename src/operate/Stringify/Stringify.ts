@@ -2,7 +2,7 @@ import { CONTENT_TYPE } from '../../constants';
 import { Content } from '../../types';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation, OperationParams } from '../types';
+import { Operation } from '../types';
 import { STRINGIFIER } from './constants';
 import { StringifyConfig } from './types';
 
@@ -14,11 +14,7 @@ import { StringifyConfig } from './types';
  * @param options オプション
  * @returns 処理結果
  */
-const Stringify: Operation<Exclude<Content, Buffer>, StringifyConfig> = async (
-  content: Exclude<Content, Buffer>,
-  config: StringifyConfig,
-  params: OperationParams,
-) => {
+const Stringify: Operation<Exclude<Content, Buffer>, StringifyConfig> = async (content, config, params) => {
   const { stringifier = 'json', args } = config;
   return STRINGIFIER[stringifier](content, args);
 };

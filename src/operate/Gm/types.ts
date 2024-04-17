@@ -1,4 +1,5 @@
 import { State } from 'gm';
+import { FactoriableConfig } from '../../utils/Factory';
 import { OPERATION_TYPE } from '../constants';
 import { OperationConfigBase } from '../types';
 import GmManipulationConfig from './GmManipulationConfig';
@@ -23,7 +24,7 @@ export type GmConfig = OperationConfigBase<typeof OPERATION_TYPE.IMAGE> & {
   /**
    * 画像に対する操作
    */
-  manipulations: GmManipulationConfigBase | GmManipulationConfigBase[] | GmManipulationConfig | GmManipulationConfig[];
+  manipulations: (GmManipulationConfig | GmManipulationConfigBase)[];
 
   /**
    * 出力時のファイル形式
@@ -31,9 +32,7 @@ export type GmConfig = OperationConfigBase<typeof OPERATION_TYPE.IMAGE> & {
   fileFormat?: string;
 };
 
-export type GmManipulationConfigBase<T = GmManipulationType> = {
-  type: T;
-};
+export type GmManipulationConfigBase<T = GmManipulationType> = FactoriableConfig<T>;
 
 /**
  * 画像操作関数

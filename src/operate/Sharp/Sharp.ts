@@ -4,7 +4,7 @@ import { asArray } from '../../utils';
 import throwError from '../../utils/throwError';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation, OperationParams } from '../types';
+import { Operation } from '../types';
 import SharpManipulationFactory from './SharpManipulationFactory';
 import { SharpConfig } from './types';
 
@@ -15,7 +15,7 @@ import { SharpConfig } from './types';
  * @param params 1繰り返し毎のパラメーター
  * @returns 処理結果
  */
-const Sharp: Operation<Buffer, SharpConfig> = async (content: Buffer, config: SharpConfig, params: OperationParams) => {
+const Sharp: Operation<Buffer, SharpConfig> = async (content, config, params) => {
   const { options, manipulations } = config;
   let sharp = SharpLib(content, options);
 
