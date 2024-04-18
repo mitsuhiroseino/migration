@@ -1,3 +1,4 @@
+import { VariableString } from '../../../types';
 import { CommonInputResult } from '../../types';
 import { INPUT_TYPE } from '../constants';
 import { InputConfigBase } from '../types';
@@ -9,7 +10,7 @@ export type BoilerplateInputConfig = InputConfigBase<typeof INPUT_TYPE.BOILERPLA
   /**
    * ボイラープレートとして使いまわすスケルトン
    */
-  skeleton: string;
+  skeleton: VariableString;
 };
 
 /**

@@ -18,7 +18,7 @@ import { FileInputConfig, FileInputResult } from './types';
  */
 const File: Input<Content, FileInputConfig, FileInputResult> = async function* (config, params: IterationParams) {
   const { inputPath } = config;
-  const rootPath: string = finishDynamicValue(inputPath, params, config);
+  const rootPath: string = path.normalize(finishDynamicValue(inputPath, params, config));
   const availablePath = await fs.exists(rootPath);
   if (availablePath) {
     // ファイルの読み込み
@@ -33,8 +33,8 @@ export default File;
 /**
  * 指定のパス配下のファイルを読み込む関数
  * @param inputPath 入力パス
- * @param inputItem ファイル・ディレクトリ名
  * @param inputParentPath 親ディレクトリのパス
+ * @param inputItem ファイル・ディレクトリ名
  * @param config コンフィグ
  * @param params 1繰り返し毎のパラメーター
  * @param inputRootPath ルートのパス
@@ -42,8 +42,8 @@ export default File;
  */
 const readFiles = async function* (
   inputPath: string,
-  inputItem: string,
   inputParentPath: string,
+  inputItem: string,
   config: Optional<FileInputConfig, 'type'>,
   params: IterationParams,
   inputRootPath: string = inputPath,
@@ -116,13 +116,13 @@ const readFiles = async function* (
     }
     // 配下のディレクトリ、ファイルを再帰的に処理
     const nextDepth = depth + 1;
-    if (!config.ignoreSubDir || nextDepth !== 0) {
+    if (!config.ignoreSubDir || nextDepth === 1) {
       const items = await fs.readdir(inputPath);
       for (const item of items) {
         const itemPath = path.join(inputPath, item);
         // 子要素を処理
         try {
-          yield* readFiles(itemPath, inputPath, item, config, params, inputRootPath, depth + 1);
+          yield* readFiles(itemPath, inputPath, item, config, params, inputRootPath, nextDepth);
         } catch (error) {}
       }
     }

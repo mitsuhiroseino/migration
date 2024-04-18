@@ -40,7 +40,7 @@ export type InputGenerator<C extends Content, R extends CommonInputResult = Comm
 >;
 
 /**
- * 入力処理
+ * コンテンツの入力元
  */
 export type Input<
   C extends Content,

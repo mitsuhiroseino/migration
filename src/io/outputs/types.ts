@@ -35,7 +35,7 @@ export type OutputConfigBase<T = OutputType> = FormattingConfig &
   };
 
 /**
- * 出力処理
+ * コンテンツの出力先
  */
 export type Output<
   C extends Content,

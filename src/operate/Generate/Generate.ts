@@ -16,7 +16,7 @@ helpers();
  * @returns 処理結果
  */
 const Generate: Operation<string, GenerateConfig> = async (content, config, params) => {
-  let { operationId: opeId, type, filter, ...compileOptions } = config;
+  let { operationId, type, filter, ...compileOptions } = config;
   const template = Handlebars.compile(content, compileOptions);
   // 実行
   return template(params);

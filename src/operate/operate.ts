@@ -18,7 +18,6 @@ export default async function operate<C, OC extends OperationConfig>(
   configs: OC | OC[],
   params: OperationParams,
 ): Promise<OperationResult<C, OC>> {
-  // 置換の為に出来るだけ改行が無い状態にする
   const operationConfigs = asArray(configs);
 
   // 置換情報を基に処理対象の置換
@@ -26,10 +25,11 @@ export default async function operate<C, OC extends OperationConfig>(
   let currentContent = content;
   for (const operationConfig of operationConfigs) {
     // 置換
-    let { type = OPERATION_TYPE.REPLACE, filter } = operationConfig;
+    const { type, filter } = operationConfig;
     const processTarget = currentContent != null ? isMatch(currentContent, filter, params) : false;
     if (processTarget) {
-      const operation = OperationFactory.get(type, getContentType(currentContent));
+      const contentType = getContentType(currentContent);
+      const operation = OperationFactory.get(type, contentType);
       if (operation) {
         // オペレーションを直列で実行
         const operatedContent = await operation(currentContent, operationConfig, params);
@@ -38,7 +38,7 @@ export default async function operate<C, OC extends OperationConfig>(
           currentContent = operatedContent;
         }
       } else {
-        throwError(`There was no ${params._contentType} operation "${type}".`, operationConfig);
+        throwError(`There was no ${contentType} operation "${type}".`, operationConfig);
       }
     }
   }

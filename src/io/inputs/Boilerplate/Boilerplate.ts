@@ -13,7 +13,7 @@ import { BoilerplateInputConfig } from './types';
  */
 const Boilerplate: Input<Content, BoilerplateInputConfig> = async function* (config, params: IterationParams) {
   const { skeleton } = config;
-  const content: string = finishDynamicValue(skeleton, params, config);
+  const content: string = finishDynamicValue(skeleton, params, { ...config, preserveString: true });
   yield {
     content,
     result: {
