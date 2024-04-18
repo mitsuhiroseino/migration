@@ -1,6 +1,4 @@
 import prettier, { Options } from 'prettier';
-export * from './io/inputs/constants';
-export * from './io/outputs/constants';
 
 /**
  * コンテンツの種別

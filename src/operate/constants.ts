@@ -18,9 +18,14 @@ export const OPERATION_TYPE = {
   DELETE: 'delete',
 
   /**
-   * 文字列の編集
+   * コンテンツの編集
    */
   EDIT: 'edit',
+
+  /**
+   * プレイスホルダーへの値の埋め込み
+   */
+  FILL: 'fill',
 
   /**
    * 文字列の整形

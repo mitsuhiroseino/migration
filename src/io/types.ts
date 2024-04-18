@@ -1,5 +1,14 @@
 import { ContentType, ItemType } from '../types';
+import { IO_TYPE } from './constants';
 
+/**
+ * 入出力の種別
+ */
+export type IoType = (typeof IO_TYPE)[keyof typeof IO_TYPE];
+
+/**
+ * 入力の共通設定
+ */
 export type CommonInputConfig = {
   /**
    * コピー
@@ -79,6 +88,9 @@ export type FsInputResult = CommonInputResult & {
   isNew?: boolean;
 };
 
+/**
+ * 出力の共通設定
+ */
 export type CommonOutputConfig = {
   /**
    * コピー

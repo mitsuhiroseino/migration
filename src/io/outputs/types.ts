@@ -9,21 +9,15 @@ import {
   ReplacementConfig,
 } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
-import { CommonOutputResult } from '../types';
+import { CommonOutputResult, IoType } from '../types';
 import OutputConfig from './OutputConfig';
-import { OUTPUT_TYPE } from './constants';
 
 export { default as OutputConfig } from './OutputConfig';
 
 /**
- * 出力の種別
- */
-export type OutputType = (typeof OUTPUT_TYPE)[keyof typeof OUTPUT_TYPE];
-
-/**
  * 出力の設定
  */
-export type OutputConfigBase<T = OutputType> = FormattingConfig &
+export type OutputConfigBase<T = IoType> = FormattingConfig &
   InputOputputConfig &
   ReplacementConfig &
   LogConfig &

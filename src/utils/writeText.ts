@@ -23,5 +23,5 @@ export default async function writeText(
 ): Promise<void> {
   // テキストファイルを出力
   const { encoding = DEFAULT_TEXT_ENCODING, ...rest } = options;
-  fs.writeFile(filePath, content, { encoding, ...rest });
+  await fs.writeFile(filePath, content, { encoding, ...rest });
 }

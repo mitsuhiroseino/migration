@@ -2,6 +2,7 @@ export { default as Add } from './Add';
 export { default as Bundle } from './Bundle';
 export { default as Delete } from './Delete';
 export { default as Edit } from './Edit';
+export { default as Fill } from './Fill';
 export { default as Format } from './Format';
 export { default as Generate } from './Generate';
 export { default as Image } from './Image';

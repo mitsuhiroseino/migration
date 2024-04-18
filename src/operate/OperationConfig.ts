@@ -2,6 +2,7 @@ import { AddConfig } from './Add';
 import { BundleConfig } from './Bundle';
 import { DeleteConfig } from './Delete';
 import { EditConfig } from './Edit';
+import { FillConfig } from './Fill';
 import { FormatConfig } from './Format';
 import { GenerateConfig } from './Generate';
 import { ImageConfig } from './Image';
@@ -22,6 +23,7 @@ type OperationConfig =
   | BundleConfig
   | DeleteConfig
   | EditConfig
+  | FillConfig
   | FormatConfig
   | GenerateConfig
   | ImageConfig

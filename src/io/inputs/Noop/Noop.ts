@@ -1,6 +1,6 @@
 import { Content, IterationParams } from '../../../types';
+import { IO_TYPE } from '../../constants';
 import InputFactory from '../InputFactory';
-import { INPUT_TYPE } from '../constants';
 import { Input } from '../types';
 import { NoopInputConfig } from './types';
 
@@ -14,5 +14,5 @@ const Noop: Input<Content, NoopInputConfig> = async function* (config, params: I
     result: {},
   };
 };
-InputFactory.register(INPUT_TYPE.NOOP, Noop);
+InputFactory.register(IO_TYPE.NOOP, Noop);
 export default Noop;

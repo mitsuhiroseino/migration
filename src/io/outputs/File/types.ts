@@ -1,14 +1,14 @@
 import { AssignedParams, IterationParams, VariableString } from '../../../types';
 import { ReplaceWithConfigsConfig, Replacer } from '../../../utils/replaceWithConfigs';
 import { WriteAnyFileOptions } from '../../../utils/writeAnyFile';
+import { IO_TYPE } from '../../constants';
 import { FsInputResult, FsOutputConfig, FsOutputResult } from '../../types';
-import { OUTPUT_TYPE } from '../constants';
 import { OutputConfigBase } from '../types';
 
 /**
  * ファイルへの出力
  */
-export type FileOutputConfig = OutputConfigBase<typeof OUTPUT_TYPE.FILE> &
+export type FileOutputConfig = OutputConfigBase<typeof IO_TYPE.FILE> &
   FsOutputConfig &
   Omit<WriteAnyFileOptions, 'encoding'> & {
     /**

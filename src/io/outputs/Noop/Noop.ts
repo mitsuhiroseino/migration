@@ -1,7 +1,7 @@
 import { MIGRATION_ITEM_STATUS } from '../../../constants';
 import { Content, IterationParams } from '../../../types';
+import { IO_TYPE } from '../../constants';
 import OutputFactory from '../OutputFactory';
-import { OUTPUT_TYPE } from '../constants';
 import { Output, OutputReturnValue } from '../types';
 import { NoopOutputConfig, NoopOutputResult } from './types';
 
@@ -13,9 +13,10 @@ import { NoopOutputConfig, NoopOutputResult } from './types';
 const Noop: Output<Content, NoopOutputConfig, NoopOutputResult> = function (config) {
   return async (content: Content, params: IterationParams): Promise<OutputReturnValue<NoopOutputResult>> => {
     return {
+      result: {},
       status: MIGRATION_ITEM_STATUS.PROCESSED,
     };
   };
 };
-OutputFactory.register(OUTPUT_TYPE.NOOP, Noop);
+OutputFactory.register(IO_TYPE.NOOP, Noop);
 export default Noop;

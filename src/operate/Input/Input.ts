@@ -1,7 +1,6 @@
-import fs from 'fs-extra';
 import { Content } from '../../types';
 import finishDynamicValue from '../../utils/finishDynamicValue';
-import isExistingFile from '../../utils/isExistingFile';
+import readAnyFile from '../../utils/readAnyFile';
 import OperationFactory from '../OperationFactory';
 import Params from '../Params';
 import { OPERATION_TYPE } from '../constants';
@@ -16,26 +15,13 @@ import { InputConfig } from './types';
  * @returns 処理結果
  */
 const Input: Operation<Content, InputConfig<Content>> = async (content, config, params) => {
-  const {
-    type,
-    inputPath,
-    preserveInputPath,
-    paramName = '_resource',
-    preserveParamName,
-    binary,
-    encoding = 'utf8',
-    ...rest
-  } = config;
+  const { type, inputPath, preserveInputPath, paramName = '_resource', preserveParamName, ...rest } = config;
+
   // 入力パス
   const inputFilePath: string = finishDynamicValue(inputPath, params, {
     ...rest,
     preserveString: preserveInputPath,
   });
-  // ファイルの存在を確認
-  const isExisting = await isExistingFile(inputFilePath);
-  if (!isExisting) {
-    throw new Error(`'${inputFilePath}' is not found.`);
-  }
 
   // パラメーター名
   const prmsName: string = finishDynamicValue(paramName, params, {
@@ -45,7 +31,7 @@ const Input: Operation<Content, InputConfig<Content>> = async (content, config, 
 
   // paramsへ追加する値を作成する関数
   const createDiff = async (cnt: Content, prms: OperationParams) => {
-    const resource = await fs.readFile(inputFilePath, binary ? null : ({ encoding } as any));
+    const resource = await readAnyFile(inputFilePath, rest);
     return { [prmsName]: resource };
   };
 

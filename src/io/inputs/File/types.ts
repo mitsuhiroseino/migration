@@ -1,9 +1,9 @@
 import { FilterableConfig, ItemType, VariableString } from '../../../types';
+import { IO_TYPE } from '../../constants';
 import { FsInputConfig, FsInputResult } from '../../types';
-import { INPUT_TYPE } from '../constants';
 import { InputConfigBase } from '../types';
 
-export type FileInputConfig = InputConfigBase<typeof INPUT_TYPE.FILE> &
+export type FileInputConfig = InputConfigBase<typeof IO_TYPE.FILE> &
   FsInputConfig &
   FilterableConfig<string> & {
     /**

@@ -2,11 +2,11 @@ import fs from 'fs-extra';
 import isBuffer from 'lodash/isBuffer';
 import isString from 'lodash/isString';
 import path from 'path';
-import writeFile, { WriteFileOptions } from './writeFile';
+import writeBuffer, { WriteBufferOptions } from './writeBuffer';
 import writeJson, { WriteJsonOptions } from './writeJson';
 import writeText, { WriteTextOptions } from './writeText';
 
-export type WriteAnyFileOptions = WriteFileOptions &
+export type WriteAnyFileOptions = WriteBufferOptions &
   WriteJsonOptions &
   WriteTextOptions & {
     /**
@@ -56,7 +56,7 @@ export default async function writeAnyFile(
     // contentの型に合わせた出力
     if (isBuffer(content) || binary) {
       // バイナリファイルを出力
-      await writeFile(filePath, content, rest);
+      await writeBuffer(filePath, content, rest);
     } else if (isString(content)) {
       // テキストファイルを出力
       await writeText(filePath, content, rest);

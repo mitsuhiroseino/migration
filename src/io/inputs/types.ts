@@ -8,20 +8,14 @@ import {
   ReplacementConfig,
 } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
-import { CommonInputResult } from '../types';
-import { INPUT_TYPE } from './constants';
+import { CommonInputResult, IoType } from '../types';
 
 export { default as InputConfig } from './InputConfig';
 
 /**
- * 入力の種別
- */
-export type InputType = (typeof INPUT_TYPE)[keyof typeof INPUT_TYPE];
-
-/**
  * 入力の設定
  */
-export type InputConfigBase<T = InputType> = FormattingConfig &
+export type InputConfigBase<T = IoType> = FormattingConfig &
   InputOputputConfig &
   ReplacementConfig &
   LogConfig &

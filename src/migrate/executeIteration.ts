@@ -1,6 +1,7 @@
 import isString from 'lodash/isString';
-import { INPUT_TYPE, InputConfig, InputFactory } from '../io/inputs';
-import { OUTPUT_TYPE, OutputConfig, OutputFactory } from '../io/outputs';
+import { IO_TYPE } from '../io';
+import { InputConfig, InputFactory } from '../io/inputs';
+import { OutputConfig, OutputFactory } from '../io/outputs';
 import { IterationParams } from '../types';
 import applyIf from '../utils/applyIf';
 import propagateError from '../utils/propagateError';
@@ -23,17 +24,15 @@ export default async function executeIteration(
   applyIf(onIterationStart, [config, params]);
 
   // 入力設定取得
-  const inputCfg = isString(input) ? { type: INPUT_TYPE.FILE, inputPath: input } : input || { type: INPUT_TYPE.NOOP };
+  const inputCfg = isString(input) ? { type: IO_TYPE.FILE, inputPath: input } : input || { type: IO_TYPE.NOOP };
   const inputConfig: InputConfig = inheritConfig({ copy, ...inputCfg }, config);
   // 出力設定取得
-  const outputCfg = isString(output)
-    ? { type: OUTPUT_TYPE.FILE, outputPath: output }
-    : output || { type: OUTPUT_TYPE.NOOP };
+  const outputCfg = isString(output) ? { type: IO_TYPE.FILE, outputPath: output } : output || { type: IO_TYPE.NOOP };
   const outputConfig: OutputConfig = inheritConfig({ copy, ...outputCfg }, config);
 
   // コピー可否判定
   if (copy && inputConfig.type !== outputConfig.type) {
-    throw new Error('コピーの場合はinputとoutputの種別が同じである必要がある');
+    throw new Error('For copies, the IO type must be the same:' + config.jobId);
   }
 
   // 入力処理

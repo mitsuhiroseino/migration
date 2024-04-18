@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 
-export type WriteFileOptions = {
+export type WriteBufferOptions = {
   encoding?: BufferEncoding | null | undefined;
   mode?: string | number | undefined;
   flag?: string | undefined;
@@ -15,10 +15,10 @@ export type WriteFileOptions = {
  * @param options オプション
  * @returns
  */
-export default async function writeFile(
+export default async function writeBuffer(
   filePath: string,
   content: string | NodeJS.ArrayBufferView | null | undefined,
-  options: WriteFileOptions = {},
+  options: WriteBufferOptions = {},
 ): Promise<void> {
   // バイナリファイルを出力
   const { mode, flag, signal, flush } = options;

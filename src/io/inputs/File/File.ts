@@ -5,9 +5,10 @@ import { CONTENT_TYPE, ITEM_TYPE } from '../../../constants';
 import { Content, ContentType, IterationParams, Optional } from '../../../types';
 import finishDynamicValue from '../../../utils/finishDynamicValue';
 import isMatch from '../../../utils/isMatch';
+import readAnyFile from '../../../utils/readAnyFile';
 import throwError from '../../../utils/throwError';
+import { IO_TYPE } from '../../constants';
 import InputFactory from '../InputFactory';
-import { INPUT_TYPE } from '../constants';
 import { Input, InputGenerator } from '../types';
 import { FileInputConfig, FileInputResult } from './types';
 
@@ -27,7 +28,7 @@ const File: Input<Content, FileInputConfig, FileInputResult> = async function* (
     throwError(`"${rootPath}" does not exist.`, config);
   }
 };
-InputFactory.register(INPUT_TYPE.FILE, File);
+InputFactory.register(IO_TYPE.FILE, File);
 export default File;
 
 /**
@@ -75,7 +76,7 @@ const readFiles = async function* (
       };
     } else {
       // ファイルの入力
-      const buffer = await fs.readFile(inputPath);
+      const buffer: Buffer = await readAnyFile(inputPath, { binary: true });
       let encoding: any;
       if (inputBinary) {
         encoding = 'BINARY';

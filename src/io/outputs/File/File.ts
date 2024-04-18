@@ -5,8 +5,8 @@ import { Content } from '../../../types';
 import finishDynamicValue from '../../../utils/finishDynamicValue';
 import replaceWithConfigs from '../../../utils/replaceWithConfigs';
 import writeAnyFile from '../../../utils/writeAnyFile';
+import { IO_TYPE } from '../../constants';
 import OutputFactory from '../OutputFactory';
-import { OUTPUT_TYPE } from '../constants';
 import { Output, OutputReturnValue } from '../types';
 import { FileAssignedParams, FileOutputConfig, FileOutputResult } from './types';
 
@@ -85,5 +85,5 @@ const File: Output<Content, FileOutputConfig, FileOutputResult, FileAssignedPara
     }
   };
 };
-OutputFactory.register(OUTPUT_TYPE.FILE, File);
+OutputFactory.register(IO_TYPE.FILE, File);
 export default File;
