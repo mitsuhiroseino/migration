@@ -1,10 +1,6 @@
-import fs from 'fs-extra';
-import path from 'path';
 import { Content } from '../../types';
 import finishDynamicValue from '../../utils/finishDynamicValue';
 import writeAnyFile from '../../utils/writeAnyFile';
-import writeBuffer from '../../utils/writeBuffer';
-import writeText from '../../utils/writeText';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import { Operation } from '../types';

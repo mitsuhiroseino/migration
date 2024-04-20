@@ -3,7 +3,6 @@ import getContentType from '../utils/getContentType';
 import isMatch from '../utils/isMatch';
 import throwError from '../utils/throwError';
 import OperationFactory from './OperationFactory';
-import { OPERATION_TYPE } from './constants';
 import { OperationConfig, OperationParams, OperationResult } from './types';
 
 /**
