@@ -39,6 +39,7 @@
     "gm": "^1.25.0",
     "handlebars": "^4.7.8",
     "handlebars-helpers": "^0.10.0",
+    "iconv-lite": "^0.6.3",
     "jimp": "^0.22.12",
     "lodash": "^4.17.21",
     "prettier": "^3.2.4",

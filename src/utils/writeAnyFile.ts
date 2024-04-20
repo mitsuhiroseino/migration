@@ -18,11 +18,6 @@ export type WriteAnyFileOptions = WriteBufferOptions &
      * 親ディレクトリのあることが保証されている
      */
     ensured?: boolean;
-
-    /**
-     * バイナリで出力する
-     */
-    binary?: boolean;
   };
 
 /**
@@ -34,10 +29,10 @@ export type WriteAnyFileOptions = WriteBufferOptions &
  */
 export default async function writeAnyFile(
   filePath: string,
-  content: string | NodeJS.ArrayBufferView | null | undefined,
+  content: string | Buffer | any,
   options: WriteAnyFileOptions = {},
 ): Promise<boolean> {
-  const { skipNullContent, ensured, binary, ...rest } = options;
+  const { skipNullContent, ensured, encoding, ...rest } = options;
   if (content == null) {
     if (skipNullContent) {
       // contentがnullの場合でも処理は継続
@@ -54,7 +49,7 @@ export default async function writeAnyFile(
     }
 
     // contentの型に合わせた出力
-    if (isBuffer(content) || binary) {
+    if (isBuffer(content) || encoding === 'binary') {
       // バイナリファイルを出力
       await writeBuffer(filePath, content, rest);
     } else if (isString(content)) {

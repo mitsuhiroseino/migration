@@ -76,18 +76,13 @@ export type InputOputputConfig = {
    * テキストファイル読み込み時のエンコーディング
    * 未指定の場合はutf8
    */
-  inputEncoding?: BufferEncoding;
+  inputEncoding?: string;
 
   /**
    * テキストファイル書き込み時のエンコーディング
    * 未指定の場合はutf8
    */
-  outputEncoding?: BufferEncoding;
-
-  /**
-   * バイナリ形式で読み込む場合にtrue
-   */
-  binary?: boolean;
+  outputEncoding?: string;
 
   /**
    * エラーがあってもファイルを出力する
@@ -147,6 +142,11 @@ export type IterationParams<
     outputPath?: string;
   }>,
 > = AP & MigrationParams;
+
+/**
+ * パラメーターの差分
+ */
+export type DiffParams = MigrationParams;
 
 /**
  * 処理内で設定されるパラメーター

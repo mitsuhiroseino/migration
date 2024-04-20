@@ -1,22 +1,43 @@
-import { IterationParams } from '../types';
+import { DiffParams, IterationParams } from '../types';
+import assignParams from '../utils/assignParams';
 import { Input, InputConfig, InputFactory, InputReturnValue } from './inputs';
 import { Output, OutputConfig, OutputFactory, OutputReturnValue } from './outputs';
-import { IoBase } from './types';
+import { IoBase, IoConfig } from './types';
 
-export type IoHandlerConfig = {
-  copy?: boolean;
-};
+export type IoHandlerConfig = IoConfig;
 
-type s = Iterable<any>;
-
+/**
+ * 入力と出力を操作するクラス
+ */
 export default class IoHandler<IC extends InputConfig = InputConfig, OC extends OutputConfig = OutputConfig>
   implements IoBase
 {
+  /**
+   * 入力処理
+   */
   private _input: Input<any, any>;
+
+  /**
+   * 出力処理
+   */
   private _output: Output<any, any>;
+
+  /**
+   * コピー
+   */
   private _copy?: boolean;
+
+  /**
+   * 処理中
+   */
   private _active: boolean = false;
 
+  /**
+   * コンストラクター
+   * @param inputConfig 入力設定
+   * @param outputConfig 出力設定
+   * @param config 入出力設定
+   */
   constructor(inputConfig: IC, outputConfig: OC, config: IoHandlerConfig) {
     const { copy } = config;
     if (copy && inputConfig.type !== outputConfig.type) {
@@ -33,10 +54,10 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * 初期化処理
    * @param params
    */
-  initialize(params: IterationParams): Promise<void> {
-    this._input.initialize(params);
-    this._output.initialize(params);
-    return;
+  async initialize(params: IterationParams): Promise<DiffParams> {
+    const inputDiffParams = await this._input.initialize(params);
+    const outputDiffParams = await this._output.initialize(assignParams(params, inputDiffParams));
+    return { ...inputDiffParams, ...outputDiffParams };
   }
 
   /**
@@ -69,23 +90,24 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * 完了処理
    * @param params
    */
-  complete(params: IterationParams): Promise<void> {
-    this._input.complete(params);
-    this._output.complete(params);
+  async complete(params: IterationParams): Promise<DiffParams> {
+    const inputDiffParams = await this._input.complete(params);
+    const outputDiffParams = await this._output.complete(assignParams(params, inputDiffParams));
     this._active = false;
-    return;
+    return { ...inputDiffParams, ...outputDiffParams };
   }
 
   /**
    * 例外処理
    * @param params
    */
-  error(params: IterationParams): Promise<void> {
+  async error(params: IterationParams): Promise<DiffParams> {
     if (this._active) {
-      this._input.error(params);
-      this._output.error(params);
+      const inputDiffParams = await this._input.error(params);
+      const outputDiffParams = await this._output.error(assignParams(params, inputDiffParams));
+      this._active = false;
+      return { ...inputDiffParams, ...outputDiffParams };
     }
-    this._active = false;
-    return;
+    return {};
   }
 }

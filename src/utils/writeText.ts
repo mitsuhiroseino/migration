@@ -1,8 +1,9 @@
 import fs from 'fs-extra';
 import { DEFAULT_TEXT_ENCODING } from '../constants';
+import toBuffer from './toBuffer';
 
 export type WriteTextOptions = {
-  encoding?: BufferEncoding | null | undefined;
+  encoding?: string;
   mode?: string | number | undefined;
   flag?: string | undefined;
   signal?: AbortSignal | undefined;
@@ -18,10 +19,11 @@ export type WriteTextOptions = {
  */
 export default async function writeText(
   filePath: string,
-  content: string | NodeJS.ArrayBufferView | null | undefined,
+  content: string,
   options: WriteTextOptions = {},
 ): Promise<void> {
   // テキストファイルを出力
   const { encoding = DEFAULT_TEXT_ENCODING, ...rest } = options;
-  await fs.writeFile(filePath, content, { encoding, ...rest });
+  const buffer = toBuffer(content, encoding);
+  await fs.writeFile(filePath, buffer, rest);
 }

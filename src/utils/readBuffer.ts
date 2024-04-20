@@ -11,5 +11,6 @@ export type ReadBufferOptions = { flag?: string | undefined };
 export default async function readBuffer(filePath: string, options: ReadBufferOptions = {}): Promise<Buffer> {
   // バイナリファイルを入力
   const { flag } = options;
-  return fs.readFile(filePath, { flag });
+  const buffer = await fs.readFile(filePath, { flag });
+  return buffer;
 }

@@ -1,6 +1,6 @@
 import { Options } from 'prettier';
 import { MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
-import { CommonInputResult, CommonOutputResult } from '../io';
+import { CommonInputResult, CommonOutputResult, IoConfig } from '../io';
 import { InputConfig } from '../io/inputs';
 import { OutputConfig } from '../io/outputs';
 import { OperationConfig, OperationResult } from '../operate';
@@ -77,12 +77,6 @@ export type MigrationJobConfig<OC = OperationConfig, FO = Options> = CommonConfi
      * 文字列を設定した場合はFileとして扱う
      */
     output?: OutputConfig | string;
-
-    /**
-     * ファイルのコピーのみ行う
-     * このプロパティがtrueの場合は、コンテンツの編集に関するプロパティは全て無効
-     */
-    copy?: boolean;
 
     // 以下はコンテンツの編集に関するプロパティ
 
@@ -288,7 +282,8 @@ export type CommonConfig<OC = OperationConfig, FO = Options> = FormattingConfig<
   ReplacementConfig &
   InputOputputConfig &
   IterationConfig<OC, FO> &
-  LogConfig;
+  LogConfig &
+  IoConfig;
 
 type IterationConfig<OC = OperationConfig, FO = Options> = {
   /**

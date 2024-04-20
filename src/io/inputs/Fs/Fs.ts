@@ -1,13 +1,14 @@
-import Encoding from 'encoding-japanese';
 import fs from 'fs-extra';
 import path from 'path';
 import { FsInputResultBase } from 'src/io/types';
 import { CONTENT_TYPE, ITEM_TYPE } from '../../../constants';
 import { Content, ContentType, IterationParams, Optional } from '../../../types';
 import finishDynamicValue from '../../../utils/finishDynamicValue';
+import getEncoding from '../../../utils/getEncoding';
 import isMatch from '../../../utils/isMatch';
 import readAnyFile from '../../../utils/readAnyFile';
 import throwError from '../../../utils/throwError';
+import toString from '../../../utils/toString';
 import { IO_TYPE } from '../../constants';
 import InputBase from '../InputBase';
 import InputFactory from '../InputFactory';
@@ -26,10 +27,10 @@ type CallbackFn = (
 
 class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
   read(params: IterationParams): AsyncIterable<InputReturnValue<any, FsInputResultBase>> {
-    return FsGenerator(readFiles, this._config, params);
+    return generateFs(readFs, this._config, params);
   }
   copy(params: IterationParams): AsyncIterable<InputReturnValue<any, FsInputResultBase>> {
-    return FsGenerator(copyFiles, this._config, params);
+    return generateFs(copyFs, this._config, params);
   }
 }
 InputFactory.register(IO_TYPE.FS, Fs);
@@ -40,7 +41,7 @@ export default Fs;
  * @param config 入力設定
  * @param params 1繰り返し毎のパラメーター
  */
-const FsGenerator = async function* (
+const generateFs = async function* (
   callback: CallbackFn,
   config: FsInputConfig,
   params: IterationParams,
@@ -66,7 +67,7 @@ const FsGenerator = async function* (
  * @param inputRootPath ルートのパス
  * @param depth ルートからの深さ
  */
-const readFiles: CallbackFn = async function* (
+const readFs: CallbackFn = async function* (
   inputPath: string,
   inputParentPath: string,
   inputItem: string,
@@ -84,51 +85,44 @@ const readFiles: CallbackFn = async function* (
     if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
       yield {
         result: {
+          inputItem,
           inputItemType: ITEM_TYPE.NODE,
           inputPath,
-          inputParentPath,
           inputRootPath,
-          inputParentRelativePath,
-          inputItem,
         },
       };
     }
     // 配下のディレクトリ、ファイルを再帰的に処理
-    yield* toNextDeps(readFiles, inputPath, config, params, inputRootPath, depth);
+    yield* toNextDeps(readFs, inputPath, config, params, inputRootPath, depth);
   } else if (isTarget && stat.isFile() && (!itemType || itemType === ITEM_TYPE.LEAF)) {
     // ファイルを読み込んで返す
-    const { inputBinary, inputEncoding: defaultEncoding } = config;
+    const { inputEncoding } = config;
     // ファイルの入力
-    const buffer: Buffer = await readAnyFile(inputPath, { binary: true });
-    let inputEncoding: any;
-    if (inputBinary) {
-      inputEncoding = 'BINARY';
-    } else {
-      inputEncoding = Encoding.detect(buffer);
+    const buffer: Buffer = await readAnyFile(inputPath, { encoding: 'binary' });
+    let encoding: string = inputEncoding;
+    if (!encoding) {
+      encoding = getEncoding(buffer);
     }
     let content: Buffer | string;
     let inputContentType: ContentType;
-    if (!inputEncoding || inputEncoding === 'BINARY') {
+    if (encoding.toLowerCase() === 'binary') {
       // バイナリファイルの場合
       content = buffer;
       inputContentType = CONTENT_TYPE.BINARY;
     } else {
       // テキストファイルの場合
-      inputEncoding = defaultEncoding || inputEncoding;
-      content = buffer.toString(inputEncoding);
+      content = toString(buffer, encoding);
       inputContentType = CONTENT_TYPE.TEXT;
     }
     yield {
       content,
       result: {
-        inputItemType: ITEM_TYPE.LEAF,
-        inputPath,
-        inputParentPath,
-        inputRootPath,
-        inputParentRelativePath,
         inputItem,
+        inputItemType: ITEM_TYPE.LEAF,
         inputContentType,
-        inputEncoding,
+        inputPath,
+        inputRootPath,
+        inputEncoding: encoding,
       },
     };
   }
@@ -144,7 +138,7 @@ const readFiles: CallbackFn = async function* (
  * @param inputRootPath ルートのパス
  * @param depth ルートからの深さ
  */
-const copyFiles: CallbackFn = async function* (
+const copyFs: CallbackFn = async function* (
   inputPath: string,
   inputParentPath: string,
   inputItem: string,
@@ -161,27 +155,23 @@ const copyFiles: CallbackFn = async function* (
     if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
       yield {
         result: {
+          inputItem,
           inputItemType: ITEM_TYPE.NODE,
           inputPath,
-          inputParentPath,
           inputRootPath,
-          inputParentRelativePath,
-          inputItem,
         },
       };
     }
     // 配下のディレクトリ、ファイルを再帰的に処理
-    yield* toNextDeps(copyFiles, inputPath, config, params, inputRootPath, depth);
+    yield* toNextDeps(copyFs, inputPath, config, params, inputRootPath, depth);
   } else if (isTarget && stat.isFile() && (!itemType || itemType === ITEM_TYPE.LEAF)) {
     // ファイルのコピーをするための情報のみを返す
     yield {
       result: {
+        inputItem,
         inputItemType: ITEM_TYPE.LEAF,
         inputPath,
-        inputParentPath,
         inputRootPath,
-        inputParentRelativePath,
-        inputItem,
       },
     };
   }

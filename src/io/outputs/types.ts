@@ -1,6 +1,7 @@
 import { MigrationItemStatus } from '../../migrate';
 import {
   Content,
+  DiffParams,
   FormattingConfig,
   InputOputputConfig,
   IterationParams,
@@ -49,7 +50,7 @@ export interface Output<C extends Content, OR extends CommonOutputResult = Commo
 /**
  * 出力処理結果
  */
-export type OutputReturnValue<R extends IterationParams> = {
+export type OutputReturnValue<R extends DiffParams> = {
   status: MigrationItemStatus;
 
   /**

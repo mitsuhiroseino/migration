@@ -3185,6 +3185,7 @@ __metadata:
     gm: "npm:^1.25.0"
     handlebars: "npm:^4.7.8"
     handlebars-helpers: "npm:^0.10.0"
+    iconv-lite: "npm:^0.6.3"
     jest: "npm:^29.7.0"
     jimp: "npm:^0.22.12"
     lodash: "npm:^4.17.21"
@@ -6388,7 +6389,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:^0.6.2":
+"iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
   dependencies:

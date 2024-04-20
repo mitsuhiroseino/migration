@@ -9,6 +9,6 @@ export default function getContentType<C>(content: C): ContentType {
   } else if (isBuffer(content)) {
     return CONTENT_TYPE.BINARY;
   } else {
-    return CONTENT_TYPE.OTHER;
+    return CONTENT_TYPE.DATA;
   }
 }

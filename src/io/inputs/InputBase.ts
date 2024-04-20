@@ -1,9 +1,9 @@
-import { Content, IterationParams } from '../../types';
+import { Content, DiffParams, IterationParams } from '../../types';
 import { CommonInputResult } from '../types';
 import { Input, InputConfigBase, InputReturnValue } from './types';
 
 /**
- * 入力の設定
+ * 入力の基底クラス
  */
 abstract class InputBase<
   C extends Content,
@@ -20,29 +20,20 @@ abstract class InputBase<
     this._params = params;
   }
 
-  initialize(params: IterationParams): Promise<void> {
-    return Promise.resolve();
+  initialize(params: IterationParams): Promise<DiffParams> {
+    return Promise.resolve({});
   }
 
   abstract read(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
 
   abstract copy(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
 
-  complete(params: IterationParams): Promise<void> {
-    return Promise.resolve();
+  complete(params: IterationParams): Promise<DiffParams> {
+    return Promise.resolve({});
   }
 
-  error(params: IterationParams): Promise<void> {
-    return Promise.resolve();
+  error(params: IterationParams): Promise<DiffParams> {
+    return Promise.resolve({});
   }
 }
 export default InputBase;
-
-class InputAsyncIterable<C extends Content, IR extends CommonInputResult = CommonInputResult>
-  implements AsyncIterable<InputReturnValue<C, IR>>
-{
-  constructor(private _iterator: AsyncIterator<InputReturnValue<C, IR>>) {}
-  [Symbol.asyncIterator](): AsyncIterator<InputReturnValue<C, IR>, any, undefined> {
-    return this._iterator;
-  }
-}

@@ -1,4 +1,4 @@
-import { AssignedParams } from '../../types';
+import { AssignedParams } from '../types';
 
 /**
  * パラメーターに処理に応じて変動するパラメーターを設定する
@@ -8,10 +8,11 @@ import { AssignedParams } from '../../types';
 export default function assignParams<P extends object, S extends object>(
   params: P,
   variedParams: S,
+  prefix = '_',
 ): P & AssignedParams<S> {
   const assignedParams: any = { ...params };
   for (const key in variedParams) {
-    assignedParams[`_${key}`] = variedParams[key];
+    assignedParams[prefix + key] = variedParams[key];
   }
   return assignedParams;
 }

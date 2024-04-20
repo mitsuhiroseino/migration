@@ -12,12 +12,7 @@ export type ReadAnyFileOptions = ReadBufferOptions &
     nullOnNotFound?: boolean;
 
     /**
-     * バイナリで入力する
-     */
-    binary?: boolean;
-
-    /**
-     * JSONで入力する
+     * JSONで読み込む場合
      */
     json?: boolean;
   };
@@ -29,7 +24,7 @@ export type ReadAnyFileOptions = ReadBufferOptions &
  * @returns
  */
 export default async function readAnyFile<R>(filePath: string, options: ReadAnyFileOptions = {}): Promise<R> {
-  const { nullOnNotFound, binary, json, ...rest } = options;
+  const { nullOnNotFound, encoding, json, ...rest } = options;
 
   if (!isExistingFile(filePath)) {
     if (nullOnNotFound) {
@@ -42,7 +37,7 @@ export default async function readAnyFile<R>(filePath: string, options: ReadAnyF
   } else {
     // 指定に従った入力
     let content;
-    if (binary) {
+    if (encoding === 'binary') {
       // バイナリで入力
       content = await readBuffer(filePath, rest);
     } else if (json) {
@@ -50,7 +45,7 @@ export default async function readAnyFile<R>(filePath: string, options: ReadAnyF
       content = await readJson(filePath, rest);
     } else {
       // テキストで入力
-      content = await readText(filePath, rest);
+      content = await readText(filePath, { ...rest, encoding });
     }
     return content;
   }

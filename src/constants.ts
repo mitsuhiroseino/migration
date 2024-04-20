@@ -6,19 +6,22 @@ import prettier, { Options } from 'prettier';
 export const CONTENT_TYPE = {
   /**
    * バイナリー
+   * Buffer型の値を扱う場合
    */
   BINARY: 'binary',
 
   /**
    * テキスト
+   * String型の値を扱う場合
    */
   TEXT: 'text',
 
   /**
-   * オブジェクト、配列など任意の値
+   * 任意の型の値
+   * オブジェクト、配列、数値、真偽値などの値を扱う場合
    * そのままファイルへ出力した場合はJSON形式のテキストに変換される
    */
-  OTHER: 'other',
+  DATA: 'data',
 
   /**
    * 指定なし

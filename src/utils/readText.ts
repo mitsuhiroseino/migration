@@ -1,8 +1,9 @@
 import fs from 'fs-extra';
 import { DEFAULT_TEXT_ENCODING } from '../constants';
+import toString from './toString';
 
 export type ReadTextOptions = {
-  encoding?: null | undefined;
+  encoding?: string;
   flag?: string | undefined;
 };
 
@@ -15,5 +16,7 @@ export type ReadTextOptions = {
 export default async function readText(filePath: string, options: ReadTextOptions = {}): Promise<string> {
   // テキストファイルを入力
   const { encoding = DEFAULT_TEXT_ENCODING, ...rest } = options;
-  return await fs.readFile(filePath, { encoding, ...rest });
+  const buffer = await fs.readFile(filePath, rest);
+  const text = toString(buffer, encoding);
+  return text;
 }

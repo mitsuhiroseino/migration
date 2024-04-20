@@ -1,12 +1,12 @@
 import fs from 'fs-extra';
 import { DEFAULT_TEXT_ENCODING } from '../constants';
+import toBuffer from './toBuffer';
 
 export type WriteJsonOptions = {
-  encoding?: BufferEncoding | null | undefined;
+  encoding?: string;
   mode?: string | number | undefined;
   flag?: string | undefined;
-  EOL?: string | undefined;
-  spaces?: string | number | undefined;
+  space?: string | number | undefined;
   replacer?: ((key: string, value: any) => any) | undefined;
 };
 
@@ -17,12 +17,10 @@ export type WriteJsonOptions = {
  * @param options オプション
  * @returns
  */
-export default async function writeJson(
-  filePath: string,
-  content: string | NodeJS.ArrayBufferView | null | undefined,
-  options: WriteJsonOptions = {},
-): Promise<void> {
+export default async function writeJson(filePath: string, content: any, options: WriteJsonOptions = {}): Promise<void> {
   // JSONファイルを出力
-  const { encoding = DEFAULT_TEXT_ENCODING, spaces = 2, ...rest } = options;
-  await fs.writeJson(filePath, content, { encoding, spaces, ...rest });
+  const { replacer, space = 2, encoding = DEFAULT_TEXT_ENCODING, ...rest } = options;
+  const json = JSON.stringify(content, replacer, space);
+  const buffer = toBuffer(json, encoding);
+  await fs.writeFile(filePath, buffer, rest);
 }

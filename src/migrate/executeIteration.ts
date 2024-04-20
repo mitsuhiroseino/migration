@@ -5,11 +5,14 @@ import { InputConfig } from '../io/inputs';
 import { OutputConfig } from '../io/outputs';
 import { IterationParams } from '../types';
 import applyIf from '../utils/applyIf';
+import assignParams from '../utils/assignParams';
 import propagateError from '../utils/propagateError';
-import assignParams from './helpers/assignParams';
 import inheritConfig from './helpers/inheritConfig';
 import operateContent from './operateContent';
 import { MigrationIterationResult, MigrationJobConfig } from './types';
+
+const getIoConfig = (config, pathParam) =>
+  isString(config) ? { type: IO_TYPE.FS, [pathParam]: config } : config || { type: IO_TYPE.NOOP };
 
 /**
  * 繰り返し処理1回分の処理を行う
@@ -25,10 +28,10 @@ export default async function executeIteration(
   applyIf(onIterationStart, [config, params]);
 
   // 入力設定取得
-  const inputCfg = isString(input) ? { type: IO_TYPE.FS, inputPath: input } : input || { type: IO_TYPE.NOOP };
+  const inputCfg = getIoConfig(input, 'inputPath');
   const inputConfig: InputConfig = inheritConfig(inputCfg, config);
   // 出力設定取得
-  const outputCfg = isString(output) ? { type: IO_TYPE.FS, outputPath: output } : output || { type: IO_TYPE.NOOP };
+  const outputCfg = getIoConfig(input, 'outputPath');
   const outputConfig: OutputConfig = inheritConfig(outputCfg, config);
   // 入出力ハンドラー
   const ioHandler = new IoHandler(inputConfig, outputConfig, { copy });
@@ -36,7 +39,7 @@ export default async function executeIteration(
   const iterationResult: MigrationIterationResult = { results: [] };
 
   try {
-    ioHandler.initialize(params);
+    await ioHandler.initialize(params);
     // 入力を回す
     const inputItems = ioHandler.read(params);
     for await (const inputItem of inputItems) {
@@ -58,13 +61,13 @@ export default async function executeIteration(
         iterationResult.results.push(result);
         applyIf(onItemEnd, [result, config, newParams]);
       } catch (error) {
-        ioHandler.error(newParams);
+        await ioHandler.error(newParams);
         throw propagateError(error, `: ${newParams._inputItem}`);
       }
     }
-    ioHandler.complete(params);
+    await ioHandler.complete(params);
   } catch (error) {
-    ioHandler.error(params);
+    await ioHandler.error(params);
     throw error;
   }
 

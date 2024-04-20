@@ -19,4 +19,4 @@ const Stringify: Operation<Exclude<Content, Buffer>, StringifyConfig> = async (c
   return STRINGIFIER[stringifier](content, args);
 };
 export default Stringify;
-OperationFactory.register(OPERATION_TYPE.STRINGIFY, Stringify, [CONTENT_TYPE.OTHER, CONTENT_TYPE.TEXT]);
+OperationFactory.register(OPERATION_TYPE.STRINGIFY, Stringify, [CONTENT_TYPE.DATA, CONTENT_TYPE.TEXT]);

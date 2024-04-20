@@ -17,6 +17,7 @@ class Noop extends InputBase<Content, NoopInputConfig, NoopInputResult> {
       },
     ]);
   }
+
   copy(params: IterationParams): AsyncIterable<InputReturnValue<Content, NoopInputResult>> {
     return toAsyncIterable([
       {

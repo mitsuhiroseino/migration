@@ -4,7 +4,6 @@ import {
   InputOputputConfig,
   IterationParams,
   LogConfig,
-  Optional,
   ReplacementConfig,
 } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
