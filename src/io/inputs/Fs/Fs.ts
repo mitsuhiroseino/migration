@@ -14,6 +14,16 @@ import InputFactory from '../InputFactory';
 import { InputGenerator, InputReturnValue } from '../types';
 import { FsInputConfig, FsInputResult } from './types';
 
+type CallbackFn = (
+  inputPath: string,
+  inputParentPath: string,
+  inputItem: string,
+  config: Optional<FsInputConfig, 'type'>,
+  params: IterationParams,
+  inputRootPath?: string,
+  depth?: number,
+) => InputGenerator<Content, FsInputResult>;
+
 class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
   read(params: IterationParams): AsyncIterable<InputReturnValue<any, FsInputResultBase>> {
     return FsGenerator(readFiles, this._config, params);
@@ -31,13 +41,7 @@ export default Fs;
  * @param params 1繰り返し毎のパラメーター
  */
 const FsGenerator = async function* (
-  fn: (
-    inputPath: string,
-    inputParentPath: string,
-    inputItem: string,
-    config: Optional<FsInputConfig, 'type'>,
-    params: IterationParams,
-  ) => InputGenerator<Content, FsInputResult>,
+  callback: CallbackFn,
   config: FsInputConfig,
   params: IterationParams,
 ): InputGenerator<Content, FsInputResult> {
@@ -46,7 +50,7 @@ const FsGenerator = async function* (
   const availablePath = await fs.exists(rootPath);
   if (availablePath) {
     // ファイルの読み込み
-    yield* fn(rootPath, path.dirname(rootPath), path.basename(rootPath), config, params);
+    yield* callback(rootPath, path.dirname(rootPath), path.basename(rootPath), config, params);
   } else {
     throwError(`"${rootPath}" does not exist.`, config);
   }
@@ -62,7 +66,7 @@ const FsGenerator = async function* (
  * @param inputRootPath ルートのパス
  * @param depth ルートからの深さ
  */
-const readFiles = async function* (
+const readFiles: CallbackFn = async function* (
   inputPath: string,
   inputParentPath: string,
   inputItem: string,
@@ -71,53 +75,13 @@ const readFiles = async function* (
   inputRootPath: string = inputPath,
   depth: number = 0,
 ): InputGenerator<Content, FsInputResult> {
-  if (!isMatch(inputPath, config.filter, params)) {
-    // フィルタリングされた場合
-    return;
-  }
-
+  const isTarget = isMatch(inputPath, config.filter, params);
   const itemType = config.itemType;
   const inputParentRelativePath = path.relative(inputRootPath, inputParentPath);
   const stat = await fs.stat(inputPath);
-  if (stat.isFile() && (!itemType || itemType === ITEM_TYPE.LEAF)) {
-    // ファイルを読み込んで返す
-    const { inputBinary, inputEncoding } = config;
-    const result: FsInputResult = {
-      inputItemType: ITEM_TYPE.LEAF,
-      inputPath,
-      inputParentPath,
-      inputRootPath,
-      inputParentRelativePath,
-      inputItem,
-    };
-    // ファイルの入力
-    const buffer: Buffer = await readAnyFile(inputPath, { binary: true });
-    let encoding: any;
-    if (inputBinary) {
-      encoding = 'BINARY';
-    } else {
-      encoding = Encoding.detect(buffer);
-    }
-    let content: Buffer | string;
-    let contentType: ContentType;
-    if (!encoding || encoding === 'BINARY') {
-      // バイナリファイルの場合
-      content = buffer;
-      contentType = CONTENT_TYPE.BINARY;
-    } else {
-      // テキストファイルの場合
-      encoding = inputEncoding || encoding;
-      content = buffer.toString(encoding);
-      contentType = CONTENT_TYPE.TEXT;
-    }
-    result.inputContentType = contentType;
-    result.inputEncoding = encoding;
-    yield {
-      content,
-      result,
-    };
-  } else {
-    if (!itemType || itemType === ITEM_TYPE.NODE) {
+  if (stat.isDirectory()) {
+    // ディレクトリの場合
+    if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
       yield {
         result: {
           inputItemType: ITEM_TYPE.NODE,
@@ -130,19 +94,43 @@ const readFiles = async function* (
       };
     }
     // 配下のディレクトリ、ファイルを再帰的に処理
-    const nextDepth = depth + 1;
-    if (!config.ignoreSubDir || nextDepth === 1) {
-      const items = await fs.readdir(inputPath);
-      for (const item of items) {
-        const itemPath = path.join(inputPath, item);
-        // 子要素を処理
-        try {
-          yield* readFiles(itemPath, inputPath, item, config, params, inputRootPath, nextDepth);
-        } catch (error) {
-          throw error;
-        }
-      }
+    yield* toNextDeps(readFiles, inputPath, config, params, inputRootPath, depth);
+  } else if (isTarget && stat.isFile() && (!itemType || itemType === ITEM_TYPE.LEAF)) {
+    // ファイルを読み込んで返す
+    const { inputBinary, inputEncoding: defaultEncoding } = config;
+    // ファイルの入力
+    const buffer: Buffer = await readAnyFile(inputPath, { binary: true });
+    let inputEncoding: any;
+    if (inputBinary) {
+      inputEncoding = 'BINARY';
+    } else {
+      inputEncoding = Encoding.detect(buffer);
     }
+    let content: Buffer | string;
+    let inputContentType: ContentType;
+    if (!inputEncoding || inputEncoding === 'BINARY') {
+      // バイナリファイルの場合
+      content = buffer;
+      inputContentType = CONTENT_TYPE.BINARY;
+    } else {
+      // テキストファイルの場合
+      inputEncoding = defaultEncoding || inputEncoding;
+      content = buffer.toString(inputEncoding);
+      inputContentType = CONTENT_TYPE.TEXT;
+    }
+    yield {
+      content,
+      result: {
+        inputItemType: ITEM_TYPE.LEAF,
+        inputPath,
+        inputParentPath,
+        inputRootPath,
+        inputParentRelativePath,
+        inputItem,
+        inputContentType,
+        inputEncoding,
+      },
+    };
   }
 };
 
@@ -156,7 +144,7 @@ const readFiles = async function* (
  * @param inputRootPath ルートのパス
  * @param depth ルートからの深さ
  */
-const copyFiles = async function* (
+const copyFiles: CallbackFn = async function* (
   inputPath: string,
   inputParentPath: string,
   inputItem: string,
@@ -165,28 +153,12 @@ const copyFiles = async function* (
   inputRootPath: string = inputPath,
   depth: number = 0,
 ): InputGenerator<Content, FsInputResult> {
-  if (!isMatch(inputPath, config.filter, params)) {
-    // フィルタリングされた場合
-    return;
-  }
-
+  const isTarget = isMatch(inputPath, config.filter, params);
   const itemType = config.itemType;
   const inputParentRelativePath = path.relative(inputRootPath, inputParentPath);
   const stat = await fs.stat(inputPath);
-  if (stat.isFile() && (!itemType || itemType === ITEM_TYPE.LEAF)) {
-    // ファイルのコピーをするための情報のみを返す
-    yield {
-      result: {
-        inputItemType: ITEM_TYPE.LEAF,
-        inputPath,
-        inputParentPath,
-        inputRootPath,
-        inputParentRelativePath,
-        inputItem,
-      },
-    };
-  } else {
-    if (!itemType || itemType === ITEM_TYPE.NODE) {
+  if (stat.isDirectory()) {
+    if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
       yield {
         result: {
           inputItemType: ITEM_TYPE.NODE,
@@ -199,18 +171,42 @@ const copyFiles = async function* (
       };
     }
     // 配下のディレクトリ、ファイルを再帰的に処理
-    const nextDepth = depth + 1;
-    if (!config.ignoreSubDir || nextDepth === 1) {
-      const items = await fs.readdir(inputPath);
-      for (const item of items) {
-        const itemPath = path.join(inputPath, item);
-        // 子要素を処理
-        try {
-          yield* copyFiles(itemPath, inputPath, item, config, params, inputRootPath, nextDepth);
-        } catch (error) {
-          throw error;
-        }
+    yield* toNextDeps(copyFiles, inputPath, config, params, inputRootPath, depth);
+  } else if (isTarget && stat.isFile() && (!itemType || itemType === ITEM_TYPE.LEAF)) {
+    // ファイルのコピーをするための情報のみを返す
+    yield {
+      result: {
+        inputItemType: ITEM_TYPE.LEAF,
+        inputPath,
+        inputParentPath,
+        inputRootPath,
+        inputParentRelativePath,
+        inputItem,
+      },
+    };
+  }
+};
+
+async function* toNextDeps(
+  callback: CallbackFn,
+  inputPath: string,
+  config: Optional<FsInputConfig, 'type'>,
+  params: IterationParams,
+  inputRootPath: string = inputPath,
+  depth: number,
+) {
+  // 配下のディレクトリ、ファイルを再帰的に処理
+  const nextDepth = depth + 1;
+  if (!config.ignoreSubDir || nextDepth === 1) {
+    const items = await fs.readdir(inputPath);
+    for (const item of items) {
+      const itemPath = path.join(inputPath, item);
+      // 子要素を処理
+      try {
+        yield* callback(itemPath, inputPath, item, config, params, inputRootPath, nextDepth);
+      } catch (error) {
+        throw error;
       }
     }
   }
-};
+}

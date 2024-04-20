@@ -37,7 +37,10 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     const { _inputPath: _inputItemPath, _inputItemType, _inputEncoding, _isNew } = params;
     const status = _isNew ? MIGRATION_ITEM_STATUS.CREATED : MIGRATION_ITEM_STATUS.CONVERTED;
 
-    if (_inputItemType === ITEM_TYPE.LEAF) {
+    if (_inputItemType === ITEM_TYPE.NODE) {
+      // ディレクトリの場合
+      await fs.ensureDir(outputItemPath);
+    } else {
       // ファイルの場合
       await writeAnyFile(outputItemPath, content, {
         encoding: outputEncoding || _inputEncoding,
@@ -45,9 +48,6 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
         ...rest,
         ensured: false,
       });
-    } else {
-      // ディレクトリの場合
-      await fs.ensureDir(outputItemPath);
     }
 
     return {
@@ -60,13 +60,13 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     const { outputItemPath, outputParentPath, outputItem } = this._getOutputInfo(params);
     const { _inputPath: _inputItemPath, _inputItemType } = params;
 
-    if (_inputItemType === ITEM_TYPE.LEAF) {
+    if (_inputItemType === ITEM_TYPE.NODE) {
+      // ディレクトリの場合
+      await fs.ensureDir(outputItemPath);
+    } else {
       // ファイルの場合
       await fs.ensureDir(outputParentPath);
       await fs.copyFile(_inputItemPath, outputItemPath);
-    } else {
-      // ディレクトリの場合
-      await fs.ensureDir(outputItemPath);
     }
 
     return {
