@@ -1,4 +1,4 @@
-import { ContentType, ItemType } from '../types';
+import { ContentType, ItemType, IterationParams } from '../types';
 import { IO_TYPE } from './constants';
 
 /**
@@ -20,7 +20,7 @@ export type CommonInputConfig = {
 /**
  * ファイルシステムから入力する際の共通設定
  */
-export type FsInputConfig = CommonInputConfig & {
+export type FsInputConfigBase = CommonInputConfig & {
   /**
    * テキストファイル読み込み時のエンコーディング
    * 未指定の場合はutf8
@@ -56,7 +56,7 @@ export type CommonInputResult = {
 /**
  * ファイルシステムから入力した場合の処理結果
  */
-export type FsInputResult = CommonInputResult & {
+export type FsInputResultBase = CommonInputResult & {
   /**
    * 入力のパス
    */
@@ -102,7 +102,7 @@ export type CommonOutputConfig = {
 /**
  * ファイルシステムへ出力する際の共通設定
  */
-export type FsOutputConfig = CommonOutputConfig & {
+export type FsOutputConfigBase = CommonOutputConfig & {
   /**
    * テキストファイル書き込み時のエンコーディング
    * 未指定の場合はutf8
@@ -138,7 +138,7 @@ export type CommonOutputResult = {
 /**
  * ファイルシステムへ出力した場合の処理結果
  */
-export type FsOutputResult = CommonOutputResult & {
+export type FsOutputResultBase = CommonOutputResult & {
   /**
    * 出力のパス
    */
@@ -164,3 +164,26 @@ export type FsOutputResult = CommonOutputResult & {
    */
   outputEncoding?: BufferEncoding;
 };
+
+/**
+ * 入出力関連の共通メソッド
+ */
+export interface IoBase {
+  /**
+   * 初期化処理
+   * @param params
+   */
+  initialize(params: IterationParams): Promise<void>;
+
+  /**
+   * 完了処理
+   * @param params
+   */
+  complete(params: IterationParams): Promise<void>;
+
+  /**
+   * 例外処理
+   * @param params
+   */
+  error(params: IterationParams): Promise<void>;
+}

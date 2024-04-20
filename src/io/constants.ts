@@ -5,7 +5,7 @@ export const IO_TYPE = {
   /**
    * ファイルシステム
    */
-  FILE: 'file',
+  FS: 'fs',
 
   /**
    * なにもしない

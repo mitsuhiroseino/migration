@@ -5,12 +5,10 @@ import {
   InputOputputConfig,
   IterationParams,
   LogConfig,
-  Optional,
   ReplacementConfig,
 } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
-import { CommonOutputResult, IoType } from '../types';
-import OutputConfig from './OutputConfig';
+import { CommonOutputResult, IoBase, IoType } from '../types';
 
 export { default as OutputConfig } from './OutputConfig';
 
@@ -31,12 +29,22 @@ export type OutputConfigBase<T = IoType> = FormattingConfig &
 /**
  * コンテンツの出力先
  */
-export type Output<
-  C extends Content,
-  OC extends OutputConfig = OutputConfig,
-  OR extends CommonOutputResult = CommonOutputResult,
-  OP extends IterationParams = IterationParams,
-> = (config: Optional<OC, 'type'>) => (content: C, params: OP) => Promise<OutputReturnValue<OR>>;
+export interface Output<C extends Content, OR extends CommonOutputResult = CommonOutputResult> extends IoBase {
+  /**
+   * コンテンツの出力
+   * @param config
+   * @param params
+   * @returns
+   */
+  write(content: C, params: IterationParams): Promise<OutputReturnValue<OR>>;
+
+  /**
+   * コンテンツのコピー
+   * @param content
+   * @param params
+   */
+  copy(content: C, params: IterationParams): Promise<OutputReturnValue<OR>>;
+}
 
 /**
  * 出力処理結果

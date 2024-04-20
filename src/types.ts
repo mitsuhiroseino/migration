@@ -164,3 +164,5 @@ export type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
  * 指定のプロパティを必須にするユーティリティ型
  */
 export type Essential<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
+
+export type Constructor<T> = new () => T;

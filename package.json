@@ -1,6 +1,6 @@
 {
   "name": "@visue/migration",
-  "version": "0.3.5",
+  "version": "0.3.9",
   "license": "MIT",
   "main": "build/index.cjs",
   "module": "build/index.mjs",
@@ -27,6 +27,7 @@
     "@babel/parser": "^7.23.9",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "ast-types": "^0.14.2",
+    "chardet": "^2.0.0",
     "encoding-japanese": "^2.0.0",
     "eslint": "^8.57.0",
     "eslint-config-standard-with-typescript": "^43.0.1",

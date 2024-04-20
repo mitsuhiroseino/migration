@@ -1,10 +1,10 @@
 import { FilterableConfig, ItemType, VariableString } from '../../../types';
 import { IO_TYPE } from '../../constants';
-import { FsInputConfig, FsInputResult } from '../../types';
+import { FsInputConfigBase, FsInputResultBase } from '../../types';
 import { InputConfigBase } from '../types';
 
-export type FileInputConfig = InputConfigBase<typeof IO_TYPE.FILE> &
-  FsInputConfig &
+export type FsInputConfig = InputConfigBase<typeof IO_TYPE.FS> &
+  FsInputConfigBase &
   FilterableConfig<string> & {
     /**
      * 入力元ファイル・ディレクトリのパス
@@ -28,4 +28,4 @@ export type FileInputConfig = InputConfigBase<typeof IO_TYPE.FILE> &
 /**
  * ファイル入力時の処理結果
  */
-export type FileInputResult = FsInputResult;
+export type FsInputResult = FsInputResultBase;

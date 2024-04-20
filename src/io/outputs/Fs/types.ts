@@ -2,14 +2,14 @@ import { AssignedParams, IterationParams, VariableString } from '../../../types'
 import { ReplaceWithConfigsConfig, Replacer } from '../../../utils/replaceWithConfigs';
 import { WriteAnyFileOptions } from '../../../utils/writeAnyFile';
 import { IO_TYPE } from '../../constants';
-import { FsInputResult, FsOutputConfig, FsOutputResult } from '../../types';
+import { FsInputResultBase, FsOutputConfigBase, FsOutputResultBase } from '../../types';
 import { OutputConfigBase } from '../types';
 
 /**
  * ファイルへの出力
  */
-export type FileOutputConfig = OutputConfigBase<typeof IO_TYPE.FILE> &
-  FsOutputConfig &
+export type FsOutputConfig = OutputConfigBase<typeof IO_TYPE.FS> &
+  FsOutputConfigBase &
   Omit<WriteAnyFileOptions, 'encoding'> & {
     /**
      * 出力先ファイル・ディレクトリのパス
@@ -27,6 +27,6 @@ export type FileOutputConfig = OutputConfigBase<typeof IO_TYPE.FILE> &
       | Replacer<IterationParams>[];
   };
 
-export type FileAssignedParams = AssignedParams<Partial<FsInputResult>> & IterationParams & {};
+export type FsAssignedParams = AssignedParams<Partial<FsInputResultBase>> & IterationParams & {};
 
-export type FileOutputResult = FsOutputResult;
+export type FsOutputResult = FsOutputResultBase;

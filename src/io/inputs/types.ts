@@ -8,7 +8,7 @@ import {
   ReplacementConfig,
 } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
-import { CommonInputResult, IoType } from '../types';
+import { CommonInputResult, IoBase, IoType } from '../types';
 
 export { default as InputConfig } from './InputConfig';
 
@@ -36,11 +36,17 @@ export type InputGenerator<C extends Content, R extends CommonInputResult = Comm
 /**
  * コンテンツの入力元
  */
-export type Input<
-  C extends Content,
-  IC extends InputConfigBase<InputConfigBase['type']> = InputConfigBase<InputConfigBase['type']>,
-  R extends CommonInputResult = CommonInputResult,
-> = (config: Optional<IC, 'type'>, params: IterationParams) => InputGenerator<C, R>;
+export interface Input<C extends Content, IR extends CommonInputResult = CommonInputResult> extends IoBase {
+  /**
+   * コンテンツの入力
+   */
+  read(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
+
+  /**
+   * コンテンツのコピー
+   */
+  copy(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
+}
 
 /**
  * 入力処理結果
