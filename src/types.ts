@@ -150,19 +150,19 @@ export type VariableString<O extends ReplaceOptions = ReplaceOptions> = string |
 /**
  * 移行処理で参照する任意のパラメーター
  */
-export type MigrationParams = ReplacementValues;
+export type ParamsBase = ReplacementValues;
 
 /**
  * 特定の処理で作成したパラメーターの差分
  */
-export type DiffParams = MigrationParams;
+export type DiffParams = ParamsBase;
 
 /**
  * 繰り返し処理内で有効なパラメーター
  * _で始まるプロパティはシステム側で自動的に設定するもの
  * それ以外はMigrationConfigのiteratorで返された値
  */
-export type IterationParams<AP = AssignedParams<DiffParams>> = AP & MigrationParams;
+export type IterationParams<AP = AssignedParams<DiffParams>> = AP & ParamsBase;
 
 /**
  * 特定の処理で作成されたパラメーターをIterationParamsに設定したもの
@@ -180,3 +180,5 @@ export type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
  * 指定のプロパティを必須にするユーティリティ型
  */
 export type Essential<T, K extends keyof T> = Required<Pick<T, K>> & Omit<T, K>;
+
+export type Constructor<T> = new (...args: any[]) => T;

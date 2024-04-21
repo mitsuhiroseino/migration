@@ -1,8 +1,9 @@
 import { Options } from 'prettier';
 import { MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
-import { InputConfig, InputResultBase, OutputConfig, OutputResultBase } from '../io';
-import { OperationConfig, OperationResult } from '../operate';
-import { CommonConfig, IterationParams } from '../types';
+import { Input, InputConfig, InputResultBase, Output, OutputConfig, OutputResultBase } from '../io';
+import Fs from '../io/inputs/Fs';
+import { Operation, OperationConfig, OperationResult } from '../operate';
+import { CommonConfig, Constructor, ContentType, IterationParams } from '../types';
 
 /**
  * 移行の設定
@@ -26,6 +27,11 @@ export type MigrationConfig<OC = OperationConfig, FO = Options> = CommonMigratio
      * タスクを並列で実行する
      */
     parallelTasks?: boolean;
+
+    /**
+     * プラグイン
+     */
+    plugins?: Plugin | Plugin[];
   };
 
 /**
@@ -286,4 +292,14 @@ type IterationConfig<OC = OperationConfig, FO = Options> = {
     | ((config: MigrationJobConfig<OC, FO>) => Generator<IterationParams>)
     | IterationParams[]
     | IterationParams;
+};
+
+/**
+ * プラグイン
+ */
+export type Plugin = {
+  pulginId?: string;
+  inputs?: { [type: string]: Constructor<Input<any>> };
+  outputs?: { [type: string]: Constructor<Output<any>> };
+  operations?: { [type: string]: { operation: Operation<any, any>; contentTypes: ContentType | ContentType[] } };
 };

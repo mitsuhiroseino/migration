@@ -5,6 +5,7 @@ import executeAsyncFunctions from '../utils/executeAsyncFunctions';
 import executeTask from './executeTask';
 import assignDefaultConfig from './helpers/assignDefaultConfig';
 import inheritConfig from './helpers/inheritConfig';
+import registerPlugins from './helpers/registerPlugins';
 import { MigrationConfig, MigrationResult, MigrationTaskConfig, MigrationTaskResult } from './types';
 
 /**
@@ -19,7 +20,11 @@ export default async function migrate<C extends MigrationConfig>(config: C): Pro
   const taskFns: (() => Promise<MigrationTaskResult>)[] = [];
 
   const cfg = assignDefaultConfig(config);
-  const { tasks } = cfg;
+  const { plugins, tasks } = cfg;
+  // プラグインの有効化
+  registerPlugins(plugins);
+
+  // タスク処理の開始
   for (const task of asArray(tasks)) {
     const taskConfig: MigrationTaskConfig = inheritConfig(task, cfg);
     // タスク実行用の関数を作成
