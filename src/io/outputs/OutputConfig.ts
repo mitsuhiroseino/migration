@@ -1,6 +1,6 @@
 import { Content } from '../../types';
+import { OutputConfigBase } from '../types';
 import { FsOutputConfig } from './Fs';
-import { OutputConfigBase } from './types';
 
 /**
  * 出力の設定

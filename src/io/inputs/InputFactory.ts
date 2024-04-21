@@ -1,5 +1,5 @@
 import Factory from '../../utils/Factory';
-import { Input, InputConfigBase } from './types';
+import { Input, InputConfigBase } from '../types';
 
 class InputFactory extends Factory<any> {
   create(config: InputConfigBase): Input<any> {

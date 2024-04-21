@@ -1,10 +1,10 @@
-import { CommonOutputResult } from 'src/io/types';
+import { OutputResultBase } from 'src/io/types';
 import { MIGRATION_ITEM_STATUS } from '../../../constants';
 import { Content, IterationParams } from '../../../types';
 import { IO_TYPE } from '../../constants';
+import { OutputReturnValue } from '../../types';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
-import { OutputReturnValue } from '../types';
 import { NoopOutputConfig, NoopOutputResult } from './types';
 
 /**
@@ -13,14 +13,14 @@ import { NoopOutputConfig, NoopOutputResult } from './types';
  * @param params 1繰り返し毎のパラメーター
  */
 class Noop extends OutputBase<Content, NoopOutputConfig, NoopOutputResult> {
-  async write(content: any, params: IterationParams): Promise<OutputReturnValue<CommonOutputResult>> {
+  async write(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
     return {
       result: {},
       status: MIGRATION_ITEM_STATUS.PROCESSED,
     };
   }
 
-  async copy(content: any, params: IterationParams): Promise<OutputReturnValue<CommonOutputResult>> {
+  async copy(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
     return {
       result: {},
       status: MIGRATION_ITEM_STATUS.PROCESSED,

@@ -1,6 +1,5 @@
 import { Content, DiffParams, IterationParams } from '../../types';
-import { CommonInputResult } from '../types';
-import { Input, InputConfigBase, InputReturnValue } from './types';
+import { Input, InputConfigBase, InputResultBase, InputReturnValue } from '../types';
 
 /**
  * 入力の基底クラス
@@ -8,7 +7,7 @@ import { Input, InputConfigBase, InputReturnValue } from './types';
 abstract class InputBase<
   C extends Content,
   IC extends InputConfigBase = InputConfigBase,
-  IR extends CommonInputResult = CommonInputResult,
+  IR extends InputResultBase = InputResultBase,
 > implements Input<C, IR>
 {
   protected _config: IC;

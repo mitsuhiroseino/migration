@@ -1,5 +1,5 @@
 import Factory from '../../utils/Factory';
-import { Output, OutputConfigBase } from './types';
+import { Output, OutputConfigBase } from '../types';
 
 class OutputFactory extends Factory<any> {
   create(config: OutputConfigBase): Output<any> {

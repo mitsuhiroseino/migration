@@ -1,11 +1,29 @@
-import { ContentType, DiffParams, ItemType, IterationParams } from '../types';
+import { MigrationItemStatus } from '../migrate';
+import {
+  Content,
+  ContentType,
+  DiffParams,
+  FormattingConfig,
+  InputOputputConfig,
+  ItemType,
+  IterationParams,
+  LogConfig,
+  ReplacementConfig,
+} from '../types';
+import { FactoriableConfig } from '../utils/Factory';
 import { IO_TYPE } from './constants';
+
+export { default as InputConfig } from './inputs/InputConfig';
+export { default as OutputConfig } from './outputs/OutputConfig';
 
 /**
  * 入出力の種別
  */
 export type IoType = (typeof IO_TYPE)[keyof typeof IO_TYPE];
 
+/**
+ * 入出力用のコンフィグ
+ */
 export type IoConfig = {
   /**
    * コピー
@@ -14,14 +32,23 @@ export type IoConfig = {
 };
 
 /**
- * 入力の共通設定
+ * 入力の設定
  */
-export type CommonInputConfig = {};
+export type InputConfigBase<T = IoType> = FormattingConfig &
+  InputOputputConfig &
+  ReplacementConfig &
+  LogConfig &
+  FactoriableConfig<T> & {
+    /**
+     * 入力ID
+     */
+    inputId?: string;
+  };
 
 /**
  * ファイルシステムから入力する際の共通設定
  */
-export type FsInputConfigBase = CommonInputConfig & {
+export type FsInputConfigBase<T = IoType> = InputConfigBase<T> & {
   /**
    * テキストファイル読み込み時のエンコーディング
    * 未指定の場合は読み込み元のファイルの内容から判断する
@@ -32,7 +59,7 @@ export type FsInputConfigBase = CommonInputConfig & {
 /**
  * 入力した場合の処理結果
  */
-export type CommonInputResult = DiffParams & {
+export type InputResultBase = DiffParams & {
   /**
    * 入力の名称
    */
@@ -52,7 +79,7 @@ export type CommonInputResult = DiffParams & {
 /**
  * ファイルシステムから入力した場合の処理結果
  */
-export type FsInputResultBase = CommonInputResult & {
+export type FsInputResultBase = InputResultBase & {
   /**
    * 入力のパス
    */
@@ -70,14 +97,60 @@ export type FsInputResultBase = CommonInputResult & {
 };
 
 /**
- * 出力の共通設定
+ * 入力処理結果
  */
-export type CommonOutputConfig = {};
+export type InputReturnValue<C extends Content, R extends InputResultBase> = {
+  /**
+   * 読み込んだコンテンツ
+   */
+  content?: C;
+
+  /**
+   * 処理に関する情報
+   */
+  result?: R;
+};
+
+/**
+ * 入力用イテレーターを生成するジェネレーター
+ */
+export type InputGenerator<C extends Content, R extends InputResultBase = InputResultBase> = AsyncGenerator<
+  InputReturnValue<C, R>
+>;
+
+/**
+ * コンテンツの入力元
+ */
+export interface Input<C extends Content, IR extends InputResultBase = InputResultBase> extends IoBase {
+  /**
+   * コンテンツの入力
+   */
+  read(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
+
+  /**
+   * コンテンツのコピー
+   */
+  copy(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
+}
+
+/**
+ * 出力の設定
+ */
+export type OutputConfigBase<T = IoType> = FormattingConfig &
+  InputOputputConfig &
+  ReplacementConfig &
+  LogConfig &
+  FactoriableConfig<T> & {
+    /**
+     * 出力ID
+     */
+    outputId?: string;
+  };
 
 /**
  * ファイルシステムへ出力する際の共通設定
  */
-export type FsOutputConfigBase = CommonOutputConfig & {
+export type FsOutputConfigBase<T = IoType> = OutputConfigBase<T> & {
   /**
    * テキストファイル書き込み時のエンコーディング
    * 未指定の場合は読み込み時のエンコーディング
@@ -88,7 +161,7 @@ export type FsOutputConfigBase = CommonOutputConfig & {
 /**
  * 出力した場合の処理結果
  */
-export type CommonOutputResult = DiffParams & {
+export type OutputResultBase = DiffParams & {
   /**
    * 出力の名称
    */
@@ -108,7 +181,7 @@ export type CommonOutputResult = DiffParams & {
 /**
  * ファイルシステムへ出力した場合の処理結果
  */
-export type FsOutputResultBase = CommonOutputResult & {
+export type FsOutputResultBase = OutputResultBase & {
   /**
    * 出力のパス
    */
@@ -124,6 +197,38 @@ export type FsOutputResultBase = CommonOutputResult & {
    */
   outputEncoding?: string;
 };
+
+/**
+ * 出力処理結果
+ */
+export type OutputReturnValue<R extends DiffParams> = {
+  status: MigrationItemStatus;
+
+  /**
+   * 処理に関する情報
+   */
+  result?: R;
+};
+
+/**
+ * コンテンツの出力先
+ */
+export interface Output<C extends Content, OR extends OutputResultBase = OutputResultBase> extends IoBase {
+  /**
+   * コンテンツの出力
+   * @param config
+   * @param params
+   * @returns
+   */
+  write(content: C, params: IterationParams): Promise<OutputReturnValue<OR>>;
+
+  /**
+   * コンテンツのコピー
+   * @param content
+   * @param params
+   */
+  copy(content: C, params: IterationParams): Promise<OutputReturnValue<OR>>;
+}
 
 /**
  * 入出力関連の共通メソッド

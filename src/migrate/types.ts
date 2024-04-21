@@ -1,6 +1,6 @@
 import { Options } from 'prettier';
 import { MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
-import { CommonInputResult, CommonOutputResult, IoConfig } from '../io';
+import { InputResultBase, IoConfig, OutputResultBase } from '../io';
 import { InputConfig } from '../io/inputs';
 import { OutputConfig } from '../io/outputs';
 import { OperationConfig, OperationResult } from '../operate';
@@ -182,8 +182,8 @@ export type MigrationIterationResult = {
 /**
  * 要素の処理結果
  */
-export type MigrationItemResult = CommonInputResult &
-  CommonOutputResult & {
+export type MigrationItemResult = InputResultBase &
+  OutputResultBase & {
     /**
      * 処理ステータス
      */

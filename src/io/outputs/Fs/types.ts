@@ -2,8 +2,7 @@ import { AssignedParams, IterationParams, VariableString } from '../../../types'
 import { ReplaceWithConfigsConfig, Replacer } from '../../../utils/replaceWithConfigs';
 import { WriteAnyFileOptions } from '../../../utils/writeAnyFile';
 import { IO_TYPE } from '../../constants';
-import { FsInputResultBase, FsOutputConfigBase, FsOutputResultBase } from '../../types';
-import { OutputConfigBase } from '../types';
+import { FsInputResultBase, FsOutputConfigBase, FsOutputResultBase, OutputConfigBase } from '../../types';
 
 /**
  * ファイルへの出力

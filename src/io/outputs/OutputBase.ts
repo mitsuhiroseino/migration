@@ -1,6 +1,5 @@
 import { Content, DiffParams, IterationParams } from '../../types';
-import { CommonOutputResult } from '../types';
-import { Output, OutputConfigBase, OutputReturnValue } from './types';
+import { Output, OutputConfigBase, OutputResultBase, OutputReturnValue } from '../types';
 
 /**
  * 出力の設定
@@ -8,7 +7,7 @@ import { Output, OutputConfigBase, OutputReturnValue } from './types';
 abstract class OutputBase<
   C extends Content,
   OC extends OutputConfigBase<OutputConfigBase['type']> = OutputConfigBase<OutputConfigBase['type']>,
-  OR extends CommonOutputResult = CommonOutputResult,
+  OR extends OutputResultBase = OutputResultBase,
 > implements Output<C, OR>
 {
   protected _config: OC;

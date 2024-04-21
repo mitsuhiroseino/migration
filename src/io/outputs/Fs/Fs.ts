@@ -6,9 +6,9 @@ import finishDynamicValue from '../../../utils/finishDynamicValue';
 import replaceWithConfigs from '../../../utils/replaceWithConfigs';
 import writeAnyFile from '../../../utils/writeAnyFile';
 import { IO_TYPE } from '../../constants';
+import { OutputReturnValue } from '../../types';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
-import { OutputReturnValue } from '../types';
 import { FsAssignedParams, FsOutputConfig, FsOutputResult } from './types';
 
 /**

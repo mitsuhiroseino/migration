@@ -10,9 +10,9 @@ import readAnyFile from '../../../utils/readAnyFile';
 import throwError from '../../../utils/throwError';
 import toString from '../../../utils/toString';
 import { IO_TYPE } from '../../constants';
+import { InputGenerator, InputReturnValue } from '../../types';
 import InputBase from '../InputBase';
 import InputFactory from '../InputFactory';
-import { InputGenerator, InputReturnValue } from '../types';
 import { FsInputConfig, FsInputResult } from './types';
 
 type CallbackFn = (
