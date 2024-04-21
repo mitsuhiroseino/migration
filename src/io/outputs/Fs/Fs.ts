@@ -34,6 +34,12 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
       : (outputItem) => outputItem;
   }
 
+  /**
+   * ファイルへの出力処理
+   * @param content
+   * @param params
+   * @returns
+   */
   async write(content: any, params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
     const config = this._config;
     const { outputEncoding, ...rest } = config;
@@ -63,7 +69,13 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     };
   }
 
-  async copy(content: any, params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
+  /**
+   * ファイルのコピー
+   * @param content
+   * @param params
+   * @returns
+   */
+  async copy(params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
     const { outputItemPath, outputRootPath, outputParentPath, outputItem } = this._getOutputInfo(params);
     const { _inputPath: _inputItemPath, _inputItemType } = params;
 

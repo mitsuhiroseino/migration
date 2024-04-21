@@ -20,7 +20,7 @@ class Noop extends OutputBase<Content, NoopOutputConfig, NoopOutputResult> {
     };
   }
 
-  async copy(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
+  async copy(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
     return {
       result: {},
       status: MIGRATION_ITEM_STATUS.PROCESSED,

@@ -80,7 +80,7 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    */
   write<C>(content: C, params: IterationParams): Promise<OutputReturnValue<IterationParams>> {
     if (this._copy) {
-      return this._output.copy(content, params);
+      return this._output.copy(params);
     } else {
       return this._output.write(content, params);
     }

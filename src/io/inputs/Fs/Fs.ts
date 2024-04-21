@@ -75,6 +75,7 @@ const readFs: CallbackFn = async function* (
 ): InputGenerator<Content, FsInputResult> {
   const isTarget = isMatch(inputPath, config.filter, params);
   const itemType = config.itemType;
+
   const stat = await fs.stat(inputPath);
   if (stat.isDirectory()) {
     // ディレクトリの場合
@@ -90,38 +91,41 @@ const readFs: CallbackFn = async function* (
     }
     // 配下のディレクトリ、ファイルを再帰的に処理
     yield* toNextDeps(readFs, inputPath, config, params, inputRootPath, depth);
-  } else if (isTarget && stat.isFile() && (!itemType || itemType === ITEM_TYPE.LEAF)) {
-    // ファイルを読み込んで返す
-    const { inputEncoding } = config;
-    // ファイルの入力
-    const buffer: Buffer = await readAnyFile(inputPath, { encoding: 'binary' });
-    let encoding: string = inputEncoding;
-    if (!encoding) {
-      // エンコーディングの指定が無い場合は入力の内容から判断
-      encoding = getEncoding(buffer);
+  } else if (stat.isFile()) {
+    // ファイルの場合
+    if (isTarget && (!itemType || itemType === ITEM_TYPE.LEAF)) {
+      // ファイルを読み込んで返す
+      const { inputEncoding } = config;
+      // ファイルの入力
+      const buffer: Buffer = await readAnyFile(inputPath, { encoding: 'binary' });
+      let encoding: string = inputEncoding;
+      if (!encoding) {
+        // エンコーディングの指定が無い場合は入力の内容から判断
+        encoding = getEncoding(buffer);
+      }
+      let content: Buffer | string;
+      let inputContentType: ContentType;
+      if (encoding.toLowerCase() === 'binary') {
+        // バイナリファイルの場合
+        content = buffer;
+        inputContentType = CONTENT_TYPE.BINARY;
+      } else {
+        // テキストファイルの場合
+        content = toString(buffer, encoding);
+        inputContentType = CONTENT_TYPE.TEXT;
+      }
+      yield {
+        content,
+        result: {
+          inputItem,
+          inputItemType: ITEM_TYPE.LEAF,
+          inputContentType,
+          inputPath,
+          inputRootPath,
+          inputEncoding: encoding,
+        },
+      };
     }
-    let content: Buffer | string;
-    let inputContentType: ContentType;
-    if (encoding.toLowerCase() === 'binary') {
-      // バイナリファイルの場合
-      content = buffer;
-      inputContentType = CONTENT_TYPE.BINARY;
-    } else {
-      // テキストファイルの場合
-      content = toString(buffer, encoding);
-      inputContentType = CONTENT_TYPE.TEXT;
-    }
-    yield {
-      content,
-      result: {
-        inputItem,
-        inputItemType: ITEM_TYPE.LEAF,
-        inputContentType,
-        inputPath,
-        inputRootPath,
-        inputEncoding: encoding,
-      },
-    };
   }
 };
 
@@ -144,6 +148,7 @@ const copyFs: CallbackFn = async function* (
 ): InputGenerator<Content, FsInputResult> {
   const isTarget = isMatch(inputPath, config.filter, params);
   const itemType = config.itemType;
+
   const stat = await fs.stat(inputPath);
   if (stat.isDirectory()) {
     if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
@@ -158,16 +163,19 @@ const copyFs: CallbackFn = async function* (
     }
     // 配下のディレクトリ、ファイルを再帰的に処理
     yield* toNextDeps(copyFs, inputPath, config, params, inputRootPath, depth);
-  } else if (isTarget && stat.isFile() && (!itemType || itemType === ITEM_TYPE.LEAF)) {
-    // ファイルのコピーをするための情報のみを返す
-    yield {
-      result: {
-        inputItem,
-        inputItemType: ITEM_TYPE.LEAF,
-        inputPath,
-        inputRootPath,
-      },
-    };
+  } else if (stat.isFile()) {
+    // ファイルの場合
+    if (isTarget && (!itemType || itemType === ITEM_TYPE.LEAF)) {
+      // ファイルのコピーをするための情報のみを返す
+      yield {
+        result: {
+          inputItem,
+          inputItemType: ITEM_TYPE.LEAF,
+          inputPath,
+          inputRootPath,
+        },
+      };
+    }
   }
 };
 

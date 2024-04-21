@@ -22,7 +22,7 @@ abstract class OutputBase<
 
   abstract write(content: C, params: IterationParams): Promise<OutputReturnValue<OR>>;
 
-  abstract copy(content: C, params: IterationParams): Promise<OutputReturnValue<OR>>;
+  abstract copy(params: IterationParams): Promise<OutputReturnValue<OR>>;
 
   complete(params: IterationParams): Promise<DiffParams> {
     return Promise.resolve({});

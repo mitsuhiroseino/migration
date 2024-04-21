@@ -199,8 +199,7 @@ export interface Output<C extends Content, OR extends OutputResultBase = OutputR
 
   /**
    * コンテンツのコピー
-   * @param content
    * @param params
    */
-  copy(content: C, params: IterationParams): Promise<OutputReturnValue<OR>>;
+  copy(params: IterationParams): Promise<OutputReturnValue<OR>>;
 }
