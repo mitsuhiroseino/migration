@@ -6,7 +6,7 @@ import { OperationConfigBase, OperationParams } from '../types';
 /**
  * ファイルを出力する操作
  */
-export type OutputConfig = OperationConfigBase<typeof OPERATION_TYPE.OUTPUT> &
+export type WriteConfig = OperationConfigBase<typeof OPERATION_TYPE.WRITE> &
   Omit<WriteAnyFileOptions, 'ensured'> & {
     /**
      * ファイルのパス

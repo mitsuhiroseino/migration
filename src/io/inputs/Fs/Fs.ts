@@ -17,7 +17,6 @@ import { FsInputConfig, FsInputResult } from './types';
 
 type CallbackFn = (
   inputPath: string,
-  inputParentPath: string,
   inputItem: string,
   config: Optional<FsInputConfig, 'type'>,
   params: IterationParams,
@@ -51,7 +50,7 @@ const generateFs = async function* (
   const availablePath = await fs.exists(rootPath);
   if (availablePath) {
     // ファイルの読み込み
-    yield* callback(rootPath, path.dirname(rootPath), path.basename(rootPath), config, params);
+    yield* callback(rootPath, path.dirname(rootPath), config, params);
   } else {
     throwError(`"${rootPath}" does not exist.`, config);
   }
@@ -60,7 +59,6 @@ const generateFs = async function* (
 /**
  * 指定のパス配下のファイルを読み込む関数
  * @param inputPath 入力パス
- * @param inputParentPath 親ディレクトリのパス
  * @param inputItem ファイル・ディレクトリ名
  * @param config コンフィグ
  * @param params 1繰り返し毎のパラメーター
@@ -69,7 +67,6 @@ const generateFs = async function* (
  */
 const readFs: CallbackFn = async function* (
   inputPath: string,
-  inputParentPath: string,
   inputItem: string,
   config: Optional<FsInputConfig, 'type'>,
   params: IterationParams,
@@ -78,7 +75,6 @@ const readFs: CallbackFn = async function* (
 ): InputGenerator<Content, FsInputResult> {
   const isTarget = isMatch(inputPath, config.filter, params);
   const itemType = config.itemType;
-  const inputParentRelativePath = path.relative(inputRootPath, inputParentPath);
   const stat = await fs.stat(inputPath);
   if (stat.isDirectory()) {
     // ディレクトリの場合
@@ -101,6 +97,7 @@ const readFs: CallbackFn = async function* (
     const buffer: Buffer = await readAnyFile(inputPath, { encoding: 'binary' });
     let encoding: string = inputEncoding;
     if (!encoding) {
+      // エンコーディングの指定が無い場合は入力の内容から判断
       encoding = getEncoding(buffer);
     }
     let content: Buffer | string;
@@ -131,7 +128,6 @@ const readFs: CallbackFn = async function* (
 /**
  * 指定のパス配下のファイルを読み込む関数
  * @param inputPath 入力パス
- * @param inputParentPath 親ディレクトリのパス
  * @param inputItem ファイル・ディレクトリ名
  * @param config コンフィグ
  * @param params 1繰り返し毎のパラメーター
@@ -140,7 +136,6 @@ const readFs: CallbackFn = async function* (
  */
 const copyFs: CallbackFn = async function* (
   inputPath: string,
-  inputParentPath: string,
   inputItem: string,
   config: Optional<FsInputConfig, 'type'>,
   params: IterationParams,
@@ -149,7 +144,6 @@ const copyFs: CallbackFn = async function* (
 ): InputGenerator<Content, FsInputResult> {
   const isTarget = isMatch(inputPath, config.filter, params);
   const itemType = config.itemType;
-  const inputParentRelativePath = path.relative(inputRootPath, inputParentPath);
   const stat = await fs.stat(inputPath);
   if (stat.isDirectory()) {
     if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
@@ -193,7 +187,7 @@ async function* toNextDeps(
       const itemPath = path.join(inputPath, item);
       // 子要素を処理
       try {
-        yield* callback(itemPath, inputPath, item, config, params, inputRootPath, nextDepth);
+        yield* callback(itemPath, item, config, params, inputRootPath, nextDepth);
       } catch (error) {
         throw error;
       }

@@ -1,4 +1,5 @@
 import { MIGRATION_STATUS } from '../constants';
+import Context from '../utils/Context';
 import asArray from '../utils/asArray';
 import executeAsyncFunctions from '../utils/executeAsyncFunctions';
 import executeTask from './executeTask';
@@ -12,6 +13,9 @@ import { MigrationConfig, MigrationResult, MigrationTaskConfig, MigrationTaskRes
  * @returns
  */
 export default async function migrate<C extends MigrationConfig>(config: C): Promise<MigrationResult> {
+  const running = Context.get(migrate) || 0;
+  Context.set(migrate, running + 1);
+
   const taskFns: (() => Promise<MigrationTaskResult>)[] = [];
 
   const cfg = assignDefaultConfig(config);
@@ -24,6 +28,10 @@ export default async function migrate<C extends MigrationConfig>(config: C): Pro
   // 設定に従い全タスクを実行
   const results = await executeAsyncFunctions(taskFns, config.parallelTasks);
 
+  const current = Context.get(migrate);
+  if (current === 1) {
+    Context.clear();
+  }
   return {
     results,
     status: MIGRATION_STATUS.SUCCESS,

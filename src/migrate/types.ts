@@ -1,15 +1,13 @@
 import { Options } from 'prettier';
 import { MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
-import { InputResultBase, IoConfig, OutputResultBase } from '../io';
-import { InputConfig } from '../io/inputs';
-import { OutputConfig } from '../io/outputs';
+import { InputConfig, InputResultBase, OutputConfig, OutputResultBase } from '../io';
 import { OperationConfig, OperationResult } from '../operate';
-import { FormattingConfig, InputOputputConfig, IterationParams, LogConfig, ReplacementConfig } from '../types';
+import { CommonConfig, IterationParams } from '../types';
 
 /**
  * 移行の設定
  */
-export type MigrationConfig<OC = OperationConfig, FO = Options> = CommonConfig<OC, FO> &
+export type MigrationConfig<OC = OperationConfig, FO = Options> = CommonMigrationConfig<OC, FO> &
   MigrationTaskEvents<OC, FO> &
   MigrationJobEvents<OC, FO> &
   MigrationIterationEvents<OC, FO> &
@@ -33,7 +31,7 @@ export type MigrationConfig<OC = OperationConfig, FO = Options> = CommonConfig<O
 /**
  * タスクの設定
  */
-export type MigrationTaskConfig<OC = OperationConfig, FO = Options> = CommonConfig<OC, FO> &
+export type MigrationTaskConfig<OC = OperationConfig, FO = Options> = CommonMigrationConfig<OC, FO> &
   MigrationTaskEvents<OC, FO> &
   MigrationJobEvents<OC, FO> &
   MigrationIterationEvents<OC, FO> &
@@ -57,7 +55,7 @@ export type MigrationTaskConfig<OC = OperationConfig, FO = Options> = CommonConf
 /**
  * ジョブの設定
  */
-export type MigrationJobConfig<OC = OperationConfig, FO = Options> = CommonConfig<OC, FO> &
+export type MigrationJobConfig<OC = OperationConfig, FO = Options> = CommonMigrationConfig<OC, FO> &
   MigrationJobEvents<OC, FO> &
   MigrationIterationEvents<OC, FO> &
   MigrationItemEvents<OC, FO> & {
@@ -278,12 +276,7 @@ type MigrationItemEvents<OC = OperationConfig, FO = Options> = {
   onItemEnd?: (result: MigrationItemResult, config: MigrationJobConfig<OC, FO>, params: IterationParams) => void;
 };
 
-export type CommonConfig<OC = OperationConfig, FO = Options> = FormattingConfig<FO> &
-  ReplacementConfig &
-  InputOputputConfig &
-  IterationConfig<OC, FO> &
-  LogConfig &
-  IoConfig;
+export type CommonMigrationConfig<OC = OperationConfig, FO = Options> = CommonConfig<FO> & IterationConfig<OC, FO>;
 
 type IterationConfig<OC = OperationConfig, FO = Options> = {
   /**

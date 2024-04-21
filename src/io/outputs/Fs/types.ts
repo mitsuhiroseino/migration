@@ -2,13 +2,12 @@ import { AssignedParams, IterationParams, VariableString } from '../../../types'
 import { ReplaceWithConfigsConfig, Replacer } from '../../../utils/replaceWithConfigs';
 import { WriteAnyFileOptions } from '../../../utils/writeAnyFile';
 import { IO_TYPE } from '../../constants';
-import { FsInputResultBase, FsOutputConfigBase, FsOutputResultBase, OutputConfigBase } from '../../types';
+import { FsInputResultBase, FsOutputResultBase, OutputConfigBase } from '../../types';
 
 /**
  * ファイルへの出力
  */
 export type FsOutputConfig = OutputConfigBase<typeof IO_TYPE.FS> &
-  FsOutputConfigBase &
   Omit<WriteAnyFileOptions, 'encoding'> & {
     /**
      * 出力先ファイル・ディレクトリのパス

@@ -19,10 +19,18 @@ export type ContentType = (typeof CONTENT_TYPE)[keyof typeof CONTENT_TYPE];
  */
 export type Content = string | Buffer | any;
 
+export type CommonConfig<FO = Options> = CommonFormattingConfig<FO> &
+  CommonReplacementConfig &
+  CommonIoConfig &
+  CommonInputConfig &
+  CommonOutputConfig &
+  CommonDevelopmentConfig &
+  CommonLogConfig;
+
 /**
  * テキストのフォーマット処理に関する設定
  */
-export type FormattingConfig<O = Options> = {
+export type CommonFormattingConfig<O = Options> = {
   /**
    * フォーマッターの指定
    * @param content コンテンツ
@@ -61,7 +69,7 @@ export type FormattingConfig<O = Options> = {
 /**
  * テキストの置換に関する設定
  */
-export type ReplacementConfig<P extends ReplacementValues = ReplacementValues> = ReplacePlaceholdersOptions & {
+export type CommonReplacementConfig<P extends ReplacementValues = ReplacementValues> = ReplacePlaceholdersOptions & {
   /**
    * プレイスホルダーと置き換えられる値
    */
@@ -69,21 +77,41 @@ export type ReplacementConfig<P extends ReplacementValues = ReplacementValues> =
 };
 
 /**
+ * 入出力用のコンフィグ
+ */
+export type CommonIoConfig = {
+  /**
+   * コピー
+   */
+  copy?: boolean;
+};
+
+/**
  * ファイルの入出力に関する設定
  */
-export type InputOputputConfig = {
+export type CommonInputConfig = {
   /**
-   * テキストファイル読み込み時のエンコーディング
-   * 未指定の場合はutf8
+   * データ読み込み時のエンコーディング
+   * 未指定の場合は読み込み元の内容から判断する
    */
   inputEncoding?: string;
+};
 
+/**
+ * ファイルの入出力に関する設定
+ */
+export type CommonOutputConfig = {
   /**
-   * テキストファイル書き込み時のエンコーディング
-   * 未指定の場合はutf8
+   * データ書き込み時のエンコーディング
+   * 未指定の場合は読み込み時のエンコーディング
    */
   outputEncoding?: string;
+};
 
+/**
+ * 開発時に利用可能な設定
+ */
+export type CommonDevelopmentConfig = {
   /**
    * エラーがあってもファイルを出力する
    */
@@ -93,7 +121,7 @@ export type InputOputputConfig = {
 /**
  * ログに関する設定
  */
-export type LogConfig = {
+export type CommonLogConfig = {
   /**
    * ログを出力しない
    */
@@ -103,7 +131,7 @@ export type LogConfig = {
 /**
  * フィルタリング可能な入力の設定
  */
-export type FilterableConfig<V = any> = {
+export type CommonFilterableConfig<V = any> = {
   /**
    * 下記の条件に当てはまった対象のみ処理対象とする
    * 未指定の場合は全てが処理対象
@@ -125,31 +153,19 @@ export type VariableString<O extends ReplaceOptions = ReplaceOptions> = string |
 export type MigrationParams = ReplacementValues;
 
 /**
- * 繰り返し処理内で有効なパラメーター
- * _で始まるプロパティはシステム側で自動的に設定するもの
- * それ以外はMigrationConfigのiteratorで返された値
- */
-export type IterationParams<
-  AP = AssignedParams<{
-    /**
-     * ファイルの読み込み元パス
-     */
-    inputPath?: string;
-
-    /**
-     * ファイルの出力先パス
-     */
-    outputPath?: string;
-  }>,
-> = AP & MigrationParams;
-
-/**
- * パラメーターの差分
+ * 特定の処理で作成したパラメーターの差分
  */
 export type DiffParams = MigrationParams;
 
 /**
- * 処理内で設定されるパラメーター
+ * 繰り返し処理内で有効なパラメーター
+ * _で始まるプロパティはシステム側で自動的に設定するもの
+ * それ以外はMigrationConfigのiteratorで返された値
+ */
+export type IterationParams<AP = AssignedParams<DiffParams>> = AP & MigrationParams;
+
+/**
+ * 特定の処理で作成されたパラメーターをIterationParamsに設定したもの
  */
 export type AssignedParams<I> = {
   [K in keyof I as `_${string & K}`]: I[K];
@@ -164,5 +180,3 @@ export type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>;
  * 指定のプロパティを必須にするユーティリティ型
  */
 export type Essential<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
-
-export type Constructor<T> = new () => T;

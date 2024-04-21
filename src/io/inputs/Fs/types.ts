@@ -1,10 +1,11 @@
-import { FilterableConfig, ItemType, VariableString } from '../../../types';
+import { CommonFilterableConfig, ItemType, VariableString } from '../../../types';
+import { ReadAnyFileOptions } from '../../../utils/readAnyFile';
 import { IO_TYPE } from '../../constants';
-import { FsInputConfigBase, FsInputResultBase, InputConfigBase } from '../../types';
+import { FsInputResultBase, InputConfigBase } from '../../types';
 
 export type FsInputConfig = InputConfigBase<typeof IO_TYPE.FS> &
-  FsInputConfigBase &
-  FilterableConfig<string> & {
+  Omit<ReadAnyFileOptions, 'encoding'> &
+  CommonFilterableConfig<string> & {
     /**
      * 入力元ファイル・ディレクトリのパス
      */

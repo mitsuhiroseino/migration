@@ -4,7 +4,7 @@ import writeAnyFile from '../../utils/writeAnyFile';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import { Operation } from '../types';
-import { OutputConfig } from './types';
+import { WriteConfig } from './types';
 
 /**
  * ファイルを出力する操作
@@ -13,7 +13,7 @@ import { OutputConfig } from './types';
  * @param params 1繰り返し毎のパラメーター
  * @returns 処理結果
  */
-const Output: Operation<Content, OutputConfig> = async (content, config, params) => {
+const Write: Operation<Content, WriteConfig> = async (content, config, params) => {
   const { outputPath, preserveOutputPath, paramName = '_resource', preserveParamName, ...rest } = config;
 
   // 出力パス
@@ -34,5 +34,5 @@ const Output: Operation<Content, OutputConfig> = async (content, config, params)
 
   return content;
 };
-export default Output;
-OperationFactory.register(OPERATION_TYPE.INPUT, Output);
+export default Write;
+OperationFactory.register(OPERATION_TYPE.WRITE, Write);

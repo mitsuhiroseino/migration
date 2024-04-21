@@ -1,8 +1,6 @@
 import isString from 'lodash/isString';
-import { IO_TYPE } from '../io';
+import { IO_TYPE, InputConfig, OutputConfig } from '../io';
 import IoHandler from '../io/IoHandler';
-import { InputConfig } from '../io/inputs';
-import { OutputConfig } from '../io/outputs';
 import { IterationParams } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';

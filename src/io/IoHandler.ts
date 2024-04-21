@@ -1,10 +1,10 @@
-import { DiffParams, IterationParams } from '../types';
+import { CommonIoConfig, DiffParams, IterationParams } from '../types';
 import assignParams from '../utils/assignParams';
-import { Input, InputConfig, InputFactory, InputReturnValue } from './inputs';
-import { Output, OutputConfig, OutputFactory, OutputReturnValue } from './outputs';
-import { IoBase, IoConfig } from './types';
+import { InputFactory } from './inputs';
+import { OutputFactory } from './outputs';
+import { Input, InputConfig, InputReturnValue, IoBase, Output, OutputConfig, OutputReturnValue } from './types';
 
-export type IoHandlerConfig = IoConfig;
+export type IoHandlerConfig = CommonIoConfig;
 
 /**
  * 入力と出力を操作するクラス

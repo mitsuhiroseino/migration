@@ -48,29 +48,19 @@ export const OPERATION_TYPE = {
   IMAGE: 'image',
 
   /**
-   * リソースをファイルから読み込む
-   */
-  INPUT: 'input',
-
-  /**
    * 文字列をオブジェクトや配列に変換する
    */
   PARSE: 'parse',
 
   /**
-   * オブジェクトや配列を文字列に変換する
-   */
-  STRINGIFY: 'stringify',
-
-  /**
-   * リソースをファイルに書き込む
-   */
-  OUTPUT: 'output',
-
-  /**
    * パラメーターの追加
    */
   PARAMS: 'params',
+
+  /**
+   * リソースをファイルから読み込む
+   */
+  READ: 'read',
 
   /**
    * 文字列の置換
@@ -83,7 +73,17 @@ export const OPERATION_TYPE = {
   SHARP: 'sharp',
 
   /**
+   * オブジェクトや配列を文字列に変換する
+   */
+  STRINGIFY: 'stringify',
+
+  /**
    * BOMの削除
    */
   UNBOM: 'unbom',
+
+  /**
+   * リソースをファイルに書き込む
+   */
+  WRITE: 'write',
 } as const;

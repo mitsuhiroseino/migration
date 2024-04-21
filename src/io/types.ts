@@ -1,15 +1,5 @@
 import { MigrationItemStatus } from '../migrate';
-import {
-  Content,
-  ContentType,
-  DiffParams,
-  FormattingConfig,
-  InputOputputConfig,
-  ItemType,
-  IterationParams,
-  LogConfig,
-  ReplacementConfig,
-} from '../types';
+import { CommonConfig, Content, ContentType, DiffParams, ItemType, IterationParams } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { IO_TYPE } from './constants';
 
@@ -22,39 +12,38 @@ export { default as OutputConfig } from './outputs/OutputConfig';
 export type IoType = (typeof IO_TYPE)[keyof typeof IO_TYPE];
 
 /**
- * 入出力用のコンフィグ
+ * 入出力関連の共通メソッド
  */
-export type IoConfig = {
+export interface IoBase {
   /**
-   * コピー
+   * 初期化処理
+   * @param params
    */
-  copy?: boolean;
-};
+  initialize(params: IterationParams): Promise<DiffParams>;
+
+  /**
+   * 完了処理
+   * @param params
+   */
+  complete(params: IterationParams): Promise<DiffParams>;
+
+  /**
+   * 例外処理
+   * @param params
+   */
+  error(params: IterationParams): Promise<DiffParams>;
+}
 
 /**
  * 入力の設定
  */
-export type InputConfigBase<T = IoType> = FormattingConfig &
-  InputOputputConfig &
-  ReplacementConfig &
-  LogConfig &
+export type InputConfigBase<T = IoType> = CommonConfig &
   FactoriableConfig<T> & {
     /**
      * 入力ID
      */
     inputId?: string;
   };
-
-/**
- * ファイルシステムから入力する際の共通設定
- */
-export type FsInputConfigBase<T = IoType> = InputConfigBase<T> & {
-  /**
-   * テキストファイル読み込み時のエンコーディング
-   * 未指定の場合は読み込み元のファイルの内容から判断する
-   */
-  inputEncoding?: string;
-};
 
 /**
  * 入力した場合の処理結果
@@ -74,6 +63,11 @@ export type InputResultBase = DiffParams & {
    * 入力コンテンツ種別
    */
   inputContentType?: ContentType;
+
+  /**
+   * 入力のエンコーディング
+   */
+  inputEncoding?: string;
 };
 
 /**
@@ -89,11 +83,6 @@ export type FsInputResultBase = InputResultBase & {
    * 入力のルートパス
    */
   inputRootPath: string;
-
-  /**
-   * 入力のエンコーディング
-   */
-  inputEncoding?: string;
 };
 
 /**
@@ -136,27 +125,13 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
 /**
  * 出力の設定
  */
-export type OutputConfigBase<T = IoType> = FormattingConfig &
-  InputOputputConfig &
-  ReplacementConfig &
-  LogConfig &
+export type OutputConfigBase<T = IoType> = CommonConfig &
   FactoriableConfig<T> & {
     /**
      * 出力ID
      */
     outputId?: string;
   };
-
-/**
- * ファイルシステムへ出力する際の共通設定
- */
-export type FsOutputConfigBase<T = IoType> = OutputConfigBase<T> & {
-  /**
-   * テキストファイル書き込み時のエンコーディング
-   * 未指定の場合は読み込み時のエンコーディング
-   */
-  outputEncoding?: string;
-};
 
 /**
  * 出力した場合の処理結果
@@ -176,6 +151,11 @@ export type OutputResultBase = DiffParams & {
    * 出力コンテンツ種別
    */
   outputContentType?: ContentType;
+
+  /**
+   * 出力のエンコーディング
+   */
+  outputEncoding?: string;
 };
 
 /**
@@ -191,11 +171,6 @@ export type FsOutputResultBase = OutputResultBase & {
    * 出力のルートパス
    */
   outputRootPath: string;
-
-  /**
-   * 出力のエンコーディング
-   */
-  outputEncoding?: string;
 };
 
 /**
@@ -228,27 +203,4 @@ export interface Output<C extends Content, OR extends OutputResultBase = OutputR
    * @param params
    */
   copy(content: C, params: IterationParams): Promise<OutputReturnValue<OR>>;
-}
-
-/**
- * 入出力関連の共通メソッド
- */
-export interface IoBase {
-  /**
-   * 初期化処理
-   * @param params
-   */
-  initialize(params: IterationParams): Promise<DiffParams>;
-
-  /**
-   * 完了処理
-   * @param params
-   */
-  complete(params: IterationParams): Promise<DiffParams>;
-
-  /**
-   * 例外処理
-   * @param params
-   */
-  error(params: IterationParams): Promise<DiffParams>;
 }

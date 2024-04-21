@@ -1,6 +1,7 @@
 import Handlebars from 'handlebars';
 import helpers from 'handlebars-helpers';
 import { CONTENT_TYPE } from '../../constants';
+import Context from '../../utils/Context';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import { Operation } from '../types';
@@ -17,7 +18,11 @@ helpers();
  */
 const Generate: Operation<string, GenerateConfig> = async (content, config, params) => {
   let { operationId, type, filter, ...compileOptions } = config;
-  const template = Handlebars.compile(content, compileOptions);
+  let template = Context.get(config);
+  if (!template) {
+    template = Handlebars.compile(content, compileOptions);
+    Context.set(config, template);
+  }
   // 実行
   return template(params);
 };

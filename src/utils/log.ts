@@ -1,10 +1,10 @@
-import { LogConfig } from '../types';
+import { CommonLogConfig } from '../types';
 import asArray from './asArray';
 
 export default function log(
   level: 'log' | 'trace' | 'debug' | 'info' | 'warn' | 'error',
   messages: any,
-  config: LogConfig = {},
+  config: CommonLogConfig = {},
 ) {
   const { silent } = config;
   if (!silent) {

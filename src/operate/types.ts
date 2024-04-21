@@ -1,12 +1,4 @@
-import {
-  Content,
-  ContentType,
-  FormattingConfig,
-  InputOputputConfig,
-  LogConfig,
-  Optional,
-  ReplacementConfig,
-} from '../types';
+import { CommonConfig, Content, ContentType, Optional } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { Condition } from '../utils/isMatch';
 import { OPERATION_TYPE } from './constants';
@@ -21,10 +13,7 @@ export type OperationType = (typeof OPERATION_TYPE)[keyof typeof OPERATION_TYPE]
 /**
  * 操作の設定
  */
-export type OperationConfigBase<T = OperationType> = FormattingConfig &
-  InputOputputConfig &
-  ReplacementConfig &
-  LogConfig &
+export type OperationConfigBase<T = OperationType> = CommonConfig &
   FactoriableConfig<T> & {
     /**
      * ID

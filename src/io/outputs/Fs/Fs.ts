@@ -22,6 +22,10 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
    */
   private _getItemName: (outputItem: string, params: FsAssignedParams) => string;
 
+  /**
+   * コンストラクター
+   * @param config
+   */
   constructor(config: FsOutputConfig) {
     super(config);
     const { itemName } = config;
@@ -43,6 +47,7 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
       // ファイルの場合
       let encoding = outputEncoding;
       if (!encoding) {
+        // エンコーディングの指定が無い場合は入力時のエンコーディングで出力
         encoding = _inputEncoding;
       }
       await writeAnyFile(outputItemPath, content, {

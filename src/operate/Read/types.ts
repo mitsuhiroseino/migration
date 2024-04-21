@@ -7,12 +7,12 @@ import { OperationParams } from '../types';
 /**
  * ファイルを入力して内容をparamsに設定する操作
  */
-export type InputConfig<C extends Content = Content> = Omit<ParamsConfig<C>, 'type' | 'createDiff'> &
+export type ReadConfig<C extends Content = Content> = Omit<ParamsConfig<C>, 'type' | 'createDiff'> &
   ReadAnyFileOptions & {
     /**
      * 操作種別
      */
-    type: typeof OPERATION_TYPE.INPUT;
+    type: typeof OPERATION_TYPE.READ;
 
     /**
      * ファイルのパス

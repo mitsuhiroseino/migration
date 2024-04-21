@@ -1,7 +1,7 @@
-import { InputOputputConfig, LogConfig } from '../types';
+import { CommonDevelopmentConfig, CommonLogConfig } from '../types';
 import log from './log';
 
-export default function catchError(error: any, message: string, config: LogConfig & InputOputputConfig) {
+export default function catchError(error: any, message: string, config: CommonLogConfig & CommonDevelopmentConfig) {
   const { forceOutput } = config;
   if (forceOutput) {
     log('error', message, config);

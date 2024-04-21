@@ -6,13 +6,13 @@ import { FillConfig } from './Fill';
 import { FormatConfig } from './Format';
 import { GenerateConfig } from './Generate';
 import { ImageConfig } from './Image';
-import { InputConfig } from './Input';
-import { OutputConfig } from './Output';
 import { ParamsConfig } from './Params';
 import { ParseConfig } from './Parse';
+import { ReadConfig } from './Read';
 import { ReplaceConfig } from './Replace';
 import { StringifyConfig } from './Stringify';
 import { UnbomConfig } from './Unbom';
+import { WriteConfig } from './Write';
 import { OperationConfigBase } from './types';
 
 /**
@@ -27,8 +27,8 @@ type OperationConfig =
   | FormatConfig
   | GenerateConfig
   | ImageConfig
-  | InputConfig
-  | OutputConfig
+  | ReadConfig
+  | WriteConfig
   | ParamsConfig
   | ParseConfig
   | ReplaceConfig

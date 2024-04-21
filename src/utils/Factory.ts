@@ -10,12 +10,12 @@ export type FactoriableConfig<T> = {
 /**
  * 簡易ファクトリー
  */
-class Factory<RP, GP = RP> {
+class Factory<P> {
   /**
    * 管理する製品
    */
   private _products: {
-    [type: string]: RP | GP;
+    [type: string]: P;
   } = {};
 
   /**
@@ -23,7 +23,7 @@ class Factory<RP, GP = RP> {
    * @param type 製品種別
    * @param products 製品
    */
-  register(type: string, products: RP) {
+  register(type: string, products: P) {
     this._products[type] = products;
   }
 
@@ -32,11 +32,11 @@ class Factory<RP, GP = RP> {
    * @param type 製品種別
    * @returns
    */
-  get<T extends string>(type: T | FactoriableConfig<T>): GP {
+  get<T extends string>(type: T | FactoriableConfig<T>): P {
     if (!isString(type)) {
       type = type.type;
     }
-    return this._products[type] as GP;
+    return this._products[type] as P;
   }
 }
 
