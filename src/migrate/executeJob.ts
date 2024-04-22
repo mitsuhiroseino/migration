@@ -1,3 +1,5 @@
+import OperationBase from '../operate/OperationBase';
+import OperationFactory from '../operate/OperationFactory';
 import applyIf from '../utils/applyIf';
 import asArray from '../utils/asArray';
 import executeIteration from './executeIteration';
@@ -13,7 +15,13 @@ import { MigrationJobConfig, MigrationJobResult } from './types';
 export default async function executeJob(config: MigrationJobConfig): Promise<MigrationJobResult | null> {
   const cfg = { ...config };
   // jobsの設定をoperationの設定に反映
-  cfg.operations = asArray(cfg.operations).map((operation) => inheritConfig(operation, config));
+  const operations = asArray(cfg.operations).map((operation) => {
+    if (operation instanceof OperationBase) {
+      return operation;
+    } else {
+      return OperationFactory.create(inheritConfig(operation, config));
+    }
+  });
   const { iteration, params: jobParams, onJobStart, onJobEnd } = cfg;
 
   // 対象が存在する場合
@@ -27,7 +35,7 @@ export default async function executeJob(config: MigrationJobConfig): Promise<Mi
     // iteratorの返す値で繰り返し処理
     const params = { ...jobParams, ...iterationParams };
     // イテレーション間は直列実行
-    results.push(await executeIteration(cfg, params));
+    results.push(await executeIteration(cfg, params, operations));
   }
   const result = { results };
 

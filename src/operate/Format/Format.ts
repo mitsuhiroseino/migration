@@ -1,19 +1,20 @@
 import { CONTENT_TYPE } from '../../constants';
+import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation } from '../types';
+import { OperationParams } from '../types';
 import { FormatConfig } from './types';
 
 /**
  * 文字列を整形する操作
- * @param content 処理対象
- * @param config 操作設定
- * @param params 1繰り返し毎のパラメーター
- * @returns 処理結果
  */
-const Format: Operation<string, FormatConfig> = async (content, config, params) => {
-  const { formatter, formatterOptions } = config;
-  return await formatter(content, formatterOptions);
-};
+class Format extends OperationBase<string, FormatConfig> {
+  readonly contentTypes = CONTENT_TYPE.TEXT;
+
+  async operate(content: string, params: OperationParams): Promise<string> {
+    const { formatter, formatterOptions } = this._config;
+    return await formatter(content, formatterOptions);
+  }
+}
 export default Format;
-OperationFactory.register(OPERATION_TYPE.FORMAT, Format, CONTENT_TYPE.TEXT);
+OperationFactory.register(OPERATION_TYPE.FORMAT, Format);

@@ -1,9 +1,8 @@
 import { Options } from 'prettier';
 import { MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
 import { Input, InputConfig, InputResultBase, Output, OutputConfig, OutputResultBase } from '../io';
-import Fs from '../io/inputs/Fs';
 import { Operation, OperationConfig, OperationResult } from '../operate';
-import { CommonConfig, Constructor, ContentType, IterationParams } from '../types';
+import { CommonConfig, Constructor, IterationParams } from '../types';
 
 /**
  * 移行の設定
@@ -100,7 +99,7 @@ export type MigrationJobConfig<OC = OperationConfig, FO = Options> = CommonMigra
     /**
      * 操作の設定
      */
-    operations?: OC[];
+    operations?: (OC | Operation<any>)[];
 
     /**
      * フォーマットも含む編集処理後に実行される任意の処理
@@ -301,5 +300,5 @@ export type Plugin = {
   pulginId?: string;
   inputs?: { [type: string]: Constructor<Input<any>> };
   outputs?: { [type: string]: Constructor<Output<any>> };
-  operations?: { [type: string]: { operation: Operation<any, any>; contentTypes: ContentType | ContentType[] } };
+  operations?: { [type: string]: Constructor<Operation<any>> };
 };

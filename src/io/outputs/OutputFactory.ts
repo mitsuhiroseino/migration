@@ -1,4 +1,5 @@
 import Factory from '../../utils/Factory';
+import throwError from '../../utils/throwError';
 import { Output, OutputConfigBase } from '../types';
 
 class OutputFactory extends Factory<any> {
@@ -7,7 +8,7 @@ class OutputFactory extends Factory<any> {
     if (Class) {
       return new Class(config);
     } else {
-      throw new Error(`Output "${config.type}" is not found.`);
+      throwError(`Output "${config.type}" is not found.`, config);
     }
   }
 }

@@ -1,21 +1,21 @@
 import { CONTENT_TYPE } from '../../constants';
 import replace from '../../utils/replace';
+import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation } from '../types';
+import { OperationParams } from '../types';
 import { UnbomConfig } from './types';
 
 /**
  * Bomを削除する操作
- * @param content 処理対象
- * @param config 操作設定
- * @param params 1繰り返し毎のパラメーター
- * @param options オプション
- * @returns 処理結果
  */
-const Unbom: Operation<string, UnbomConfig> = async (content, config, params) => {
-  // 置換の実行
-  return replace(content, /^\ufeff/, '');
-};
+class Unbom extends OperationBase<string, UnbomConfig> {
+  readonly contentTypes = CONTENT_TYPE.TEXT;
+
+  async operate(content: string, params: OperationParams): Promise<string> {
+    // BOMの置換
+    return replace(content, /^\ufeff/, '');
+  }
+}
 export default Unbom;
-OperationFactory.register(OPERATION_TYPE.UNBOM, Unbom, CONTENT_TYPE.TEXT);
+OperationFactory.register(OPERATION_TYPE.UNBOM, Unbom);

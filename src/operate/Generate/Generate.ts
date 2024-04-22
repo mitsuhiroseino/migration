@@ -1,30 +1,31 @@
 import Handlebars from 'handlebars';
 import helpers from 'handlebars-helpers';
 import { CONTENT_TYPE } from '../../constants';
-import Context from '../../utils/Context';
+import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation } from '../types';
+import { OperationParams } from '../types';
 import { GenerateConfig } from './types';
 
 helpers();
 
 /**
  * テンプレートエンジンを使用した生成の操作
- * @param content 処理対象
- * @param config 操作設定
- * @param params 1繰り返し毎のパラメーター
- * @returns 処理結果
  */
-const Generate: Operation<string, GenerateConfig> = async (content, config, params) => {
-  let { operationId, type, filter, ...compileOptions } = config;
-  let template = Context.get(config);
-  if (!template) {
-    template = Handlebars.compile(content, compileOptions);
-    Context.set(config, template);
+class Generate extends OperationBase<string, GenerateConfig> {
+  readonly contentTypes = CONTENT_TYPE.TEXT;
+
+  private _templates: Record<string, ReturnType<typeof Handlebars.compile>> = {};
+
+  async operate(content: string, params: OperationParams): Promise<string> {
+    const { operationId, type, filter, ...compileOptions } = this._config;
+    let template = this._templates[content];
+    if (!template) {
+      template = this._templates[content] = Handlebars.compile(content, compileOptions);
+    }
+    // 実行
+    return template(params);
   }
-  // 実行
-  return template(params);
-};
+}
 export default Generate;
-OperationFactory.register(OPERATION_TYPE.GENERATE, Generate, CONTENT_TYPE.TEXT);
+OperationFactory.register(OPERATION_TYPE.GENERATE, Generate);

@@ -1,6 +1,7 @@
 import isString from 'lodash/isString';
 import { IO_TYPE, InputConfig, OutputConfig } from '../io';
 import IoHandler from '../io/IoHandler';
+import { Operation } from '../operate';
 import { IterationParams } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
@@ -20,6 +21,7 @@ const getIoConfig = (config, pathParam) =>
 export default async function executeIteration(
   config: MigrationJobConfig,
   params: IterationParams,
+  operations: Operation<any>[],
 ): Promise<MigrationIterationResult | null> {
   const { input, output, copy, onIterationStart, onIterationEnd, onItemStart, onItemEnd, ...rest } = config;
 
@@ -48,7 +50,7 @@ export default async function executeIteration(
         applyIf(onItemStart, [config, newParams]);
 
         // コンテンツを処理
-        const content = await operateContent(inputItem.content, rest, newParams);
+        const content = await operateContent(inputItem.content, rest, newParams, operations);
 
         // 出力処理
         const outputItem = await ioHandler.write(content, newParams);

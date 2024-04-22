@@ -15,8 +15,7 @@ export default function registerPlugins(plugins: Plugin | Plugin[]) {
       OutputFactory.register(type, outputs[type]);
     }
     for (const type in operations) {
-      const { operation, contentTypes } = operations[type];
-      OperationFactory.register(type, operation, contentTypes);
+      OperationFactory.register(type, operations[type]);
     }
   }
 }

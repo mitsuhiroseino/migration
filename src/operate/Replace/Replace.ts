@@ -1,19 +1,20 @@
 import { CONTENT_TYPE } from '../../constants';
 import replaceWithConfigs from '../../utils/replaceWithConfigs';
+import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation } from '../types';
+import { OperationParams } from '../types';
 import { ReplaceConfig } from './types';
 
 /**
- * 文字列を置換する操作
- * @param content 処理対象
- * @param config 操作設定
- * @param params 1繰り返し毎のパラメーター
- * @returns 処理結果
+ * 文字列を削除する操作
  */
-const Replace: Operation<string, ReplaceConfig> = async (content, config, params) => {
-  return replaceWithConfigs(content, config, params);
-};
+class Replace extends OperationBase<string, ReplaceConfig> {
+  readonly contentTypes = CONTENT_TYPE.TEXT;
+
+  async operate(content: string, params: OperationParams): Promise<string> {
+    return replaceWithConfigs(content, this._config, params);
+  }
+}
 export default Replace;
-OperationFactory.register(OPERATION_TYPE.REPLACE, Replace, CONTENT_TYPE.TEXT);
+OperationFactory.register(OPERATION_TYPE.REPLACE, Replace);

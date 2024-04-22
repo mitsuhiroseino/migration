@@ -6,6 +6,7 @@ export { default as Fill } from './Fill';
 export { default as Format } from './Format';
 export { default as Generate } from './Generate';
 export { default as Image } from './Image';
+export { default as OperationBase } from './OperationBase';
 export { default as OperationFactory } from './OperationFactory';
 export { default as Params } from './Params';
 export { default as Parse } from './Parse';

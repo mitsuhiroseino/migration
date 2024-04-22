@@ -1,21 +1,21 @@
 import { CONTENT_TYPE } from '../../constants';
+import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation } from '../types';
+import { OperationParams } from '../types';
 import { PARSER } from './constants';
 import { ParseConfig } from './types';
 
 /**
  * 文字列をオブジェクトや配列に変換する
- * @param content 処理対象
- * @param config 操作設定
- * @param params 1繰り返し毎のパラメーター
- * @param options オプション
- * @returns 処理結果
  */
-const Parse: Operation<string, ParseConfig> = async (content, config, params) => {
-  const { parser = 'json', args } = config;
-  return PARSER[parser](content, args);
-};
+class Parse extends OperationBase<string, ParseConfig> {
+  readonly contentTypes = CONTENT_TYPE.TEXT;
+
+  async operate(content: string, params: OperationParams): Promise<string> {
+    const { parser = 'json', args } = this._config;
+    return PARSER[parser](content, args);
+  }
+}
 export default Parse;
-OperationFactory.register(OPERATION_TYPE.PARSE, Parse, CONTENT_TYPE.TEXT);
+OperationFactory.register(OPERATION_TYPE.PARSE, Parse);

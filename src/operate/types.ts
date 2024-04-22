@@ -1,7 +1,8 @@
-import { CommonConfig, Content, ContentType, Optional } from '../types';
+import { CommonConfig, Content, ContentType } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { Condition } from '../utils/isMatch';
 import { OPERATION_TYPE } from './constants';
+import OperationBase from './OperationBase';
 
 export { default as OperationConfig } from './OperationConfig';
 
@@ -37,7 +38,7 @@ export type ParentOperationConfig<C = Content> = {
   /**
    * 子操作
    */
-  operations: OperationConfigBase[] | ((content: C, params: OperationParams) => Promise<OperationConfigBase[]>);
+  operations: (OperationConfigBase | OperationBase)[];
 };
 
 /**
@@ -58,15 +59,27 @@ export type OperationParams = {
 /**
  * 処理の結果
  */
-export type OperationResult<C = Content, OC = OperationConfigBase> = { content: C; results: OC[] };
+export type OperationResult<C = Content, OC = OperationConfigBase> = { content: C; results: string[] };
 
 export type TypedOperationConfig = OperationConfigBase<OperationConfigBase['type'] | string>;
 
 /**
  * 内容に対する操作
  */
-export type Operation<C extends Content = Content, S extends TypedOperationConfig = TypedOperationConfig> = (
-  content: C,
-  config: Optional<S, 'type'>,
-  params: OperationParams,
-) => Promise<C | Content>;
+export interface Operation<C extends Content = Content> {
+  getOperationId(): string;
+
+  /**
+   * 処理可能か判定する
+   * @param content
+   * @param params
+   */
+  isOperable(content: C, params: OperationParams): boolean;
+
+  /**
+   * コンテンツを操作する
+   * @param content
+   * @param params
+   */
+  operate(content: C, params: OperationParams): Promise<C | Content>;
+}

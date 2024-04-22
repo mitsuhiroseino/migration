@@ -1,9 +1,7 @@
 import isString from 'lodash/isString';
-import operate, { OperationConfig } from '../operate';
+import operate, { Operation, OperationConfig } from '../operate';
 import { Content, IterationParams } from '../types';
-import asArray from '../utils/asArray';
 import catchError from '../utils/catchError';
-import inheritConfig from './helpers/inheritConfig';
 import { MigrationJobConfig } from './types';
 
 /**
@@ -15,18 +13,11 @@ import { MigrationJobConfig } from './types';
  */
 export default async function operateContent<OC extends OperationConfig>(
   content: Content,
-  config: MigrationJobConfig<OC>,
+  config: Omit<MigrationJobConfig<OC>, 'operation'>,
   params: IterationParams,
+  operations: Operation<any>[],
 ): Promise<Content> {
-  const {
-    initialize,
-    formatter: format,
-    preFormatting,
-    postFormatting,
-    formatterOptions,
-    operations,
-    finalize,
-  } = config;
+  const { initialize, formatter: format, preFormatting, postFormatting, formatterOptions, finalize } = config;
   const { _inputItem } = params;
 
   // 任意の前処理

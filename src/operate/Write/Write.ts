@@ -1,38 +1,37 @@
 import { Content } from '../../types';
 import finishDynamicValue from '../../utils/finishDynamicValue';
 import writeAnyFile from '../../utils/writeAnyFile';
+import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { Operation } from '../types';
+import { OperationParams } from '../types';
 import { WriteConfig } from './types';
 
 /**
  * ファイルを出力する操作
- * @param content 処理対象
- * @param config 操作設定
- * @param params 1繰り返し毎のパラメーター
- * @returns 処理結果
  */
-const Write: Operation<Content, WriteConfig> = async (content, config, params) => {
-  const { outputPath, preserveOutputPath, paramName = '_resource', preserveParamName, ...rest } = config;
+class Write extends OperationBase<Content, WriteConfig> {
+  async operate(content: Content, params: OperationParams): Promise<Content> {
+    const { outputPath, preserveOutputPath, paramName = '_resource', preserveParamName, ...rest } = this._config;
 
-  // 出力パス
-  const outputFilePath: string = finishDynamicValue(outputPath, params, {
-    ...rest,
-    preserveString: preserveOutputPath,
-  });
+    // 出力パス
+    const outputFilePath: string = finishDynamicValue(outputPath, params, {
+      ...rest,
+      preserveString: preserveOutputPath,
+    });
 
-  // パラメーター名
-  const prmsName: string = finishDynamicValue(paramName, params, {
-    ...rest,
-    preserveString: preserveParamName,
-  });
+    // パラメーター名
+    const prmsName: string = finishDynamicValue(paramName, params, {
+      ...rest,
+      preserveString: preserveParamName,
+    });
 
-  // ファイルの出力
-  const resource = params[prmsName];
-  await writeAnyFile(outputFilePath, resource, rest);
+    // ファイルの出力
+    const resource = params[prmsName];
+    await writeAnyFile(outputFilePath, resource, rest);
 
-  return content;
-};
+    return content;
+  }
+}
 export default Write;
 OperationFactory.register(OPERATION_TYPE.WRITE, Write);
