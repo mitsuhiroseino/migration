@@ -2,9 +2,9 @@ import { MIGRATION_STATUS } from '../constants';
 import Context from '../utils/Context';
 import asArray from '../utils/asArray';
 import executeAsyncFunctions from '../utils/executeAsyncFunctions';
+import inheritConfig from '../utils/inheritConfig';
 import executeTask from './executeTask';
 import assignDefaultConfig from './helpers/assignDefaultConfig';
-import inheritConfig from './helpers/inheritConfig';
 import registerPlugins from './helpers/registerPlugins';
 import { MigrationConfig, MigrationResult, MigrationTaskConfig, MigrationTaskResult } from './types';
 

@@ -7,7 +7,10 @@ import { CommonConfig, Constructor, IterationParams } from '../types';
 /**
  * 移行の設定
  */
-export type MigrationConfig<OC = OperationConfig, FO = Options> = CommonMigrationConfig<OC, FO> &
+export type MigrationConfig<OC extends OperationConfig = OperationConfig, FO = Options> = CommonMigrationConfig<
+  OC,
+  FO
+> &
   MigrationTaskEvents<OC, FO> &
   MigrationJobEvents<OC, FO> &
   MigrationIterationEvents<OC, FO> &
@@ -36,7 +39,10 @@ export type MigrationConfig<OC = OperationConfig, FO = Options> = CommonMigratio
 /**
  * タスクの設定
  */
-export type MigrationTaskConfig<OC = OperationConfig, FO = Options> = CommonMigrationConfig<OC, FO> &
+export type MigrationTaskConfig<OC extends OperationConfig = OperationConfig, FO = Options> = CommonMigrationConfig<
+  OC,
+  FO
+> &
   MigrationTaskEvents<OC, FO> &
   MigrationJobEvents<OC, FO> &
   MigrationIterationEvents<OC, FO> &
@@ -60,7 +66,10 @@ export type MigrationTaskConfig<OC = OperationConfig, FO = Options> = CommonMigr
 /**
  * ジョブの設定
  */
-export type MigrationJobConfig<OC = OperationConfig, FO = Options> = CommonMigrationConfig<OC, FO> &
+export type MigrationJobConfig<OC extends OperationConfig = OperationConfig, FO = Options> = CommonMigrationConfig<
+  OC,
+  FO
+> &
   MigrationJobEvents<OC, FO> &
   MigrationIterationEvents<OC, FO> &
   MigrationItemEvents<OC, FO> & {
@@ -193,10 +202,15 @@ export type MigrationItemResult = InputResultBase &
     status: MigrationItemStatus;
   };
 
+export type MigrationEvents<OC extends OperationConfig = OperationConfig, FO = Options> = MigrationTaskEvents<OC, FO> &
+  MigrationJobEvents<OC, FO> &
+  MigrationIterationEvents<OC, FO> &
+  MigrationItemEvents<OC, FO>;
+
 /**
  * タスク用のイベントハンドラー
  */
-type MigrationTaskEvents<OC = OperationConfig, FO = Options> = {
+type MigrationTaskEvents<OC extends OperationConfig = OperationConfig, FO = Options> = {
   /**
    * タスク開始時のハンドラー
    * @param config タスク設定
@@ -216,7 +230,7 @@ type MigrationTaskEvents<OC = OperationConfig, FO = Options> = {
 /**
  * ジョブ用のイベントハンドラー
  */
-type MigrationJobEvents<OC = OperationConfig, FO = Options> = {
+type MigrationJobEvents<OC extends OperationConfig = OperationConfig, FO = Options> = {
   /**
    * ジョブ開始時のハンドラー
    * @param config ジョブ設定
@@ -236,7 +250,7 @@ type MigrationJobEvents<OC = OperationConfig, FO = Options> = {
 /**
  * イテレーション用のイベントハンドラー
  */
-type MigrationIterationEvents<OC = OperationConfig, FO = Options> = {
+type MigrationIterationEvents<OC extends OperationConfig = OperationConfig, FO = Options> = {
   /**
    * イテレーション開始時のハンドラー
    * @param config イテレーション設定
@@ -262,7 +276,7 @@ type MigrationIterationEvents<OC = OperationConfig, FO = Options> = {
 /**
  * 要素処理用のイベントハンドラー
  */
-type MigrationItemEvents<OC = OperationConfig, FO = Options> = {
+type MigrationItemEvents<OC extends OperationConfig = OperationConfig, FO = Options> = {
   /**
    * 要素処理開始時のハンドラー
    * @param config イテレーション設定
@@ -281,9 +295,10 @@ type MigrationItemEvents<OC = OperationConfig, FO = Options> = {
   onItemEnd?: (result: MigrationItemResult, config: MigrationJobConfig<OC, FO>, params: IterationParams) => void;
 };
 
-export type CommonMigrationConfig<OC = OperationConfig, FO = Options> = CommonConfig<FO> & IterationConfig<OC, FO>;
+export type CommonMigrationConfig<OC extends OperationConfig = OperationConfig, FO = Options> = CommonConfig<FO> &
+  IterationConfig<OC, FO>;
 
-type IterationConfig<OC = OperationConfig, FO = Options> = {
+type IterationConfig<OC extends OperationConfig = OperationConfig, FO = Options> = {
   /**
    * 繰り返し処理毎にパラメーターを作成するイテレーターの取得元
    */

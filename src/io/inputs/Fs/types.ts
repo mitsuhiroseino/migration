@@ -23,6 +23,12 @@ export type FsInputConfig = InputConfigBase<typeof IO_TYPE.FS> &
      * 未指定: ディレクトリ & ファイル
      */
     itemType?: ItemType;
+
+    /**
+     * 入力のファイル名から削除する拡張子
+     * handlebarsの拡張子`.hbs`を削除したい場合などに利用可能
+     */
+    removeExtensions?: string[];
   };
 
 /**

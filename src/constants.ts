@@ -1,4 +1,5 @@
 import prettier, { Options } from 'prettier';
+import { CommonMigrationConfig, MigrationEvents } from './migrate/types';
 
 /**
  * コンテンツの種別
@@ -53,7 +54,7 @@ export const MIGRATION_STATUS = {
  * 親から引き継ぐ設定
  * TODO: 見直し
  */
-export const INHERITED_CONFIGS = {
+export const INHERITED_CONFIGS: { [K in keyof (CommonMigrationConfig & MigrationEvents)]: true } = {
   iteration: true,
   formatter: true,
   preFormatting: true,
@@ -66,12 +67,11 @@ export const INHERITED_CONFIGS = {
   outputEncoding: true,
   forceOutput: true,
   silent: true,
+  copy: true,
   onTaskStart: true,
   onTaskEnd: true,
   onJobStart: true,
   onJobEnd: true,
-  onTargetStart: true,
-  onTargetEnd: true,
   onIterationStart: true,
   onIterationEnd: true,
   onItemStart: true,

@@ -1,6 +1,6 @@
 import SharpLib from 'sharp';
 import { CONTENT_TYPE } from '../../constants';
-import { asArray } from '../../utils';
+import asArray from '../../utils/asArray';
 import throwError from '../../utils/throwError';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';

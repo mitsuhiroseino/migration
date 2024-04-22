@@ -9,6 +9,7 @@ export { default as Image } from './Image';
 export { default as OperationBase } from './OperationBase';
 export { default as OperationFactory } from './OperationFactory';
 export { default as Params } from './Params';
+export { default as ParentOperationBase } from './ParentOperationBase';
 export { default as Parse } from './Parse';
 export { default as Read } from './Read';
 export { default as Replace } from './Replace';

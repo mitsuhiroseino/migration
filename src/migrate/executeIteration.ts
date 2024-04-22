@@ -5,8 +5,8 @@ import { Operation } from '../operate';
 import { IterationParams } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
+import inheritConfig from '../utils/inheritConfig';
 import propagateError from '../utils/propagateError';
-import inheritConfig from './helpers/inheritConfig';
 import operateContent from './operateContent';
 import { MigrationIterationResult, MigrationJobConfig } from './types';
 
@@ -31,7 +31,7 @@ export default async function executeIteration(
   const inputCfg = getIoConfig(input, 'inputPath');
   const inputConfig: InputConfig = inheritConfig(inputCfg, config);
   // 出力設定取得
-  const outputCfg = getIoConfig(input, 'outputPath');
+  const outputCfg = getIoConfig(output, 'outputPath');
   const outputConfig: OutputConfig = inheritConfig(outputCfg, config);
   // 入出力ハンドラー
   const ioHandler = new IoHandler(inputConfig, outputConfig, { copy });

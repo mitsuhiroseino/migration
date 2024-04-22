@@ -1,7 +1,6 @@
 import { Content } from '../types';
-import asArray from '../utils/asArray';
+import toOperations from '../utils/toOperations';
 import OperationBase from './OperationBase';
-import OperationFactory from './OperationFactory';
 import operate from './operate';
 import { Operation, OperationParams, ParentOperationConfig, TypedOperationConfig } from './types';
 
@@ -13,18 +12,12 @@ export default abstract class ParentOperationBase<
   OC extends TypedOperationConfig & ParentOperationConfig<Content> = TypedOperationConfig &
     ParentOperationConfig<Content>,
 > extends OperationBase<C, OC> {
-  private _operations: Operation<any>[];
+  protected _operations: Operation<any>[];
 
   constructor(config: OC) {
     super(config);
     const { operations } = config;
-    this._operations = asArray(operations).map((operation) => {
-      if (operation instanceof OperationBase) {
-        return operation;
-      } else {
-        return OperationFactory.create(operation);
-      }
-    });
+    this._operations = toOperations(operations, config);
   }
 
   /**

@@ -44,7 +44,7 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     const config = this._config;
     const { outputEncoding, ...rest } = config;
     const { outputItemPath, outputRootPath, outputItem } = this._getOutputInfo(params);
-    const { _inputPath: _inputItemPath, _inputItemType, _inputEncoding } = params;
+    const { _inputItemType, _inputEncoding } = params;
 
     if (_inputItemType === ITEM_TYPE.NODE) {
       // ディレクトリの場合
@@ -94,11 +94,16 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     };
   }
 
+  /**
+   * 出力先の情報を取得する
+   * @param params
+   * @param removeExtensions
+   * @returns
+   */
   private _getOutputInfo(params: FsAssignedParams) {
     const config = this._config;
     const { outputPath } = config;
     const { _inputPath: _inputItemPath, _inputRootPath, _inputItem } = params;
-    const inputParentRelativePath = path.relative(_inputRootPath, path.dirname(_inputItemPath));
     const isRoot = _inputRootPath === _inputItemPath;
 
     // 出力先のルートパスは設定から取得
@@ -115,6 +120,7 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     } else {
       // 配下に対する処理
       // 出力の親ディレクトリパス＝出力のルートのパス
+      const inputParentRelativePath = path.relative(_inputRootPath, path.dirname(_inputItemPath));
       outputParentPath = path.join(outputRootPath, inputParentRelativePath);
       outputItem = _inputItem;
     }

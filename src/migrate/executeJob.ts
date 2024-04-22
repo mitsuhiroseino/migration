@@ -1,10 +1,7 @@
-import OperationBase from '../operate/OperationBase';
-import OperationFactory from '../operate/OperationFactory';
 import applyIf from '../utils/applyIf';
-import asArray from '../utils/asArray';
+import toOperations from '../utils/toOperations';
 import executeIteration from './executeIteration';
 import getIterator from './helpers/getIterator';
-import inheritConfig from './helpers/inheritConfig';
 import { MigrationJobConfig, MigrationJobResult } from './types';
 
 /**
@@ -15,13 +12,7 @@ import { MigrationJobConfig, MigrationJobResult } from './types';
 export default async function executeJob(config: MigrationJobConfig): Promise<MigrationJobResult | null> {
   const cfg = { ...config };
   // jobsの設定をoperationの設定に反映
-  const operations = asArray(cfg.operations).map((operation) => {
-    if (operation instanceof OperationBase) {
-      return operation;
-    } else {
-      return OperationFactory.create(inheritConfig(operation, config));
-    }
-  });
+  const operations = toOperations(cfg.operations, config);
   const { iteration, params: jobParams, onJobStart, onJobEnd } = cfg;
 
   // 対象が存在する場合

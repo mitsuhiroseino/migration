@@ -1,8 +1,8 @@
 import applyIf from '../utils/applyIf';
 import asArray from '../utils/asArray';
 import executeAsyncFunctions from '../utils/executeAsyncFunctions';
+import inheritConfig from '../utils/inheritConfig';
 import executeJob from './executeJob';
-import inheritConfig from './helpers/inheritConfig';
 import { MigrationJobConfig, MigrationJobResult, MigrationTaskConfig, MigrationTaskResult } from './types';
 
 /**
