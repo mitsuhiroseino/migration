@@ -30,10 +30,11 @@ export default async function executeJob(config: MigrationJobConfig): Promise<Mi
   let i = 0;
   for (const iterationParams of iterator) {
     // iteratorの返す値で繰り返し処理
-    const iterationCfg = { iterationId: `${jobId}-${i++}`, ...cfg };
+    const iterationCfg = { iterationId: `${jobId}[${i}]`, ...cfg };
     const params = { ...jobParams, ...iterationParams };
     // イテレーション間は直列実行
     results.push(await executeIteration(iterationCfg, params));
+    i++;
   }
   const result = { results };
 

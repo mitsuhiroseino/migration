@@ -108,36 +108,37 @@ export type MigrationIterationConfig = MigrationIterationSpecificConfig &
 /**
  * 一連のオペレーション実行時の設定
  */
-export type OperateContentConfig<OP = Operation> = CommonConfig & {
-  /**
-   * フォーマットも含む編集処理前に実行される任意の処理
-   * @param content コンテンツ
-   * @param config 当コンフィグ
-   * @param params 繰り返し処理毎のパラメーター
-   * @returns 編集処理対象になるコンテンツ
-   */
-  initialize?: <C = Content>(content: C, config: OperateContentConfig, params: IterationParams) => Promise<C>;
+export type OperateContentConfig<OP = Operation> = CommonConfig &
+  OperateContentSpecificConfig & {
+    /**
+     * フォーマットも含む編集処理前に実行される任意の処理
+     * @param content コンテンツ
+     * @param config 当コンフィグ
+     * @param params 繰り返し処理毎のパラメーター
+     * @returns 編集処理対象になるコンテンツ
+     */
+    initialize?: <C = Content>(content: C, config: OperateContentConfig, params: IterationParams) => Promise<C>;
 
-  /**
-   * 操作の設定
-   */
-  operations?: OP[];
+    /**
+     * 操作の設定
+     */
+    operations?: OP[];
 
-  /**
-   * フォーマットも含む編集処理後に実行される任意の処理
-   * @param content 編集処理後のコンテンツ
-   * @param config 当コンフィグ
-   * @param params 繰り返し処理毎のパラメーター
-   * @param result 処理結果
-   * @returns 最終的なコンテンツ
-   */
-  finalize?: <C = Content>(
-    content: C,
-    config: OperateContentConfig,
-    params: IterationParams,
-    results: OperationResult<C>[],
-  ) => Promise<C>;
-};
+    /**
+     * フォーマットも含む編集処理後に実行される任意の処理
+     * @param content 編集処理後のコンテンツ
+     * @param config 当コンフィグ
+     * @param params 繰り返し処理毎のパラメーター
+     * @param result 処理結果
+     * @returns 最終的なコンテンツ
+     */
+    finalize?: <C = Content>(
+      content: C,
+      config: OperateContentConfig,
+      params: IterationParams,
+      results: OperationResult<C>[],
+    ) => Promise<C>;
+  };
 
 /**
  * タスク専用の設定
@@ -238,6 +239,27 @@ export type MigrationItemSpecificConfig = {
 };
 
 /**
+ * 一連のオペレーション実行時専用の設定
+ */
+export type OperateContentSpecificConfig = {
+  /**
+   * 移行処理開始前のフォーマット有無
+   */
+  preFormatting?: FormatOptions;
+
+  /**
+   * 移行処理終了後のフォーマット有無
+   */
+  postFormatting?: FormatOptions;
+
+  /**
+   * フォーマット時の設定
+   * preFormatting,postFormattingがtrueの場合は、この設定を使用してフォーマットを行う
+   */
+  formatterOptions?: FormatOptions;
+};
+
+/**
  * 1ファイルorディレクトリ毎の処理結果
  */
 export type MigrationItemStatus = (typeof MIGRATION_ITEM_STATUS)[keyof typeof MIGRATION_ITEM_STATUS];
@@ -316,34 +338,12 @@ export type MigrationItemResult = InputResultBase &
 /**
  * MigrationConfig以下で継承するコンフィグ
  */
-export type CommonConfig = CommonFormattingConfig &
-  CommonReplacementConfig &
+export type CommonConfig = CommonReplacementConfig &
   CommonIoConfig &
   CommonInputConfig &
   CommonOutputConfig &
   CommonDevelopmentConfig &
   CommonLogConfig;
-
-/**
- * テキストのフォーマット処理に関する設定
- */
-export type CommonFormattingConfig = {
-  /**
-   * 移行処理開始前のフォーマット有無
-   */
-  preFormatting?: FormatOptions;
-
-  /**
-   * 移行処理終了後のフォーマット有無
-   */
-  postFormatting?: FormatOptions;
-
-  /**
-   * フォーマット時の設定
-   * preFormatting,postFormattingがtrueの場合は、この設定を使用してフォーマットを行う
-   */
-  formatterOptions?: FormatOptions;
-};
 
 /**
  * テキストの置換に関する設定

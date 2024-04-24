@@ -1,5 +1,9 @@
 import {
-  CommonConfig,
+  CommonDevelopmentConfig,
+  CommonInputConfig,
+  CommonLogConfig,
+  CommonOutputConfig,
+  CommonReplacementConfig,
   Content,
   ContentType,
   DiffParams,
@@ -44,7 +48,10 @@ export interface IoBase {
 /**
  * 入力の設定
  */
-export type InputConfigBase<T = IoType> = CommonConfig &
+export type InputConfigBase<T = IoType> = CommonInputConfig &
+  CommonReplacementConfig &
+  CommonDevelopmentConfig &
+  CommonLogConfig &
   FactoriableConfig<T> & {
     /**
      * 入力ID
@@ -132,7 +139,10 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
 /**
  * 出力の設定
  */
-export type OutputConfigBase<T = IoType> = CommonConfig &
+export type OutputConfigBase<T = IoType> = CommonOutputConfig &
+  CommonReplacementConfig &
+  CommonDevelopmentConfig &
+  CommonLogConfig &
   FactoriableConfig<T> & {
     /**
      * 出力ID

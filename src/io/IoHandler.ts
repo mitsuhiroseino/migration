@@ -1,10 +1,10 @@
-import { CommonConfig, CommonIoConfig, DiffParams, IterationParams } from '../types';
+import { CommonIoConfig, DiffParams, IterationParams } from '../types';
 import assignParams from '../utils/assignParams';
 import { InputFactory } from './inputs';
 import { OutputFactory } from './outputs';
 import { Input, InputConfig, InputReturnValue, IoBase, Output, OutputConfig, OutputReturnValue } from './types';
 
-export type IoHandlerConfig = CommonConfig & CommonIoConfig;
+export type IoHandlerConfig = CommonIoConfig;
 
 /**
  * 入力と出力を操作するクラス
@@ -28,11 +28,6 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
   private _output: Output<any, any>;
 
   /**
-   * コピー
-   */
-  private _copy?: boolean;
-
-  /**
    * 処理中
    */
   private _active: boolean = false;
@@ -44,13 +39,11 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @param config 入出力設定
    */
   constructor(inputConfig: IC, outputConfig: OC, config: IoHandlerConfig) {
-    const { copy } = config;
-    if (copy && inputConfig.type !== outputConfig.type) {
+    if (config.copy && inputConfig.type !== outputConfig.type) {
       throw new Error('For copies, the IO type must be the same');
     }
 
     this._config = config;
-    this._copy = copy;
     this._input = InputFactory.create(inputConfig);
     this._output = OutputFactory.create(outputConfig);
     this._active = true;
@@ -72,7 +65,7 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @returns
    */
   read(params: IterationParams): AsyncIterable<InputReturnValue<any, any>> {
-    if (this._copy) {
+    if (this._config.copy) {
       return this._input.copy(params);
     } else {
       return this._input.read(params);
@@ -85,7 +78,7 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @returns
    */
   write<C>(content: C, params: IterationParams): Promise<OutputReturnValue<IterationParams>> {
-    if (this._copy) {
+    if (this._config.copy) {
       return this._output.copy(params);
     } else {
       return this._output.write(content, params);

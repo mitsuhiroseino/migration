@@ -4,6 +4,7 @@ import {
   MigrationIterationSpecificConfig,
   MigrationJobSpecificConfig,
   MigrationTaskSpecificConfig,
+  OperateContentSpecificConfig,
 } from './types';
 
 /**
@@ -68,6 +69,7 @@ export const INHERITED_CONFIGS: Required<{
     MigrationJobSpecificConfig &
     MigrationIterationSpecificConfig &
     MigrationItemSpecificConfig &
+    OperateContentSpecificConfig &
     CommonConfig)]: boolean | ((config: any, baseConfig: any) => any);
 }> = {
   onTaskStart: true,
