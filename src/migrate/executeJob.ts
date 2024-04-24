@@ -1,8 +1,8 @@
+import { MigrationIterationConfig, MigrationJobConfig, MigrationJobResult } from '../types';
 import applyIf from '../utils/applyIf';
 import toOperations from '../utils/toOperations';
 import executeIteration from './executeIteration';
 import getIterator from './helpers/getIterator';
-import { MigrationJobConfig, MigrationJobResult } from './types';
 
 /**
  * 1処理対象分の処理を行う
@@ -10,26 +10,33 @@ import { MigrationJobConfig, MigrationJobResult } from './types';
  * @param params 繰り返し毎のパラメーター
  */
 export default async function executeJob(config: MigrationJobConfig): Promise<MigrationJobResult | null> {
-  const cfg = { ...config };
-  // jobsの設定をoperationの設定に反映
-  const operations = toOperations(cfg.operations, config);
-  const { iteration, params: jobParams, onJobStart, onJobEnd } = cfg;
+  const { jobId, operations, iteration, params: jobParams, onJobStart, onJobEnd, disabled, ...rest } = config;
+  if (disabled) {
+    return {
+      results: [],
+    };
+  }
+
+  const cfg: MigrationIterationConfig = rest;
+  cfg.operations = toOperations(operations, cfg);
 
   // 対象が存在する場合
-  applyIf(onJobStart, [cfg]);
+  applyIf(onJobStart, [config]);
 
   // イテレーターを作成する
-  const iterator = getIterator(iteration, cfg);
+  const iterator = getIterator(iteration, config);
   // 対象の処理
   const results = [];
+  let i = 0;
   for (const iterationParams of iterator) {
     // iteratorの返す値で繰り返し処理
+    const iterationCfg = { iterationId: `${jobId}-${i++}`, ...cfg };
     const params = { ...jobParams, ...iterationParams };
     // イテレーション間は直列実行
-    results.push(await executeIteration(cfg, params, operations));
+    results.push(await executeIteration(iterationCfg, params));
   }
   const result = { results };
 
-  applyIf(onJobEnd, [result, cfg]);
+  applyIf(onJobEnd, [result, config]);
   return result;
 }

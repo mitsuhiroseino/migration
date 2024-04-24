@@ -1,10 +1,10 @@
-import { CommonIoConfig, DiffParams, IterationParams } from '../types';
+import { CommonConfig, CommonIoConfig, DiffParams, IterationParams } from '../types';
 import assignParams from '../utils/assignParams';
 import { InputFactory } from './inputs';
 import { OutputFactory } from './outputs';
 import { Input, InputConfig, InputReturnValue, IoBase, Output, OutputConfig, OutputReturnValue } from './types';
 
-export type IoHandlerConfig = CommonIoConfig;
+export type IoHandlerConfig = CommonConfig & CommonIoConfig;
 
 /**
  * 入力と出力を操作するクラス
@@ -12,6 +12,11 @@ export type IoHandlerConfig = CommonIoConfig;
 export default class IoHandler<IC extends InputConfig = InputConfig, OC extends OutputConfig = OutputConfig>
   implements IoBase
 {
+  /**
+   * 設定
+   */
+  private _config: IoHandlerConfig;
+
   /**
    * 入力処理
    */
@@ -44,6 +49,7 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
       throw new Error('For copies, the IO type must be the same');
     }
 
+    this._config = config;
     this._copy = copy;
     this._input = InputFactory.create(inputConfig);
     this._output = OutputFactory.create(outputConfig);

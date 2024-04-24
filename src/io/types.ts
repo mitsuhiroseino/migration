@@ -1,5 +1,12 @@
-import { MigrationItemStatus } from '../migrate';
-import { CommonConfig, Content, ContentType, DiffParams, ItemType, IterationParams } from '../types';
+import {
+  CommonConfig,
+  Content,
+  ContentType,
+  DiffParams,
+  ItemType,
+  IterationParams,
+  MigrationItemStatus,
+} from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { IO_TYPE } from './constants';
 

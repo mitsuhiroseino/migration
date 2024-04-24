@@ -1,6 +1,5 @@
 import isPlainObject from 'lodash/isPlainObject';
-import { IterationParams } from '../../types';
-import { MigrationJobConfig } from '../types';
+import { IterationParams, MigrationJobConfig } from '../../types';
 
 /**
  * イテレーターを取得する
@@ -10,7 +9,7 @@ import { MigrationJobConfig } from '../types';
  */
 export default function getIterator(
   iteration:
-    | ((cfg: MigrationJobConfig) => Generator<IterationParams>)
+    | ((config: MigrationJobConfig) => Generator<IterationParams>)
     | IterationParams[]
     | IterationParams
     | null

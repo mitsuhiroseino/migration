@@ -25,7 +25,9 @@ export default abstract class OperationBase<
   }
 
   isOperable(content: C, params: OperationParams): boolean {
-    if (content == null || !isMatch(content, this._config.filter, params)) {
+    if (this._config.disabled) {
+      return false;
+    } else if (content == null || !isMatch(content, this._config.filter, params)) {
       return false;
     }
     const contentType = getContentType(content);

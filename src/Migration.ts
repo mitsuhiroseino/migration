@@ -1,4 +1,5 @@
-import migrate, { MigrationConfig, MigrationResult, MigrationTaskConfig } from './migrate';
+import migrate from './migrate';
+import { MigrationConfig, MigrationResult, MigrationTaskConfig } from './types';
 import asArray from './utils/asArray';
 import throwError from './utils/throwError';
 

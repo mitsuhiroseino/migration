@@ -14,7 +14,7 @@ export type OperationType = (typeof OPERATION_TYPE)[keyof typeof OPERATION_TYPE]
 /**
  * 操作の設定
  */
-export type OperationConfigBase<T = OperationType> = CommonConfig &
+export type OperationConfigBase<T = OperationType | string> = CommonConfig &
   FactoriableConfig<T> & {
     /**
      * ID
@@ -59,7 +59,7 @@ export type OperationParams = {
 /**
  * 処理の結果
  */
-export type OperationResult<C = Content, OC = OperationConfigBase> = { content: C; results: string[] };
+export type OperationResult<C = Content> = { content: C; results: string[] };
 
 export type TypedOperationConfig = OperationConfigBase<OperationConfigBase['type'] | string>;
 

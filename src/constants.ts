@@ -1,5 +1,10 @@
-import prettier, { Options } from 'prettier';
-import { CommonMigrationConfig, MigrationEvents } from './migrate/types';
+import {
+  CommonConfig,
+  MigrationItemSpecificConfig,
+  MigrationIterationSpecificConfig,
+  MigrationJobSpecificConfig,
+  MigrationTaskSpecificConfig,
+} from './types';
 
 /**
  * コンテンツの種別
@@ -48,45 +53,52 @@ export const MIGRATION_STATUS = {
    * 想定外のエラー
    */
   FATAL: 'fatal',
+
+  /**
+   * 非活性
+   */
+  DISABLED: 'disabled',
 } as const;
 
 /**
  * 親から引き継ぐ設定
- * TODO: 見直し
  */
-export const INHERITED_CONFIGS: { [K in keyof (CommonMigrationConfig & MigrationEvents)]: true } = {
-  iteration: true,
-  formatter: true,
-  preFormatting: true,
-  postFormatting: true,
-  formatterOptions: true,
-  replacementBracket: true,
-  removePlaceholders: true,
-  flatKeys: true,
-  inputEncoding: true,
-  outputEncoding: true,
-  forceOutput: true,
-  silent: true,
-  copy: true,
+export const INHERITED_CONFIGS: Required<{
+  [K in keyof (MigrationTaskSpecificConfig &
+    MigrationJobSpecificConfig &
+    MigrationIterationSpecificConfig &
+    MigrationItemSpecificConfig &
+    CommonConfig)]: boolean | ((config: any, baseConfig: any) => any);
+}> = {
   onTaskStart: true,
   onTaskEnd: true,
+  parallelJobs: true,
   onJobStart: true,
   onJobEnd: true,
   onIterationStart: true,
   onIterationEnd: true,
   onItemStart: true,
   onItemEnd: true,
+  iteration: true,
+  preFormatting: true,
+  postFormatting: true,
+  formatterOptions: true,
+  replacementBracket: true,
+  removePlaceholders: true,
+  flatKeys: true,
+  params: (config: any, baseConfig: any) => {
+    config.params = { ...baseConfig.params, ...config.params };
+    return config;
+  },
+  copy: true,
+  input: true,
+  inputEncoding: true,
+  output: true,
+  outputEncoding: true,
+  forceOutput: true,
+  disabled: true,
+  silent: true,
 };
-
-/**
- * デフォルトのフォーマッター
- * @param content
- * @param options
- * @returns
- */
-export async function DEFAULT_FORMATTER(content: string, options: Options): Promise<string> {
-  return await prettier.format(content, options);
-}
 
 /**
  * デフォルトフォーマットオプション
@@ -106,7 +118,6 @@ export const DEFAULT_TEXT_ENCODING = 'utf8';
  * デフォルトの設定
  */
 export const DEFAULT_CONFIGS = {
-  formatter: DEFAULT_FORMATTER,
   formatterOptions: DEFAULT_FORMATTER_OPTIONS,
   replacementBracket: DEFAULT_BRACKET,
 };

@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { FsInputResultBase } from 'src/io/types';
 import { CONTENT_TYPE, ITEM_TYPE } from '../../../constants';
-import { Content, ContentType, IterationParams, Optional } from '../../../types';
+import { Content, ContentType, IterationParams } from '../../../types';
 import finishDynamicValue from '../../../utils/finishDynamicValue';
 import getEncoding from '../../../utils/getEncoding';
 import isMatch from '../../../utils/isMatch';
@@ -19,7 +19,6 @@ import { FsInputConfig, FsInputResult } from './types';
 type CallbackFn = (
   inputPath: string,
   inputItem: string,
-  config: Optional<FsInputConfig, 'type'>,
   params: IterationParams,
   inputRootPath?: string,
   depth?: number,
@@ -35,7 +34,7 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
    * @returns
    */
   read(params: IterationParams): AsyncIterable<InputReturnValue<any, FsInputResultBase>> {
-    return this._generateFs(this._readFs, this._config, params);
+    return this._generateFs(this._readFs, params);
   }
 
   /**
@@ -44,7 +43,7 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
    * @returns
    */
   copy(params: IterationParams): AsyncIterable<InputReturnValue<any, FsInputResultBase>> {
-    return this._generateFs(this._copyFs, this._config, params);
+    return this._generateFs(this._copyFs, params);
   }
 
   /**
@@ -53,17 +52,14 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
    * @param config 入力設定
    * @param params 1繰り返し毎のパラメーター
    */
-  private async *_generateFs(
-    callback: CallbackFn,
-    config: FsInputConfig,
-    params: IterationParams,
-  ): InputGenerator<Content, FsInputResult> {
+  private async *_generateFs(callback: CallbackFn, params: IterationParams): InputGenerator<Content, FsInputResult> {
+    const config = this._config;
     const { inputPath } = config;
     const rootPath: string = path.normalize(finishDynamicValue(inputPath, params, config));
     const availablePath = await fs.exists(rootPath);
     if (availablePath) {
       // ファイルの読み込み
-      yield* callback(rootPath, path.basename(rootPath), config, params);
+      yield* callback.call(this, rootPath, path.basename(rootPath), params);
     } else {
       throwError(`"${rootPath}" does not exist.`, config);
     }
@@ -81,11 +77,11 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
   private async *_readFs(
     inputPath: string,
     inputItem: string,
-    config: Optional<FsInputConfig, 'type'>,
     params: IterationParams,
     inputRootPath: string = inputPath,
     depth: number = 0,
   ): InputGenerator<Content, FsInputResult> {
+    const config = this._config;
     const isTarget = isMatch(inputPath, config.filter, params);
     const itemType = config.itemType;
 
@@ -103,7 +99,7 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
         };
       }
       // 配下のディレクトリ、ファイルを再帰的に処理
-      yield* this._toNextDeps(this._readFs, inputPath, config, params, inputRootPath, depth);
+      yield* this._toNextDeps(this._readFs, inputPath, params, inputRootPath, depth);
     } else if (stat.isFile()) {
       // ファイルの場合
       if (isTarget && (!itemType || itemType === ITEM_TYPE.LEAF)) {
@@ -152,11 +148,11 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
   private async *_copyFs(
     inputPath: string,
     inputItem: string,
-    config: Optional<FsInputConfig, 'type'>,
     params: IterationParams,
     inputRootPath: string = inputPath,
     depth: number = 0,
   ): InputGenerator<Content, FsInputResult> {
+    const config = this._config;
     const isTarget = isMatch(inputPath, config.filter, params);
     const itemType = config.itemType;
 
@@ -173,7 +169,7 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
         };
       }
       // 配下のディレクトリ、ファイルを再帰的に処理
-      yield* this._toNextDeps(this._copyFs, inputPath, config, params, inputRootPath, depth);
+      yield* this._toNextDeps(this._copyFs, inputPath, params, inputRootPath, depth);
     } else if (stat.isFile()) {
       // ファイルの場合
       if (isTarget && (!itemType || itemType === ITEM_TYPE.LEAF)) {
@@ -192,12 +188,12 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
   private async *_toNextDeps(
     callback: CallbackFn,
     inputPath: string,
-    config: Optional<FsInputConfig, 'type'>,
     params: IterationParams,
     inputRootPath: string = inputPath,
     depth: number,
   ) {
     // 配下のディレクトリ、ファイルを再帰的に処理
+    const config = this._config;
     const nextDepth = depth + 1;
     if (!config.ignoreSubDir || nextDepth === 1) {
       const items = await fs.readdir(inputPath);
@@ -205,7 +201,7 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
         const itemPath = path.join(inputPath, item);
         // 子要素を処理
         try {
-          yield* callback(itemPath, item, config, params, inputRootPath, nextDepth);
+          yield* callback.call(this, itemPath, item, params, inputRootPath, nextDepth);
         } catch (error) {
           throw error;
         }

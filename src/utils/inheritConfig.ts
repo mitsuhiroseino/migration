@@ -1,28 +1,31 @@
-import isString from 'lodash/isString';
+import isFunction from 'lodash/isFunction';
 import { INHERITED_CONFIGS } from '../constants';
 
 /**
- * 親から子に引き継ぐコンフィグの設定
+ * 設定を引き継ぐ
  * @param config 子の設定
  * @param baseConfig 親の設定
- * @param mapping 子と親のコンフィグ名が異なる場合のマッピング。親のコンフィグ名をキー、子のコンフィグ名を値として定義する
+ * @param mapping 引き継ぐ項目の指定
  */
 export default function inheritConfig<C extends any>(
   config: any,
   baseConfig: any,
-  mapping: { [baseConfigName: string]: string | boolean } = INHERITED_CONFIGS,
+  mapping: { [baseConfigName: string]: boolean | ((config: any, baseConfig: any) => any) } = INHERITED_CONFIGS,
 ): C {
-  const cfg = { ...config };
+  let cfg = { ...config };
   const base = { ...baseConfig };
+
   // mappingにあるプロパティが未設定の場合はbaseConfigから引き継ぐ
   for (const name in mapping) {
-    const nm = isString(mapping[name]) ? (mapping[name] as string) : name;
-    if (nm in cfg === false && name in base) {
-      cfg[nm] = base[name];
+    const value = mapping[name];
+    if (isFunction(value)) {
+      cfg = value(cfg, base);
+    } else if (value === true) {
+      if (name in cfg === false && name in base) {
+        cfg[name] = base[name];
+      }
     }
   }
-  // paramsはマージ
-  cfg.params = { ...base.params, ...cfg.params };
 
   return cfg;
 }

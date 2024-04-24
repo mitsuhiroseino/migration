@@ -1,5 +1,5 @@
 import { DEFAULT_CONFIGS } from '../../constants';
-import { MigrationConfig } from '../types';
+import { MigrationConfig } from '../../types';
 
 /**
  * 設定のデフォルト値を設定する

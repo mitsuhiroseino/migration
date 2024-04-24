@@ -1,8 +1,8 @@
 import isString from 'lodash/isString';
-import operate, { Operation, OperationConfig } from '../operate';
-import { Content, IterationParams } from '../types';
+import operate from '../operate';
+import { Content, IterationParams, OperateContentConfig } from '../types';
 import catchError from '../utils/catchError';
-import { MigrationJobConfig } from './types';
+import format from '../utils/format';
 
 /**
  * コンテンツの変換処理を行う
@@ -11,13 +11,12 @@ import { MigrationJobConfig } from './types';
  * @param params
  * @returns
  */
-export default async function operateContent<OC extends OperationConfig>(
+export default async function operateContent(
   content: Content,
-  config: Omit<MigrationJobConfig<OC>, 'operation'>,
+  config: OperateContentConfig,
   params: IterationParams,
-  operations: Operation<any>[],
 ): Promise<Content> {
-  const { initialize, formatter: format, preFormatting, postFormatting, formatterOptions, finalize } = config;
+  const { initialize, preFormatting, postFormatting, finalize, operations } = config;
   const { _inputItem } = params;
 
   // 任意の前処理
@@ -33,8 +32,7 @@ export default async function operateContent<OC extends OperationConfig>(
   if (preFormatting && isString(content)) {
     // 処理開始前のフォーマットあり
     try {
-      const formatConfig = preFormatting as typeof formatterOptions;
-      content = await format(content, { ...formatConfig, filepath: _inputItem as string });
+      content = await format(content, { filepath: _inputItem as string, ...preFormatting });
     } catch (e) {
       catchError(e, 'Error in pre-formatting', config);
       return content;
@@ -57,10 +55,9 @@ export default async function operateContent<OC extends OperationConfig>(
   if (postFormatting && isString(migrated.content)) {
     // 処理終了後のフォーマットあり
     try {
-      const formatConfig = postFormatting as typeof formatterOptions;
       migrated.content = await format(migrated.content, {
-        ...formatConfig,
         filepath: _inputItem as string,
+        ...postFormatting,
       });
     } catch (e) {
       catchError(e, 'Error in post-formatting', config);

@@ -1,14 +1,12 @@
 import isString from 'lodash/isString';
 import { IO_TYPE, InputConfig, OutputConfig } from '../io';
-import IoHandler from '../io/IoHandler';
-import { Operation } from '../operate';
-import { IterationParams } from '../types';
+import IoHandler, { IoHandlerConfig } from '../io/IoHandler';
+import { IterationParams, MigrationIterationConfig, MigrationIterationResult } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
 import inheritConfig from '../utils/inheritConfig';
 import propagateError from '../utils/propagateError';
 import operateContent from './operateContent';
-import { MigrationIterationResult, MigrationJobConfig } from './types';
 
 const getIoConfig = (config, pathParam) =>
   isString(config) ? { type: IO_TYPE.FS, [pathParam]: config } : config || { type: IO_TYPE.NOOP };
@@ -19,22 +17,38 @@ const getIoConfig = (config, pathParam) =>
  * @param params 繰り返し毎のパラメーター
  */
 export default async function executeIteration(
-  config: MigrationJobConfig,
+  config: MigrationIterationConfig,
   params: IterationParams,
-  operations: Operation<any>[],
 ): Promise<MigrationIterationResult | null> {
-  const { input, output, copy, onIterationStart, onIterationEnd, onItemStart, onItemEnd, ...rest } = config;
+  const {
+    iterationId,
+    input,
+    output,
+    copy,
+    onIterationStart,
+    onIterationEnd,
+    onItemStart,
+    onItemEnd,
+    disabled,
+    ...rest
+  } = config;
+  if (disabled) {
+    return {
+      results: [],
+    };
+  }
 
   applyIf(onIterationStart, [config, params]);
 
   // 入力設定取得
   const inputCfg = getIoConfig(input, 'inputPath');
-  const inputConfig: InputConfig = inheritConfig(inputCfg, config);
+  const inputConfig: InputConfig = inheritConfig(inputCfg, rest);
   // 出力設定取得
   const outputCfg = getIoConfig(output, 'outputPath');
-  const outputConfig: OutputConfig = inheritConfig(outputCfg, config);
+  const outputConfig: OutputConfig = inheritConfig(outputCfg, rest);
   // 入出力ハンドラー
-  const ioHandler = new IoHandler(inputConfig, outputConfig, { copy });
+  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ copy }, rest);
+  const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
   // 処理結果
   const iterationResult: MigrationIterationResult = { results: [] };
 
@@ -50,7 +64,7 @@ export default async function executeIteration(
         applyIf(onItemStart, [config, newParams]);
 
         // コンテンツを処理
-        const content = await operateContent(inputItem.content, rest, newParams, operations);
+        const content = await operateContent(inputItem.content, rest, newParams);
 
         // 出力処理
         const outputItem = await ioHandler.write(content, newParams);

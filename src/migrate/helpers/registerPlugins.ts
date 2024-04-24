@@ -1,8 +1,8 @@
 import InputFactory from '../../io/inputs/InputFactory';
 import OutputFactory from '../../io/outputs/OutputFactory';
 import OperationFactory from '../../operate/OperationFactory';
+import { Plugin } from '../../types';
 import asArray from '../../utils/asArray';
-import { Plugin } from '../types';
 
 export default function registerPlugins(plugins: Plugin | Plugin[]) {
   // プラグインの有効化

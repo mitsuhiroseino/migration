@@ -1,4 +1,4 @@
-import { Operation, OperationConfig, OperationParams, OperationResult } from './types';
+import { Operation, OperationParams, OperationResult } from './types';
 
 /**
  * 処理対象内の文字列をコンフィグに従って置換する
@@ -7,11 +7,11 @@ import { Operation, OperationConfig, OperationParams, OperationResult } from './
  * @param params 置換前・後の文字列に埋め込むパラメーター
  * @returns
  */
-export default async function operate<C, OC extends OperationConfig>(
+export default async function operate<C>(
   content: C,
   operations: Operation<any>[],
   params: OperationParams,
-): Promise<OperationResult<C, OC>> {
+): Promise<OperationResult<C>> {
   // 処理対象の操作を行う
   const results: string[] = [];
   let currentContent = content;
