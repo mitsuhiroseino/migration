@@ -2,6 +2,7 @@ import isString from 'lodash/isString';
 import operate from '../operate';
 import { Content, IterationParams, OperateContentConfig } from '../types';
 import catchError from '../utils/catchError';
+import finishFormattingOptions from '../utils/finishFormattingOptions';
 import format from '../utils/format';
 
 /**
@@ -16,7 +17,7 @@ export default async function operateContent(
   config: OperateContentConfig,
   params: IterationParams,
 ): Promise<Content> {
-  const { initialize, preFormatting, postFormatting, finalize, operations } = config;
+  const { initialize, preFormatting, postFormatting, formatterOptions, finalize, operations } = config;
   const { _inputItem } = params;
 
   // 任意の前処理
@@ -31,8 +32,9 @@ export default async function operateContent(
 
   if (preFormatting && isString(content)) {
     // 処理開始前のフォーマットあり
+    const preFormattingOptions = finishFormattingOptions(preFormatting, formatterOptions, params);
     try {
-      content = await format(content, { filepath: _inputItem as string, ...preFormatting });
+      content = await format(content, { filepath: _inputItem as string, ...preFormattingOptions });
     } catch (e) {
       catchError(e, 'Error in pre-formatting', config);
       return content;
@@ -54,10 +56,11 @@ export default async function operateContent(
 
   if (postFormatting && isString(migrated.content)) {
     // 処理終了後のフォーマットあり
+    const postFormattingOptions = finishFormattingOptions(postFormatting, formatterOptions, params);
     try {
       migrated.content = await format(migrated.content, {
         filepath: _inputItem as string,
-        ...postFormatting,
+        ...postFormattingOptions,
       });
     } catch (e) {
       catchError(e, 'Error in post-formatting', config);

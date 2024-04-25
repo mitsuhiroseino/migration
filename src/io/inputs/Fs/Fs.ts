@@ -4,6 +4,7 @@ import { FsInputResultBase } from 'src/io/types';
 import { CONTENT_TYPE, ITEM_TYPE } from '../../../constants';
 import { Content, ContentType, IterationParams } from '../../../types';
 import finishDynamicValue from '../../../utils/finishDynamicValue';
+import fsStat from '../../../utils/fsStat';
 import getEncoding from '../../../utils/getEncoding';
 import isMatch from '../../../utils/isMatch';
 import readAnyFile from '../../../utils/readAnyFile';
@@ -54,14 +55,16 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
    */
   private async *_generateFs(callback: CallbackFn, params: IterationParams): InputGenerator<Content, FsInputResult> {
     const config = this._config;
-    const { inputPath } = config;
+    const { inputPath, skipIfNoInput } = config;
     const rootPath: string = path.normalize(finishDynamicValue(inputPath, params, config));
     const availablePath = await fs.exists(rootPath);
     if (availablePath) {
       // ファイルの読み込み
       yield* callback.call(this, rootPath, path.basename(rootPath), params);
     } else {
-      throwError(`"${rootPath}" does not exist.`, config);
+      if (!skipIfNoInput) {
+        throwError(`"${rootPath}" does not exist.`, config);
+      }
     }
   }
 
@@ -82,10 +85,10 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
     depth: number = 0,
   ): InputGenerator<Content, FsInputResult> {
     const config = this._config;
-    const isTarget = isMatch(inputPath, config.filter, params);
-    const itemType = config.itemType;
+    const { filter, itemType, ignoreSymlinks } = config;
+    const isTarget = isMatch(inputPath, filter, params);
 
-    const stat = await fs.stat(inputPath);
+    const stat = await fsStat(inputPath, { ignoreSymlinks });
     if (stat.isDirectory()) {
       // ディレクトリの場合
       if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
@@ -153,10 +156,10 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
     depth: number = 0,
   ): InputGenerator<Content, FsInputResult> {
     const config = this._config;
-    const isTarget = isMatch(inputPath, config.filter, params);
-    const itemType = config.itemType;
+    const { filter, itemType, ignoreSymlinks } = config;
+    const isTarget = isMatch(inputPath, filter, params);
 
-    const stat = await fs.stat(inputPath);
+    const stat = await fsStat(inputPath, { ignoreSymlinks });
     if (stat.isDirectory()) {
       if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
         yield {

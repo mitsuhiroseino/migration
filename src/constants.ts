@@ -95,6 +95,7 @@ export const INHERITED_CONFIGS: Required<{
   copy: true,
   input: true,
   inputEncoding: true,
+  skipIfNoInput: true,
   output: true,
   outputEncoding: true,
   forceOutput: true,

@@ -1,6 +1,6 @@
 {
   "name": "@visue/migration",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "license": "MIT",
   "main": "build/index.cjs",
   "module": "build/index.mjs",
@@ -44,7 +44,8 @@
     "lodash": "^4.17.21",
     "prettier": "^3.2.4",
     "prettier-plugin-organize-imports": "^3.2.4",
-    "sharp": "^0.33.2"
+    "sharp": "^0.33.2",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
@@ -65,6 +66,7 @@
     "@types/lodash": "^4.14.195",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.11.26",
+    "@types/uuid": "^9",
     "@types/yargs": "^17.0.24",
     "babel-jest": "^29.5.0",
     "esbuild": "^0.18.11",

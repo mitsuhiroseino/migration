@@ -28,7 +28,7 @@ export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase
   MigrationJobSpecificConfig<OC> &
   MigrationIterationSpecificConfig &
   MigrationItemSpecificConfig &
-  OperateContentConfig & {
+  Omit<OperateContentConfig, 'preFormatting' | 'formatterOptions'> & {
     /**
      * ID
      */
@@ -48,15 +48,6 @@ export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase
      * タスクを並列で実行する
      */
     parallelTasks?: boolean;
-    /**
-     * 移行処理開始前のフォーマット有無
-     */
-    preFormatting?: boolean | FormatOptions;
-
-    /**
-     * 移行処理終了後のフォーマット有無
-     */
-    postFormatting?: boolean | FormatOptions;
   };
 
 /**
@@ -245,12 +236,12 @@ export type OperateContentSpecificConfig = {
   /**
    * 移行処理開始前のフォーマット有無
    */
-  preFormatting?: FormatOptions;
+  preFormatting?: boolean | FormatOptions | ((params: IterationParams) => FormatOptions);
 
   /**
    * 移行処理終了後のフォーマット有無
    */
-  postFormatting?: FormatOptions;
+  postFormatting?: boolean | FormatOptions | ((params: IterationParams) => FormatOptions);
 
   /**
    * フォーマット時の設定
@@ -380,6 +371,11 @@ export type CommonInputConfig = {
    * 未指定の場合は読み込み元の内容から判断する
    */
   inputEncoding?: string;
+
+  /**
+   * 入力が無い場合は処理をスキップする
+   */
+  skipIfNoInput?: boolean;
 };
 
 /**

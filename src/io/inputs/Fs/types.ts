@@ -29,6 +29,11 @@ export type FsInputConfig = InputConfigBase<typeof IO_TYPE.FS> &
      * handlebarsの拡張子`.hbs`を削除したい場合などに利用可能
      */
     removeExtensions?: string[];
+
+    /**
+     * シンボリックリンクは無視する
+     */
+    ignoreSymlinks?: boolean;
   };
 
 /**

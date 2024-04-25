@@ -2,6 +2,7 @@ import { CONTENT_TYPE } from '../constants';
 import { Content, ContentType, Optional } from '../types';
 import getContentType from '../utils/getContentType';
 import isMatch from '../utils/isMatch';
+import uuid from '../utils/uuid';
 import { Operation, OperationParams, TypedOperationConfig } from './types';
 
 export default abstract class OperationBase<
@@ -17,7 +18,7 @@ export default abstract class OperationBase<
 
   constructor(config: Optional<OC, 'type'>) {
     this._config = config;
-    this._operationId = config.operationId || String(Date.now());
+    this._operationId = config.operationId || uuid();
   }
 
   getOperationId(): string {
@@ -25,9 +26,10 @@ export default abstract class OperationBase<
   }
 
   isOperable(content: C, params: OperationParams): boolean {
-    if (this._config.disabled) {
+    const { disabled, filter } = this._config;
+    if (disabled) {
       return false;
-    } else if (content == null || !isMatch(content, this._config.filter, params)) {
+    } else if (content == null || !isMatch(content, filter, params)) {
       return false;
     }
     const contentType = getContentType(content);

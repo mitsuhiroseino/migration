@@ -11,11 +11,6 @@ export default function assignDefaultConfig(config: MigrationConfig): MigrationC
       config[name] = DEFAULT_CONFIGS[name];
     }
   }
-  if (config.preFormatting === true) {
-    config.preFormatting = config.formatterOptions;
-  }
-  if (config.postFormatting === true) {
-    config.postFormatting = config.formatterOptions;
-  }
+
   return config;
 }
