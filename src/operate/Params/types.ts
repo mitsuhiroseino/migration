@@ -6,7 +6,7 @@ import { OperationConfigBase, OperationParams, ParentOperationConfig } from '../
  * パラメーターの更新
  */
 export type ParamsConfig<C extends Content = Content> = OperationConfigBase<typeof OPERATION_TYPE.PARAMS> &
-  ParentOperationConfig<C> & {
+  ParentOperationConfig & {
     /**
      * パラメーターの差分作成関数
      * @param content コンテンツ

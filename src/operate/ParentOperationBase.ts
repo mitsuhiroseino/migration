@@ -9,8 +9,7 @@ import { Operation, OperationParams, ParentOperationConfig, TypedOperationConfig
  */
 export default abstract class ParentOperationBase<
   C extends Content = Content,
-  OC extends TypedOperationConfig & ParentOperationConfig<Content> = TypedOperationConfig &
-    ParentOperationConfig<Content>,
+  OC extends TypedOperationConfig & ParentOperationConfig = TypedOperationConfig & ParentOperationConfig,
 > extends OperationBase<C, OC> {
   protected _operations: Operation<any>[];
 

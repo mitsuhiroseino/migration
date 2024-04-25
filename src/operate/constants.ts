@@ -43,6 +43,11 @@ export const OPERATION_TYPE = {
   GM: 'gm',
 
   /**
+   * 条件に応じた操作の切り替え
+   */
+  IF: 'if',
+
+  /**
    * 画像の変換
    */
   IMAGE: 'image',
@@ -81,6 +86,11 @@ export const OPERATION_TYPE = {
    * BOMの削除
    */
   UNBOM: 'unbom',
+
+  /**
+   * 繰り返し
+   */
+  WHILE: 'while',
 
   /**
    * リソースをファイルに書き込む

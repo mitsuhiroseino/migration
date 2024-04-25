@@ -34,7 +34,7 @@ export type OperationConfigBase<T = OperationType | string> = CommonConfig &
 /**
  * 子要素を持つ操作のコンフィグ
  */
-export type ParentOperationConfig<C = Content> = {
+export type ParentOperationConfig = {
   /**
    * 子操作
    */
