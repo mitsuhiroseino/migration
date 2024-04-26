@@ -10,7 +10,6 @@ import { IfConfig } from './types';
 
 /**
  * 条件に応じて処理を切り替える操作
- * 設定のoperationsを関数で定義すれば、コンテンツの内容に応じて処理を変更することが可能
  */
 class If extends OperationBase<Content, IfConfig> {
   private _then: Operation[];
@@ -31,7 +30,7 @@ class If extends OperationBase<Content, IfConfig> {
       operations = this._else;
     }
     const result = await operate(content, operations, params);
-    return result.content;
+    return result;
   }
 }
 

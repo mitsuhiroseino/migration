@@ -92,7 +92,6 @@ export const INHERITED_CONFIGS: Required<{
     config.params = { ...baseConfig.params, ...config.params };
     return config;
   },
-  copy: true,
   input: true,
   inputEncoding: true,
   skipIfNoInput: true,

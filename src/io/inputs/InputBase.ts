@@ -27,6 +27,8 @@ abstract class InputBase<
 
   abstract copy(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
 
+  abstract remove(params: IterationParams): Promise<DiffParams>;
+
   complete(params: IterationParams): Promise<DiffParams> {
     return Promise.resolve({});
   }

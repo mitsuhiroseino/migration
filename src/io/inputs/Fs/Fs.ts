@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { FsInputResultBase } from 'src/io/types';
 import { CONTENT_TYPE, ITEM_TYPE } from '../../../constants';
-import { Content, ContentType, IterationParams } from '../../../types';
+import { Content, ContentType, DiffParams, IterationParams } from '../../../types';
 import finishDynamicValue from '../../../utils/finishDynamicValue';
 import fsStat from '../../../utils/fsStat';
 import getEncoding from '../../../utils/getEncoding';
@@ -45,6 +45,12 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
    */
   copy(params: IterationParams): AsyncIterable<InputReturnValue<any, FsInputResultBase>> {
     return this._generateFs(this._copyFs, params);
+  }
+
+  async remove(params: IterationParams): Promise<DiffParams> {
+    const _inputPath = params._inputPath as string;
+    await fs.remove(_inputPath);
+    return {};
   }
 
   /**
@@ -91,7 +97,10 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
     const stat = await fsStat(inputPath, { ignoreSymlinks });
     if (stat.isDirectory()) {
       // ディレクトリの場合
+      // 削除されることを考慮し、先に配下のディレクトリ、ファイルを再帰的に処理
+      yield* this._toNextDeps(this._readFs, inputPath, params, inputRootPath, depth);
       if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
+        // ディレクトリ自身を返す
         yield {
           result: {
             inputItem,
@@ -101,8 +110,6 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
           },
         };
       }
-      // 配下のディレクトリ、ファイルを再帰的に処理
-      yield* this._toNextDeps(this._readFs, inputPath, params, inputRootPath, depth);
     } else if (stat.isFile()) {
       // ファイルの場合
       if (isTarget && (!itemType || itemType === ITEM_TYPE.LEAF)) {
@@ -161,7 +168,11 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
 
     const stat = await fsStat(inputPath, { ignoreSymlinks });
     if (stat.isDirectory()) {
+      // ディレクトリの場合
+      // 削除されることを考慮し、先に配下のディレクトリ、ファイルを再帰的に処理
+      yield* this._toNextDeps(this._copyFs, inputPath, params, inputRootPath, depth);
       if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
+        // ディレクトリ自身を返す
         yield {
           result: {
             inputItem,
@@ -171,8 +182,6 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
           },
         };
       }
-      // 配下のディレクトリ、ファイルを再帰的に処理
-      yield* this._toNextDeps(this._copyFs, inputPath, params, inputRootPath, depth);
     } else if (stat.isFile()) {
       // ファイルの場合
       if (isTarget && (!itemType || itemType === ITEM_TYPE.LEAF)) {

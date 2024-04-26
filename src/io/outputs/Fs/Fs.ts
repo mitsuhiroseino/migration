@@ -1,8 +1,10 @@
 import fs from 'fs-extra';
+import isString from 'lodash/isString';
 import path from 'path';
 import { ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../../constants';
 import { Content } from '../../../types';
 import finishDynamicValue from '../../../utils/finishDynamicValue';
+import replacePlaceholders from '../../../utils/replacePlaceholders';
 import replaceWithConfigs from '../../../utils/replaceWithConfigs';
 import writeAnyFile from '../../../utils/writeAnyFile';
 import { IO_TYPE } from '../../constants';
@@ -30,7 +32,9 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     super(config);
     const { itemName } = config;
     this._getItemName = itemName
-      ? (outputItem, params) => replaceWithConfigs(outputItem, itemName, params)
+      ? isString(itemName)
+        ? (outputItem, params) => replacePlaceholders(itemName, params, config)
+        : (outputItem, params) => replaceWithConfigs(outputItem, itemName, params)
       : (outputItem) => outputItem;
   }
 

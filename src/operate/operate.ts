@@ -1,4 +1,4 @@
-import { Operation, OperationParams, OperationResult } from './types';
+import { Operation, OperationParams } from './types';
 
 /**
  * 処理対象内の文字列をコンフィグに従って置換する
@@ -11,20 +11,15 @@ export default async function operate<C>(
   content: C,
   operations: Operation<any>[],
   params: OperationParams,
-): Promise<OperationResult<C>> {
+): Promise<C> {
   // 処理対象の操作を行う
-  const results: string[] = [];
   let currentContent = content;
   for (const operation of operations) {
     // 操作
     if (operation && operation.isOperable(currentContent, params)) {
       // オペレーションを直列で実行
-      const operatedContent = await operation.operate(currentContent, params);
-      if (currentContent !== operatedContent) {
-        results.push(operation.getOperationId());
-        currentContent = operatedContent;
-      }
+      currentContent = await operation.operate(currentContent, params);
     }
   }
-  return { content: currentContent, results };
+  return currentContent;
 }

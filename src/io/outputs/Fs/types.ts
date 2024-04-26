@@ -22,7 +22,8 @@ export type FsOutputConfig = OutputConfigBase<typeof IO_TYPE.FS> &
       | ReplaceWithConfigsConfig<IterationParams>
       | ReplaceWithConfigsConfig<IterationParams>[]
       | Replacer<IterationParams>
-      | Replacer<IterationParams>[];
+      | Replacer<IterationParams>[]
+      | string;
   };
 
 export type FsAssignedParams = AssignedParams<Partial<FsInputResultBase>> & IterationParams & {};

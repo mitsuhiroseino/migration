@@ -56,11 +56,6 @@ export type OperationParams = {
   [key: string | number]: any;
 };
 
-/**
- * 処理の結果
- */
-export type OperationResult<C = Content> = { content: C; results: string[] };
-
 export type TypedOperationConfig = OperationConfigBase<OperationConfigBase['type'] | string>;
 
 /**

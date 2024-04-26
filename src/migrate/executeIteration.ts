@@ -25,6 +25,7 @@ export default async function executeIteration(
     input,
     output,
     copy,
+    remove,
     onIterationStart,
     onIterationEnd,
     onItemStart,
@@ -47,7 +48,7 @@ export default async function executeIteration(
   const outputCfg = getIoConfig(output, 'outputPath');
   const outputConfig: OutputConfig = inheritConfig(outputCfg, rest);
   // 入出力ハンドラー
-  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ copy }, rest);
+  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ copy, remove }, rest);
   const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
   // 処理結果
   const iterationResult: MigrationIterationResult = { results: [] };
@@ -70,9 +71,17 @@ export default async function executeIteration(
         const outputItem = await ioHandler.write(content, newParams);
         newParams = assignParams(newParams, outputItem.result);
 
+        // 入力を削除
+        let removeItem;
+        if (remove) {
+          removeItem = await ioHandler.remove(newParams);
+          newParams = assignParams(newParams, removeItem);
+        }
+
         // 要素の処理結果
-        const result = { ...inputItem.result, ...outputItem.result, status: outputItem.status };
+        const result = { ...inputItem.result, ...outputItem.result, ...removeItem, status: outputItem.status };
         iterationResult.results.push(result);
+
         applyIf(onItemEnd, [result, config, newParams]);
       } catch (error) {
         await ioHandler.error(newParams);

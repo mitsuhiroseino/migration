@@ -1,6 +1,6 @@
 import { CONTENT_TYPE, ITEM_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from './constants';
 import { Input, InputConfig, InputResultBase, Output, OutputConfig, OutputResultBase } from './io/types';
-import { Operation, OperationConfigBase, OperationResult } from './operate/types';
+import { Operation, OperationConfigBase } from './operate/types';
 import { FormatOptions } from './utils/format';
 import { Condition } from './utils/isMatch';
 import { DynamicPattern, ReplaceOptions } from './utils/replace';
@@ -76,7 +76,8 @@ export type MigrationTaskConfig<OC extends OperationConfigBase = OperationConfig
 export type MigrationJobConfig<OC extends OperationConfigBase = OperationConfigBase> = MigrationJobSpecificConfig<OC> &
   MigrationIterationSpecificConfig &
   MigrationItemSpecificConfig &
-  OperateContentConfig<OC> & {
+  OperateContentConfig<OC> &
+  CommonIoConfig & {
     /**
      *  ジョブID
      */
@@ -88,7 +89,8 @@ export type MigrationJobConfig<OC extends OperationConfigBase = OperationConfigB
  */
 export type MigrationIterationConfig = MigrationIterationSpecificConfig &
   MigrationItemSpecificConfig &
-  OperateContentConfig & {
+  OperateContentConfig &
+  CommonIoConfig & {
     /**
      * イテレーションのID
      * ジョブID+連番
@@ -120,15 +122,9 @@ export type OperateContentConfig<OP = Operation> = CommonConfig &
      * @param content 編集処理後のコンテンツ
      * @param config 当コンフィグ
      * @param params 繰り返し処理毎のパラメーター
-     * @param result 処理結果
      * @returns 最終的なコンテンツ
      */
-    finalize?: <C = Content>(
-      content: C,
-      config: OperateContentConfig,
-      params: IterationParams,
-      results: OperationResult<C>[],
-    ) => Promise<C>;
+    finalize?: <C = Content>(content: C, config: OperateContentConfig, params: IterationParams) => Promise<C>;
   };
 
 /**
@@ -330,7 +326,6 @@ export type MigrationItemResult = InputResultBase &
  * MigrationConfig以下で継承するコンフィグ
  */
 export type CommonConfig = CommonReplacementConfig &
-  CommonIoConfig &
   CommonInputConfig &
   CommonOutputConfig &
   CommonDevelopmentConfig &
@@ -354,6 +349,11 @@ export type CommonIoConfig = {
    * コピー
    */
   copy?: boolean;
+
+  /**
+   * 削除
+   */
+  remove?: boolean;
 };
 
 /**

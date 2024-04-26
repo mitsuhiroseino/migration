@@ -1,4 +1,4 @@
-import { Content, IterationParams } from '../../../types';
+import { Content, DiffParams, IterationParams } from '../../../types';
 import toAsyncIterable from '../../../utils/toAsyncIterable';
 import { IO_TYPE } from '../../constants';
 import { InputReturnValue } from '../../types';
@@ -24,6 +24,9 @@ class Noop extends InputBase<Content, NoopInputConfig, NoopInputResult> {
         result: {},
       },
     ]);
+  }
+  async remove(params: IterationParams): Promise<DiffParams> {
+    return {};
   }
 }
 InputFactory.register(IO_TYPE.NOOP, Noop);

@@ -15,10 +15,10 @@ export type IfConfig = OperationConfigBase<typeof OPERATION_TYPE.IF> & {
   /**
    * 条件に合致したときの処理
    */
-  then: (OperationConfigBase | OperationBase)[];
+  then?: (OperationConfigBase | OperationBase)[];
 
   /**
    * 条件に合致しなかったときの処理
    */
-  else: (OperationConfigBase | OperationBase)[];
+  else?: (OperationConfigBase | OperationBase)[];
 };

@@ -1,6 +1,6 @@
 {
   "name": "@visue/migration",
-  "version": "0.4.7",
+  "version": "0.4.9",
   "license": "MIT",
   "main": "build/index.cjs",
   "module": "build/index.mjs",
@@ -45,6 +45,7 @@
     "prettier": "^3.2.4",
     "prettier-plugin-organize-imports": "^3.2.4",
     "sharp": "^0.33.2",
+    "tslib": "^2.6.2",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
@@ -77,7 +78,6 @@
     "rollup-plugin-postcss": "^4.0.2",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "tslib": "^2.6.2",
     "typescript": "^5.3.3",
     "yargs": "^17.7.2"
   }

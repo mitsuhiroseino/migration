@@ -41,42 +41,39 @@ export default async function operateContent(
     }
   }
 
-  let migrated;
   if (operations) {
     // 操作
     try {
-      migrated = await operate(content, operations, params);
+      content = await operate(content, operations, params);
     } catch (e) {
       catchError(e, 'Error in operation', config);
       return content;
     }
-  } else {
-    migrated = { content, results: [] };
   }
 
-  if (postFormatting && isString(migrated.content)) {
+  if (postFormatting && isString(content)) {
     // 処理終了後のフォーマットあり
     const postFormattingOptions = finishFormattingOptions(postFormatting, formatterOptions, params);
     try {
-      migrated.content = await format(migrated.content, {
+      content = await format(content, {
         filepath: _inputItem as string,
         ...postFormattingOptions,
       });
     } catch (e) {
       catchError(e, 'Error in post-formatting', config);
-      return migrated.content;
+      return content;
     }
   }
 
   // 任意の後処理
   if (finalize) {
     try {
-      migrated.content = await finalize(migrated.content, { ...config }, { ...params }, migrated.results);
+      content = await finalize(content, { ...config }, { ...params });
     } catch (e) {
       catchError(e, 'Error in finalizing', config);
-      return migrated.content;
+      return content;
     }
   }
 
-  return migrated.content;
+  return content;
 }

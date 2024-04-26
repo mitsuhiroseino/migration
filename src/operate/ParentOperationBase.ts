@@ -26,6 +26,6 @@ export default abstract class ParentOperationBase<
    */
   async operate(content: C, params: OperationParams): Promise<C | Content> {
     const result = await operate(content, this._operations, params);
-    return result.content;
+    return result;
   }
 }

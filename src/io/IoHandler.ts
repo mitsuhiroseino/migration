@@ -86,6 +86,17 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
   }
 
   /**
+   * 削除処理
+   * @param params
+   * @returns
+   */
+  remove(params: IterationParams): Promise<DiffParams> {
+    if (this._config.remove) {
+      return this._input.remove(params);
+    }
+  }
+
+  /**
    * 完了処理
    * @param params
    */

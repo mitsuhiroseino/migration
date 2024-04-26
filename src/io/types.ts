@@ -134,6 +134,11 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
    * コンテンツのコピー
    */
   copy(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
+
+  /**
+   * コンテンツの削除
+   */
+  remove(params: IterationParams): Promise<DiffParams>;
 }
 
 /**
