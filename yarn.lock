@@ -3208,6 +3208,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     tslib: "npm:^2.6.2"
     typescript: "npm:^5.3.3"
+    undici: "npm:^6.14.1"
     uuid: "npm:^9.0.1"
     yargs: "npm:^17.7.2"
   languageName: unknown
@@ -10775,6 +10776,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 10c0/bb673d7876c2d411b6eb6c560e0c571eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
+  languageName: node
+  linkType: hard
+
+"undici@npm:^6.14.1":
+  version: 6.14.1
+  resolution: "undici@npm:6.14.1"
+  checksum: 10c0/1d0e2607c29d975d8d6b1ef81feb3ef5b8e262df95d66b17a5df7e1bbb96f84e5d85e2737b5a23c811254fe5e537ebbfb45ce3ebe6f2b9100f5ec911d08e3ec5
   languageName: node
   linkType: hard
 

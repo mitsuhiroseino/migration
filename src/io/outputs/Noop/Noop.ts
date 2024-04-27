@@ -1,8 +1,7 @@
-import { OutputResultBase } from 'src/io/types';
 import { MIGRATION_ITEM_STATUS } from '../../../constants';
 import { Content, IterationParams } from '../../../types';
 import { IO_TYPE } from '../../constants';
-import { OutputReturnValue } from '../../types';
+import { OutputResultBase, OutputReturnValue } from '../../types';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
 import { NoopOutputConfig, NoopOutputResult } from './types';

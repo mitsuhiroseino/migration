@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import isString from 'lodash/isString';
 import path from 'path';
 import { ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../../constants';
-import { Content } from '../../../types';
+import { Content, MigrationItemStatus } from '../../../types';
 import finishDynamicValue from '../../../utils/finishDynamicValue';
 import replacePlaceholders from '../../../utils/replacePlaceholders';
 import replaceWithConfigs from '../../../utils/replaceWithConfigs';
@@ -81,16 +81,10 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
    */
   async copy(params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
     const { outputItemPath, outputRootPath, outputParentPath, outputItem } = this._getOutputInfo(params);
-    const { _inputPath: _inputItemPath, _inputItemType } = params;
+    const { _inputPath: _inputItemPath } = params;
 
-    if (_inputItemType === ITEM_TYPE.NODE) {
-      // ディレクトリの場合
-      await fs.ensureDir(outputItemPath);
-    } else {
-      // ファイルの場合
-      await fs.ensureDir(outputParentPath);
-      await fs.copyFile(_inputItemPath, outputItemPath);
-    }
+    await fs.ensureDir(outputParentPath);
+    await fs.copy(_inputItemPath, outputItemPath, {});
 
     return {
       status: MIGRATION_ITEM_STATUS.COPIED,
@@ -106,19 +100,13 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
    */
   async move(params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
     const { outputItemPath, outputRootPath, outputParentPath, outputItem } = this._getOutputInfo(params);
-    const { _inputPath: _inputItemPath, _inputItemType } = params;
+    const { _inputPath: _inputItemPath } = params;
 
-    if (_inputItemType === ITEM_TYPE.NODE) {
-      // ディレクトリの場合
-      await fs.ensureDir(outputItemPath);
-    } else {
-      // ファイルの場合
-      await fs.ensureDir(outputParentPath);
-      await fs.move(_inputItemPath, outputItemPath);
-    }
+    await fs.ensureDir(outputParentPath);
+    await fs.move(_inputItemPath, outputItemPath, {});
 
     return {
-      status: MIGRATION_ITEM_STATUS.COPIED,
+      status: MIGRATION_ITEM_STATUS.MOVED,
       result: { outputItem, outputPath: outputItemPath, outputRootPath },
     };
   }
@@ -133,7 +121,6 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     const config = this._config;
     const { outputPath } = config;
     const { _inputPath: _inputItemPath, _inputRootPath, _inputItem } = params;
-    const isRoot = _inputRootPath === _inputItemPath;
 
     // 出力先のルートパスは設定から取得
     const outputRootPath: string = path.normalize(finishDynamicValue(outputPath, params, config));
@@ -141,13 +128,17 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     let outputParentPath: string;
     // 出力するアイテムの名称
     let outputItem: string;
-    if (isRoot) {
-      // ルートに対する処理
+    if (_inputRootPath == null && _inputItemPath == null) {
+      // 入力はパスを持たない
+      outputParentPath = outputRootPath;
+      outputItem = _inputItem;
+    } else if (_inputRootPath == null || _inputRootPath === _inputItemPath) {
+      // 入力はパスを持つ & (ルートが無い or ルートに対する処理)
       // 出力の親ディレクトリパス＝出力のルートの親ディレクトリのパス
       outputParentPath = path.dirname(outputRootPath);
       outputItem = path.basename(outputRootPath);
     } else {
-      // 配下に対する処理
+      // 入力はパスを持つ & 配下に対する処理
       // 出力の親ディレクトリパス＝出力のルートのパス
       const inputParentRelativePath = path.relative(_inputRootPath, path.dirname(_inputItemPath));
       outputParentPath = path.join(outputRootPath, inputParentRelativePath);

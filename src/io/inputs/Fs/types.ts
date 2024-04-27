@@ -1,7 +1,7 @@
 import { CommonFilterableConfig, ItemType, VariableString } from '../../../types';
 import { ReadAnyFileOptions } from '../../../utils/readAnyFile';
 import { IO_TYPE } from '../../constants';
-import { FsInputResultBase, InputConfigBase } from '../../types';
+import { InputConfigBase, PathInputResultBase } from '../../types';
 
 export type FsInputConfig = InputConfigBase<typeof IO_TYPE.FS> &
   Omit<ReadAnyFileOptions, 'encoding'> &
@@ -39,4 +39,4 @@ export type FsInputConfig = InputConfigBase<typeof IO_TYPE.FS> &
 /**
  * ファイル入力時の処理結果
  */
-export type FsInputResult = FsInputResultBase;
+export type FsInputResult = PathInputResultBase;

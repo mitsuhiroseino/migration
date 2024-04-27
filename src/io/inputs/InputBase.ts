@@ -12,11 +12,8 @@ abstract class InputBase<
 {
   protected _config: IC;
 
-  protected _params: IterationParams;
-
-  constructor(config: IC, params: IterationParams) {
+  constructor(config: IC) {
     this._config = config;
-    this._params = params;
   }
 
   initialize(params: IterationParams): Promise<DiffParams> {

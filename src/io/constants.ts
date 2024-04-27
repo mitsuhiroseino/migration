@@ -8,6 +8,11 @@ export const IO_TYPE = {
   FS: 'fs',
 
   /**
+   * HTTP
+   */
+  HTTP: 'http',
+
+  /**
    * なにもしない
    */
   NOOP: 'noop',

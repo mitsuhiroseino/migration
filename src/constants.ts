@@ -169,6 +169,11 @@ export const MIGRATION_ITEM_STATUS = {
   SKIPPED: 'skipped',
 
   /**
+   * 移動
+   */
+  MOVED: 'moved',
+
+  /**
    * 処理対象なし
    */
   NONE: 'none',

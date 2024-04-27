@@ -85,9 +85,9 @@ export type InputResultBase = DiffParams & {
 };
 
 /**
- * ファイルシステムから入力した場合の処理結果
+ * パスでリソースの場所を表す入力した場合の処理結果
  */
-export type FsInputResultBase = InputResultBase & {
+export type PathInputResultBase = InputResultBase & {
   /**
    * 入力のパス
    */
@@ -186,9 +186,9 @@ export type OutputResultBase = DiffParams & {
 };
 
 /**
- * ファイルシステムへ出力した場合の処理結果
+ * パスでリソースの場所を表す出力をした場合の処理結果
  */
-export type FsOutputResultBase = OutputResultBase & {
+export type PathOutputResultBase = OutputResultBase & {
   /**
    * 出力のパス
    */

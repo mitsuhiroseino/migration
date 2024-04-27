@@ -1,3 +1,5 @@
+import isFunction from 'lodash/isFunction';
+
 class AsyncIterableImpl<T> implements AsyncIterable<T> {
   private _iterable: Iterable<T>;
 
@@ -12,11 +14,36 @@ class AsyncIterableImpl<T> implements AsyncIterable<T> {
   }
 }
 
+type Fn<T> = (...args: any[]) => Promise<T> | T;
+
+class AsyncFnIterable<T> implements AsyncIterable<T> {
+  private _fn: Fn<T>;
+  private _args: any[];
+
+  constructor(fn: Fn<T>, args: any[] = []) {
+    this._fn = fn;
+    this._args = args;
+  }
+
+  async *[Symbol.asyncIterator]() {
+    const result = this._fn(...this._args);
+    if (result instanceof Promise) {
+      yield await result;
+    } else {
+      yield result;
+    }
+  }
+}
+
 /**
- * 配列などを非同期のイテレーターを返すインスタンスに変換する
+ * 配列や非同期の関数などを非同期のイテレーターを返すインスタンスに変換する
  * @param iterable
  * @returns
  */
-export default function toAsyncIterable<T>(iterable: Iterable<T>) {
-  return new AsyncIterableImpl(iterable);
+export default function toAsyncIterable<T>(target: Iterable<T> | Fn<T>, args?: any[]) {
+  if (isFunction(target)) {
+    return new AsyncFnIterable(target, args);
+  } else {
+    return new AsyncIterableImpl(target);
+  }
 }

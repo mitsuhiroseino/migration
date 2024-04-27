@@ -2,7 +2,7 @@ import { AssignedParams, IterationParams, VariableString } from '../../../types'
 import { ReplaceWithConfigsConfig, Replacer } from '../../../utils/replaceWithConfigs';
 import { WriteAnyFileOptions } from '../../../utils/writeAnyFile';
 import { IO_TYPE } from '../../constants';
-import { FsInputResultBase, FsOutputResultBase, OutputConfigBase } from '../../types';
+import { OutputConfigBase, PathInputResultBase, PathOutputResultBase } from '../../types';
 
 /**
  * ファイルへの出力
@@ -26,6 +26,6 @@ export type FsOutputConfig = OutputConfigBase<typeof IO_TYPE.FS> &
       | string;
   };
 
-export type FsAssignedParams = AssignedParams<Partial<FsInputResultBase>> & IterationParams & {};
+export type FsAssignedParams = AssignedParams<Partial<PathInputResultBase>> & IterationParams & {};
 
-export type FsOutputResult = FsOutputResultBase;
+export type FsOutputResult = PathOutputResultBase;
