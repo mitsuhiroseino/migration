@@ -25,7 +25,16 @@ class Noop extends InputBase<Content, NoopInputConfig, NoopInputResult> {
       },
     ]);
   }
-  async remove(params: IterationParams): Promise<DiffParams> {
+
+  move(params: IterationParams): AsyncIterable<InputReturnValue<Content, NoopInputResult>> {
+    return toAsyncIterable([
+      {
+        result: {},
+      },
+    ]);
+  }
+
+  async delete(params: IterationParams): Promise<DiffParams> {
     return {};
   }
 }

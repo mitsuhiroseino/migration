@@ -178,3 +178,24 @@ export const MIGRATION_ITEM_STATUS = {
    */
   PENDING: 'pending',
 } as const;
+
+/**
+ * 入出力対象そのものに対する操作
+ * ファイルシステム(FS)の場合は、ファイル・ディレクトリに対する操作
+ */
+export const MANIPULATION_TYPE = {
+  /**
+   * 複写
+   */
+  COPY: 'copy',
+
+  /**
+   * 移動
+   */
+  MOVE: 'move',
+
+  /**
+   * 削除
+   */
+  DELETE: 'delete',
+} as const;

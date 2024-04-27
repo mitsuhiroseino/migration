@@ -26,6 +26,13 @@ class Noop extends OutputBase<Content, NoopOutputConfig, NoopOutputResult> {
       status: MIGRATION_ITEM_STATUS.PROCESSED,
     };
   }
+
+  async move(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
+    return {
+      result: {},
+      status: MIGRATION_ITEM_STATUS.PROCESSED,
+    };
+  }
 }
 
 OutputFactory.register(IO_TYPE.NOOP, Noop);

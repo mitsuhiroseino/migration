@@ -1,15 +1,13 @@
-import isString from 'lodash/isString';
-import { IO_TYPE, InputConfig, OutputConfig } from '../io';
+import { MANIPULATION_TYPE } from '../constants';
+import { InputConfig, OutputConfig } from '../io';
 import IoHandler, { IoHandlerConfig } from '../io/IoHandler';
+import getIoConfig from '../io/helpers/getIoConfig';
 import { IterationParams, MigrationIterationConfig, MigrationIterationResult } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
 import inheritConfig from '../utils/inheritConfig';
 import propagateError from '../utils/propagateError';
 import operateContent from './operateContent';
-
-const getIoConfig = (config, pathParam) =>
-  isString(config) ? { type: IO_TYPE.FS, [pathParam]: config } : config || { type: IO_TYPE.NOOP };
 
 /**
  * 繰り返し処理1回分の処理を行う
@@ -24,8 +22,7 @@ export default async function executeIteration(
     iterationId,
     input,
     output,
-    copy,
-    remove,
+    manipulationType,
     onIterationStart,
     onIterationEnd,
     onItemStart,
@@ -48,7 +45,7 @@ export default async function executeIteration(
   const outputCfg = getIoConfig(output, 'outputPath');
   const outputConfig: OutputConfig = inheritConfig(outputCfg, rest);
   // 入出力ハンドラー
-  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ copy, remove }, rest);
+  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ manipulationType }, rest);
   const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
   // 処理結果
   const iterationResult: MigrationIterationResult = { results: [] };
@@ -72,14 +69,14 @@ export default async function executeIteration(
         newParams = assignParams(newParams, outputItem.result);
 
         // 入力を削除
-        let removeItem;
-        if (remove) {
-          removeItem = await ioHandler.remove(newParams);
-          newParams = assignParams(newParams, removeItem);
+        let deletedItem;
+        if (manipulationType === MANIPULATION_TYPE.DELETE) {
+          deletedItem = await ioHandler.delete(newParams);
+          newParams = assignParams(newParams, deletedItem);
         }
 
         // 要素の処理結果
-        const result = { ...inputItem.result, ...outputItem.result, ...removeItem, status: outputItem.status };
+        const result = { ...inputItem.result, ...outputItem.result, ...deletedItem, status: outputItem.status };
         iterationResult.results.push(result);
 
         applyIf(onItemEnd, [result, config, newParams]);

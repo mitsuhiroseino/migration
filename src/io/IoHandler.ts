@@ -1,3 +1,4 @@
+import { MANIPULATION_TYPE } from '../constants';
 import { CommonIoConfig, DiffParams, IterationParams } from '../types';
 import assignParams from '../utils/assignParams';
 import { InputFactory } from './inputs';
@@ -39,8 +40,13 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @param config 入出力設定
    */
   constructor(inputConfig: IC, outputConfig: OC, config: IoHandlerConfig) {
-    if (config.copy && inputConfig.type !== outputConfig.type) {
-      throw new Error('For copies, the IO type must be the same');
+    const { manipulationType } = config;
+    if (inputConfig.type !== outputConfig.type) {
+      if (manipulationType === MANIPULATION_TYPE.COPY) {
+        throw new Error('For copies, the IO type must be the same');
+      } else if (manipulationType === MANIPULATION_TYPE.MOVE) {
+        throw new Error('For moves, the IO type must be the same');
+      }
     }
 
     this._config = config;
@@ -65,8 +71,12 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @returns
    */
   read(params: IterationParams): AsyncIterable<InputReturnValue<any, any>> {
-    if (this._config.copy) {
+    const manipulationType = this._config.manipulationType;
+
+    if (manipulationType === MANIPULATION_TYPE.COPY) {
       return this._input.copy(params);
+    } else if (manipulationType === MANIPULATION_TYPE.MOVE) {
+      return this._input.move(params);
     } else {
       return this._input.read(params);
     }
@@ -78,8 +88,12 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @returns
    */
   write<C>(content: C, params: IterationParams): Promise<OutputReturnValue<IterationParams>> {
-    if (this._config.copy) {
+    const manipulationType = this._config.manipulationType;
+
+    if (manipulationType === MANIPULATION_TYPE.COPY) {
       return this._output.copy(params);
+    } else if (manipulationType === MANIPULATION_TYPE.MOVE) {
+      return this._output.move(params);
     } else {
       return this._output.write(content, params);
     }
@@ -90,9 +104,9 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @param params
    * @returns
    */
-  remove(params: IterationParams): Promise<DiffParams> {
-    if (this._config.remove) {
-      return this._input.remove(params);
+  delete(params: IterationParams): Promise<DiffParams> {
+    if (this._config.manipulationType === MANIPULATION_TYPE.DELETE) {
+      return this._input.delete(params);
     }
   }
 

@@ -1,6 +1,11 @@
-import { Content } from '../../types';
-import finishDynamicValue from '../../utils/finishDynamicValue';
-import readAnyFile from '../../utils/readAnyFile';
+import { Input, InputConfig } from '../../io';
+import getIoConfig from '../../io/helpers/getIoConfig';
+import { InputFactory } from '../../io/inputs';
+import { Content, DiffParams, VariableString } from '../../types';
+import asArray from '../../utils/asArray';
+import assignParams from '../../utils/assignParams';
+import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
+import inheritConfig from '../../utils/inheritConfig';
 import OperationFactory from '../OperationFactory';
 import ParentOperationBase from '../ParentOperationBase';
 import { OPERATION_TYPE } from '../constants';
@@ -10,27 +15,61 @@ import { ReadConfig } from './types';
 /**
  * ファイルを入力して内容をparamsに設定する操作
  */
-class Read extends ParentOperationBase<Content, ReadConfig<Content>> {
+class Read extends ParentOperationBase<Content, ReadConfig> {
+  /**
+   * 入力処理
+   */
+  private _input: Input<any, any>;
+
+  private _paramName: VariableString<OperationParams>;
+
+  private _paramNameOptions: FinishDynamicValueOptions;
+
+  constructor(config: ReadConfig) {
+    super(config);
+
+    const { type, input, paramName = '_resource', preserveParamName, ...rest } = config;
+
+    // 入力設定取得
+    const inputCfg = getIoConfig(input, 'inputPath');
+    const inputConfig: InputConfig = inheritConfig(inputCfg, rest);
+    this._input = InputFactory.create(inputConfig);
+
+    this._paramName = paramName;
+    this._paramNameOptions = { ...rest, preserveString: preserveParamName };
+  }
+
   async operate(content: Content, params: OperationParams): Promise<Content> {
-    const { type, inputPath, preserveInputPath, paramName = '_resource', preserveParamName, ...rest } = this._config;
+    const resources: DiffParams = {};
+    const paramNames: any = {};
 
-    // 入力パス
-    const inputFilePath: string = finishDynamicValue(inputPath, params, {
-      ...rest,
-      preserveString: preserveInputPath,
-    });
+    // 初期化処理
+    await this._input.initialize(params);
 
-    // パラメーター名
-    const prmsName: string = finishDynamicValue(paramName, params, {
-      ...rest,
-      preserveString: preserveParamName,
-    });
+    // リソースの取得
+    const inputItems = await this._input.read(params);
 
-    // paramsへ追加する値を作成する関数
-    const resource = await readAnyFile(inputFilePath, rest);
+    for await (const inputItem of inputItems) {
+      // 入力時の結果をパラメーターにマージ
+      let newParams = assignParams(params, inputItem.result);
+      // パラメーター名
+      const prmsName: string = finishDynamicValue(this._paramName, newParams, this._paramNameOptions);
+      if (paramNames[prmsName]) {
+        // 以前と同じパラメーター名が帰ってきた時は配列にする
+        const resource = asArray(resources[prmsName]);
+        resource.push(inputItem.content);
+        resources[prmsName] = resource;
+      } else {
+        resources[prmsName] = inputItem.content;
+      }
+      paramNames[prmsName] = true;
+    }
+
+    // 完了処理
+    await this._input.complete(params);
 
     // 子要素で処理
-    return super.operate(content, { ...params, [prmsName]: resource });
+    return super.operate(content, { ...params, ...resources });
   }
 }
 export default Read;

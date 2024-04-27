@@ -1,4 +1,4 @@
-import { CONTENT_TYPE, ITEM_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from './constants';
+import { CONTENT_TYPE, ITEM_TYPE, MANIPULATION_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from './constants';
 import { Input, InputConfig, InputResultBase, Output, OutputConfig, OutputResultBase } from './io/types';
 import { Operation, OperationConfigBase } from './operate/types';
 import { FormatOptions } from './utils/format';
@@ -15,6 +15,11 @@ export type ItemType = (typeof ITEM_TYPE)[keyof typeof ITEM_TYPE];
  * コンテンツの種別
  */
 export type ContentType = (typeof CONTENT_TYPE)[keyof typeof CONTENT_TYPE];
+
+/**
+ * 入出力の対象に対する操作の種別
+ */
+export type ManipulationType = (typeof MANIPULATION_TYPE)[keyof typeof MANIPULATION_TYPE];
 
 /**
  * ファイルの内容の型
@@ -346,14 +351,9 @@ export type CommonReplacementConfig<P extends ReplacementValues = ReplacementVal
  */
 export type CommonIoConfig = {
   /**
-   * コピー
+   * 入出力の対象そのものに対する操作
    */
-  copy?: boolean;
-
-  /**
-   * 削除
-   */
-  remove?: boolean;
+  manipulationType?: ManipulationType;
 };
 
 /**

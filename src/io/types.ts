@@ -136,9 +136,14 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
   copy(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
 
   /**
+   * コンテンツの移動
+   */
+  move(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
+
+  /**
    * コンテンツの削除
    */
-  remove(params: IterationParams): Promise<DiffParams>;
+  delete(params: IterationParams): Promise<DiffParams>;
 }
 
 /**
@@ -224,4 +229,10 @@ export interface Output<C extends Content, OR extends OutputResultBase = OutputR
    * @param params
    */
   copy(params: IterationParams): Promise<OutputReturnValue<OR>>;
+
+  /**
+   * コンテンツの移動
+   * @param params
+   */
+  move(params: IterationParams): Promise<OutputReturnValue<OR>>;
 }

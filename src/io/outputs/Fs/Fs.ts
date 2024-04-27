@@ -99,6 +99,31 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
   }
 
   /**
+   * ファイルの移動
+   * @param content
+   * @param params
+   * @returns
+   */
+  async move(params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
+    const { outputItemPath, outputRootPath, outputParentPath, outputItem } = this._getOutputInfo(params);
+    const { _inputPath: _inputItemPath, _inputItemType } = params;
+
+    if (_inputItemType === ITEM_TYPE.NODE) {
+      // ディレクトリの場合
+      await fs.ensureDir(outputItemPath);
+    } else {
+      // ファイルの場合
+      await fs.ensureDir(outputParentPath);
+      await fs.move(_inputItemPath, outputItemPath);
+    }
+
+    return {
+      status: MIGRATION_ITEM_STATUS.COPIED,
+      result: { outputItem, outputPath: outputItemPath, outputRootPath },
+    };
+  }
+
+  /**
    * 出力先の情報を取得する
    * @param params
    * @param removeExtensions

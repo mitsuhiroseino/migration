@@ -47,7 +47,16 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
     return this._generateFs(this._copyFs, params);
   }
 
-  async remove(params: IterationParams): Promise<DiffParams> {
+  /**
+   * ファイル・ディレクトリの移動
+   * @param params
+   * @returns
+   */
+  move(params: IterationParams): AsyncIterable<InputReturnValue<any, FsInputResultBase>> {
+    return this._generateFs(this._copyFs, params);
+  }
+
+  async delete(params: IterationParams): Promise<DiffParams> {
     const _inputPath = params._inputPath as string;
     await fs.remove(_inputPath);
     return {};

@@ -24,6 +24,8 @@ abstract class OutputBase<
 
   abstract copy(params: IterationParams): Promise<OutputReturnValue<OR>>;
 
+  abstract move(params: IterationParams): Promise<OutputReturnValue<OR>>;
+
   complete(params: IterationParams): Promise<DiffParams> {
     return Promise.resolve({});
   }

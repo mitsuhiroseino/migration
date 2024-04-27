@@ -1,6 +1,9 @@
-import { Content } from '../../types';
-import finishDynamicValue from '../../utils/finishDynamicValue';
-import writeAnyFile from '../../utils/writeAnyFile';
+import { Output, OutputConfig } from '../../io';
+import getIoConfig from '../../io/helpers/getIoConfig';
+import { OutputFactory } from '../../io/outputs';
+import { Content, VariableString } from '../../types';
+import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
+import inheritConfig from '../../utils/inheritConfig';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
@@ -11,24 +14,42 @@ import { WriteConfig } from './types';
  * ファイルを出力する操作
  */
 class Write extends OperationBase<Content, WriteConfig> {
-  async operate(content: Content, params: OperationParams): Promise<Content> {
-    const { outputPath, preserveOutputPath, paramName = '_resource', preserveParamName, ...rest } = this._config;
+  /**
+   * 入力処理
+   */
+  private _output: Output<any, any>;
 
-    // 出力パス
-    const outputFilePath: string = finishDynamicValue(outputPath, params, {
-      ...rest,
-      preserveString: preserveOutputPath,
-    });
+  private _paramName: VariableString<OperationParams>;
+
+  private _paramNameOptions: FinishDynamicValueOptions;
+
+  constructor(config: WriteConfig) {
+    super(config);
+
+    const { type, output, paramName = '_resource', preserveParamName, ...rest } = config;
+
+    // 出力設定取得
+    const outputCfg = getIoConfig(output, 'outputPath');
+    const outputConfig: OutputConfig = inheritConfig(outputCfg, rest);
+    this._output = OutputFactory.create(outputConfig);
+
+    this._paramName = paramName;
+    this._paramNameOptions = { ...rest, preserveString: preserveParamName };
+  }
+
+  async operate(content: Content, params: OperationParams): Promise<Content> {
+    // 初期化処理
+    await this._output.initialize(params);
 
     // パラメーター名
-    const prmsName: string = finishDynamicValue(paramName, params, {
-      ...rest,
-      preserveString: preserveParamName,
-    });
+    const prmsName: string = finishDynamicValue(this._paramName, params, this._paramNameOptions);
 
     // ファイルの出力
     const resource = params[prmsName];
-    await writeAnyFile(outputFilePath, resource, rest);
+    await this._output.write(resource, params);
+
+    // 完了処理
+    await this._output.complete(params);
 
     return content;
   }

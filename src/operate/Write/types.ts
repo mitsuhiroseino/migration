@@ -1,5 +1,4 @@
-import { VariableString } from '../../types';
-import { WriteAnyFileOptions } from '../../utils/writeAnyFile';
+import { CommonOutputConfig, VariableString } from '../../types';
 import { OPERATION_TYPE } from '../constants';
 import { OperationConfigBase, OperationParams } from '../types';
 
@@ -7,17 +6,7 @@ import { OperationConfigBase, OperationParams } from '../types';
  * ファイルを出力する操作
  */
 export type WriteConfig = OperationConfigBase<typeof OPERATION_TYPE.WRITE> &
-  Omit<WriteAnyFileOptions, 'ensured'> & {
-    /**
-     * ファイルのパス
-     */
-    outputPath: VariableString<OperationParams>;
-
-    /**
-     * outputPathの要素のプレイスホルダーを置換するなどの前処理を行わない
-     */
-    preserveOutputPath?: boolean;
-
+  CommonOutputConfig & {
     /**
      * paramsからファイルの内容を取得する際のプロパティ名
      * デフォルトは_resource
