@@ -56,8 +56,10 @@ class Fs extends InputBase<Content, FsInputConfig, FsInputResult> {
   }
 
   async delete(params: IterationParams): Promise<DiffParams> {
-    const _inputPath = params._inputPath as string;
-    await fs.remove(_inputPath);
+    if (!this._config.dryRun) {
+      const _inputPath = params._inputPath as string;
+      await fs.remove(_inputPath);
+    }
     return {};
   }
 

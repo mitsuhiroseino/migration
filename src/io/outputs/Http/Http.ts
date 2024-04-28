@@ -34,15 +34,17 @@ OutputFactory.register(IO_TYPE.NOOP, Http);
 export default Http;
 
 async function request(content: any, config: HttpOutputConfig, params: IterationParams): Promise<HttpOutputResult> {
-  const { url, removeIndex, removeExtensions, requestInit } = config;
+  const { dryRun, url, removeIndex, removeExtensions, requestInit } = config;
   const output: string = finishDynamicValue(url, params, config);
 
   // リクエストの送信
-  const init = isFunction(requestInit) ? requestInit(content, params) : requestInit;
-  const response = await fetchHttp(output, init);
+  if (!dryRun) {
+    const init = isFunction(requestInit) ? requestInit(content, params) : requestInit;
+    const response = await fetchHttp(output, init);
 
-  if (response.status !== 200) {
-    throw new Error(`Error on HTTP output: ${response.statusText}`);
+    if (response.status !== 200) {
+      throw new Error(`Error on HTTP output: ${response.statusText}`);
+    }
   }
 
   // itemNameの取得

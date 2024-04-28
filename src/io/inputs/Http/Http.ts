@@ -38,7 +38,10 @@ class Http extends InputBase<Content, HttpInputConfig, HttpInputResult> {
   }
 
   async delete(params: IterationParams): Promise<DiffParams> {
-    const { url, deleteInit, deleteUrl = url } = this._config;
+    const { dryRun, url, deleteInit, deleteUrl = url } = this._config;
+    if (dryRun) {
+      return {};
+    }
     if (deleteInit) {
       // deleteInitが設定されているときのみ削除可能
       const input: string = finishDynamicValue(deleteUrl, params, this._config);
@@ -48,6 +51,8 @@ class Http extends InputBase<Content, HttpInputConfig, HttpInputResult> {
       if (response.status !== 200) {
         throw new Error(response.statusText);
       }
+    } else {
+      throw new Error('To delete via HTTP, set "deleteInit".');
     }
     return {};
   }

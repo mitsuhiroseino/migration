@@ -408,6 +408,13 @@ export type CommonDevelopmentConfig = {
    * 無効
    */
   disabled?: boolean;
+
+  /**
+   * 操作がどのように実行されるかを確認する
+   * trueを設定した場合、ファイルの削除や出力など、現在の状態を変更する可能性のある処理は実行されない
+   * 但しHTTPのreadの処理に更新を伴う設定がされている場合は、サーバー側の状態が変わるため注意が必要
+   */
+  dryRun?: boolean;
 };
 
 /**

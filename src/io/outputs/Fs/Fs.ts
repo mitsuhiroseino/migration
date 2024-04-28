@@ -46,25 +46,27 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
    */
   async write(content: any, params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
     const config = this._config;
-    const { outputEncoding, ...rest } = config;
+    const { dryRun, outputEncoding, ...rest } = config;
     const { outputItemPath, outputRootPath, outputItem } = this._getOutputInfo(params);
     const { _inputItemType, _inputEncoding } = params;
 
-    if (_inputItemType === ITEM_TYPE.NODE) {
-      // ディレクトリの場合
-      await fs.ensureDir(outputItemPath);
-    } else {
-      // ファイルの場合
-      let encoding = outputEncoding;
-      if (!encoding) {
-        // エンコーディングの指定が無い場合は入力時のエンコーディングで出力
-        encoding = _inputEncoding;
+    if (dryRun) {
+      if (_inputItemType === ITEM_TYPE.NODE) {
+        // ディレクトリの場合
+        await fs.ensureDir(outputItemPath);
+      } else {
+        // ファイルの場合
+        let encoding = outputEncoding;
+        if (!encoding) {
+          // エンコーディングの指定が無い場合は入力時のエンコーディングで出力
+          encoding = _inputEncoding;
+        }
+        await writeAnyFile(outputItemPath, content, {
+          encoding,
+          ...rest,
+          ensured: false,
+        });
       }
-      await writeAnyFile(outputItemPath, content, {
-        encoding,
-        ...rest,
-        ensured: false,
-      });
     }
 
     return {
@@ -83,8 +85,10 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     const { outputItemPath, outputRootPath, outputParentPath, outputItem } = this._getOutputInfo(params);
     const { _inputPath: _inputItemPath } = params;
 
-    await fs.ensureDir(outputParentPath);
-    await fs.copy(_inputItemPath, outputItemPath, {});
+    if (!this._config.dryRun) {
+      await fs.ensureDir(outputParentPath);
+      await fs.copy(_inputItemPath, outputItemPath, {});
+    }
 
     return {
       status: MIGRATION_ITEM_STATUS.COPIED,
@@ -102,8 +106,10 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     const { outputItemPath, outputRootPath, outputParentPath, outputItem } = this._getOutputInfo(params);
     const { _inputPath: _inputItemPath } = params;
 
-    await fs.ensureDir(outputParentPath);
-    await fs.move(_inputItemPath, outputItemPath, {});
+    if (!this._config.dryRun) {
+      await fs.ensureDir(outputParentPath);
+      await fs.move(_inputItemPath, outputItemPath, {});
+    }
 
     return {
       status: MIGRATION_ITEM_STATUS.MOVED,

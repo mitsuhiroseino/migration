@@ -13,7 +13,7 @@ export type HttpInputConfig = InputConfigBase<typeof IO_TYPE.HTTP> & {
   url?: VariableString;
 
   /**
-   * inputItemに設定する値としてindexは除外する
+   * inputItemに設定する値はindexを除外する
    * 例: url='http://localhost/foo/index.html'の場合
    *
    * - false: inputItem='index.html'

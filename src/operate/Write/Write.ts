@@ -38,6 +38,10 @@ class Write extends OperationBase<Content, WriteConfig> {
   }
 
   async operate(content: Content, params: OperationParams): Promise<Content> {
+    if (this._config.dryRun) {
+      return content;
+    }
+
     // 初期化処理
     await this._output.initialize(params);
 

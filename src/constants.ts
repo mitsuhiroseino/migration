@@ -99,6 +99,7 @@ export const INHERITED_CONFIGS: Required<{
   outputEncoding: true,
   forceOutput: true,
   disabled: true,
+  dryRun: true,
   silent: true,
 };
 
