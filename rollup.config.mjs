@@ -5,96 +5,66 @@ import typescript from '@rollup/plugin-typescript';
 import * as path from 'path';
 import packagejson from 'rollup-plugin-generate-package-json';
 
-const INPUT = './src/index.ts',
+const SRC_DIR = './src',
+  INPUT = path.join(SRC_DIR, 'index.ts'),
   EXTENTIONS = ['.ts', '.js'],
   EXTENTION_CJS = 'js',
   EXTENTION_ESM = 'mjs',
   // node_modules配下のdependenciesはバンドルしない。下記の正規表現の指定をするためには'@rollup/plugin-node-resolve'が必要
   EXTERNAL = [/node_modules/, /@visue/],
-  OUTPUT = './build',
-  OUTPUT_CJS = OUTPUT,
-  OUTPUT_ESM = OUTPUT,
+  BUID_DIR = './build',
+  OUTPUT = BUID_DIR,
   BABEL_CONFIG_PATH = path.resolve('babel.config.js'),
   TEST_FILE = /.+\.test\..+/,
   SOURCE_MAP = false;
 
+const getConfig = (input, output, format, ext, dev = false) => ({
+  // エントリーポイント
+  input,
+  output: {
+    // 出力先ディレクトリ
+    dir: output,
+    format,
+    exports: 'named',
+    sourcemap: dev,
+    entryFileNames: `[name].${ext}`,
+    // バンドルしない(falseだとindex.cjsに纏められてしまう)
+    preserveModules: true,
+  },
+  external: EXTERNAL,
+  treeshake: false,
+  plugins: [
+    nodeResolve(),
+    typescript({
+      tsconfig: './tsconfig.json',
+      exclude: [TEST_FILE],
+      outDir: output,
+      ...(dev
+        ? { declaration: true, declarationMap: true, declarationDir: output, sourceMap: true }
+        : { declaration: false, declarationMap: false, sourceMap: false }),
+    }),
+    babel({
+      extensions: EXTENTIONS,
+      babelHelpers: 'runtime',
+      configFile: BABEL_CONFIG_PATH,
+    }),
+    commonjs(),
+  ],
+});
+
 // commonjs用とesmodule用のソースを出力する
 const config = [
   // cjs & typeのビルド
-  {
-    // エントリーポイント
-    input: INPUT,
-    output: {
-      // 出力先ディレクトリ
-      dir: OUTPUT_CJS,
-      format: 'cjs',
-      exports: 'named',
-      sourcemap: SOURCE_MAP,
-      entryFileNames: `[name].${EXTENTION_CJS}`,
-      // バンドルしない(falseだとindex.cjsに纏められてしまう)
-      preserveModules: true,
-    },
-    external: EXTERNAL,
-    treeshake: false,
-    plugins: [
-      nodeResolve(),
-      typescript({
-        tsconfig: './tsconfig.json',
-        exclude: [TEST_FILE],
-        declarationDir: OUTPUT_CJS,
-        outDir: OUTPUT_CJS,
-      }),
-      babel({
-        extensions: EXTENTIONS,
-        babelHelpers: 'runtime',
-        configFile: BABEL_CONFIG_PATH,
-      }),
-      commonjs(),
-      packagejson({
-        baseContents: (pkgjson) => ({
-          name: pkgjson.name,
-          version: pkgjson.version,
-          author: pkgjson.author,
-          license: pkgjson.license,
-          main: `index.${EXTENTION_CJS}`,
-          module: `index.${EXTENTION_ESM}`,
-          types: 'index.d.ts',
-        }),
-      }),
-    ],
-  },
+  getConfig(INPUT, OUTPUT, 'cjs', EXTENTION_CJS, true),
   // esmのビルド
-  {
-    // エントリーポイント
-    input: INPUT,
-    output: {
-      // 出力先ディレクトリ
-      dir: OUTPUT_ESM,
-      format: 'es',
-      exports: 'named',
-      sourcemap: SOURCE_MAP,
-      entryFileNames: `[name].${EXTENTION_ESM}`,
-      // バンドルしない(falseだとindex.mjsに纏められてしまう)
-      preserveModules: true,
-    },
-    external: EXTERNAL,
-    treeshake: false,
-    plugins: [
-      nodeResolve(),
-      typescript({
-        tsconfig: './tsconfig.json',
-        declaration: false,
-        declarationMap: false,
-        exclude: [TEST_FILE],
-        outDir: OUTPUT_ESM,
-      }),
-      babel({
-        extensions: EXTENTIONS,
-        babelHelpers: 'runtime',
-        configFile: BABEL_CONFIG_PATH,
-      }),
-      commonjs(),
-    ],
-  },
+  getConfig(INPUT, OUTPUT, 'es', EXTENTION_ESM),
+  // gm
+  getConfig(`${SRC_DIR}/operate/Gm/index.ts`, BUID_DIR, 'cjs', EXTENTION_CJS),
+  // gm
+  getConfig(`${SRC_DIR}/operate/Gm/index.ts`, BUID_DIR, 'es', EXTENTION_ESM),
+  // sharp
+  getConfig(`${SRC_DIR}/operate/Sharp/index.ts`, BUID_DIR, 'cjs', EXTENTION_CJS),
+  // sharp
+  getConfig(`${SRC_DIR}/operate/Sharp/index.ts`, BUID_DIR, 'es', EXTENTION_ESM),
 ];
 export default config;

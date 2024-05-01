@@ -2812,13 +2812,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/encoding-japanese@npm:^2":
-  version: 2.0.5
-  resolution: "@types/encoding-japanese@npm:2.0.5"
-  checksum: 10c0/c2e8cba293661671af687ce4bc60256abb1b9b0cb1d18027fbec1c9a7b72d29690104b764cf1eaeb13ffb7fc74e178b5eaa3fe05da0c29b3324f10c81aeecef9
-  languageName: node
-  linkType: hard
-
 "@types/eslint@npm:^8.56.5":
   version: 8.56.5
   resolution: "@types/eslint@npm:8.56.5"
@@ -3166,7 +3159,6 @@ __metadata:
     "@rollup/plugin-commonjs": "npm:^24.0.1"
     "@rollup/plugin-node-resolve": "npm:^15.0.2"
     "@rollup/plugin-typescript": "npm:^8.3.2"
-    "@types/encoding-japanese": "npm:^2"
     "@types/eslint": "npm:^8.56.5"
     "@types/fs-extra": "npm:^11.0.1"
     "@types/gm": "npm:^1"
@@ -3181,7 +3173,6 @@ __metadata:
     ast-types: "npm:^0.14.2"
     babel-jest: "npm:^29.5.0"
     chardet: "npm:^2.0.0"
-    encoding-japanese: "npm:^2.0.0"
     esbuild: "npm:^0.18.11"
     eslint: "npm:^8.57.0"
     eslint-config-standard-with-typescript: "npm:^43.0.1"
@@ -4926,13 +4917,6 @@ __metadata:
   version: 9.2.2
   resolution: "emoji-regex@npm:9.2.2"
   checksum: 10c0/af014e759a72064cf66e6e694a7fc6b0ed3d8db680427b021a89727689671cefe9d04151b2cad51dbaf85d5ba790d061cd167f1cf32eb7b281f6368b3c181639
-  languageName: node
-  linkType: hard
-
-"encoding-japanese@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "encoding-japanese@npm:2.0.0"
-  checksum: 10c0/453bbca71d3666213a9bc873d5a69441b379f158a2992aa5cd1fc124c915b518e19fce7654f973d1334234f870e8053443a464c8f73ff9d7efe66bbc1ce1f4f6
   languageName: node
   linkType: hard
 
