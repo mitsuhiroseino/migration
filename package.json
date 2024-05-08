@@ -15,12 +15,10 @@
   },
   "scripts": {
     "build": "rimraf build && rollup --config",
-    "prepublish": "rimraf build && rollup --config",
     "start": "rimraf build && rollup --config --watch",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,scss,sass,html,json}\"",
-    "format-c": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,scss,sass,html,json}\" --config ./.prettierrc.cleanup.js",
-    "test": "jest",
-    "indexes": "node ./scripts/indexes.js"
+    "optimize": "prettier --write \"src/**/*.{ts,tsx,js,jsx,css,scss,sass,html,json}\" --config ./.prettierrc.cleanup.js",
+    "test": "jest"
   },
   "dependencies": {
     "chardet": "^2.0.0",

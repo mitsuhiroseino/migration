@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import isString from 'lodash/isString';
 import path from 'path';
 import { ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../../constants';
-import { Content, MigrationItemStatus } from '../../../types';
+import { Content } from '../../../types';
 import finishDynamicValue from '../../../utils/finishDynamicValue';
 import replacePlaceholders from '../../../utils/replacePlaceholders';
 import replaceWithConfigs from '../../../utils/replaceWithConfigs';
