@@ -1,8 +1,7 @@
-export { default } from './Migration';
+export { default as Migration } from './Migration';
 export * from './constants';
-export * from './io';
-export * from './migrate';
+export * as io from './io';
 export { default as migrate } from './migrate';
-export * from './operate';
 export { default as operate } from './operate';
 export type * from './types';
+export * as utils from './utils';

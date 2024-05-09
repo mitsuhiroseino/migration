@@ -8,6 +8,7 @@ export { default as Dither } from './Dither';
 export { default as Flip } from './Flip';
 export { default as Gaussian } from './Gaussian';
 export { default } from './Image';
+export { default as ImageManipulationFactory } from './ImageManipulationFactory';
 export { default as Invert } from './Invert';
 export { default as Mask } from './Mask';
 export { default as Normalize } from './Normalize';
