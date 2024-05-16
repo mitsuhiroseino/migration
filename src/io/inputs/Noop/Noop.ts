@@ -6,27 +6,22 @@ import InputBase from '../InputBase';
 import InputFactory from '../InputFactory';
 import { NoopInputConfig, NoopInputResult } from './types';
 
-const getNoopNoopInputResult = () =>
-  toAsyncIterable([
-    {
-      result: {},
-    },
-  ]);
+const getNoopInputResult = () => toAsyncIterable([{}]);
 
 /**
  * なにもしない
  */
 class Noop extends InputBase<Content, NoopInputConfig, NoopInputResult> {
   read(params: IterationParams): AsyncIterable<InputReturnValue<Content, NoopInputResult>> {
-    return getNoopNoopInputResult();
+    return getNoopInputResult();
   }
 
   copy(params: IterationParams): AsyncIterable<InputReturnValue<Content, NoopInputResult>> {
-    return getNoopNoopInputResult();
+    return getNoopInputResult();
   }
 
   move(params: IterationParams): AsyncIterable<InputReturnValue<Content, NoopInputResult>> {
-    return getNoopNoopInputResult();
+    return getNoopInputResult();
   }
 
   async delete(params: IterationParams): Promise<DiffParams> {

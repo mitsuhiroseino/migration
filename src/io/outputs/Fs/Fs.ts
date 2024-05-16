@@ -48,9 +48,9 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     const config = this._config;
     const { dryRun, outputEncoding, ...rest } = config;
     const { outputItemPath, outputRootPath, outputItem } = this._getOutputInfo(params);
-    const { _inputItemType, _inputEncoding } = params;
+    const { _inputItemType = ITEM_TYPE.LEAF, _inputEncoding } = params;
 
-    if (dryRun) {
+    if (!dryRun) {
       if (_inputItemType === ITEM_TYPE.NODE) {
         // ディレクトリの場合
         await fs.ensureDir(outputItemPath);
@@ -153,7 +153,7 @@ class Fs extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     // itemNameの変換がある場合は既定のoutputItemを基に変換する
     outputItem = this._getItemName(outputItem, params);
 
-    const outputItemPath: string = path.join(outputParentPath, outputItem);
+    const outputItemPath: string = outputItem != null ? path.join(outputParentPath, outputItem) : outputParentPath;
 
     return {
       outputItemPath,
