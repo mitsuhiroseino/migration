@@ -1,12 +1,12 @@
 import { Content } from '../../types';
 import { OPERATION_TYPE } from '../constants';
-import { OperationConfigBase, OperationParams, ParentOperationConfig } from '../types';
+import { OperationBundlerConfig, OperationConfigBase, OperationParams } from '../types';
 
 /**
  * パラメーターの更新
  */
 export type ParamsConfig<C extends Content = Content> = OperationConfigBase<typeof OPERATION_TYPE.PARAMS> &
-  ParentOperationConfig & {
+  OperationBundlerConfig & {
     /**
      * パラメーターの差分作成関数
      * @param content コンテンツ

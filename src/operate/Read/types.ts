@@ -1,12 +1,12 @@
 import { CommonInputConfig, VariableString } from '../../types';
 import { OPERATION_TYPE } from '../constants';
-import { OperationConfigBase, OperationParams, ParentOperationConfig } from '../types';
+import { OperationBundlerConfig, OperationConfigBase, OperationParams } from '../types';
 
 /**
  * ファイルを入力して内容をparamsに設定する操作
  */
 export type ReadConfig = OperationConfigBase<typeof OPERATION_TYPE.READ> &
-  ParentOperationConfig &
+  OperationBundlerConfig &
   CommonInputConfig & {
     /**
      * paramsに設定する際のプロパティ名

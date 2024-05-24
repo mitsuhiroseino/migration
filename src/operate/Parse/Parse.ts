@@ -1,5 +1,5 @@
 import { CONTENT_TYPE } from '../../constants';
-import OperationBase from '../OperationBase';
+import ImmutableOperationBase from '../ImmutableOperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import { OperationParams } from '../types';
@@ -9,10 +9,10 @@ import { ParseConfig } from './types';
 /**
  * 文字列をオブジェクトや配列に変換する
  */
-class Parse extends OperationBase<string, ParseConfig> {
+class Parse extends ImmutableOperationBase<string, ParseConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
-  async operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operate(content: string, params: OperationParams): Promise<any> {
     const { parser = 'json', args } = this._config;
     return PARSER[parser](content, args);
   }

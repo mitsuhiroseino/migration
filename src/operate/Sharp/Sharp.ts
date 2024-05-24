@@ -4,8 +4,8 @@ import asArray from '../../utils/asArray';
 import throwError from '../../utils/throwError';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
-import { OPERATION_TYPE } from '../constants';
-import { OperationParams } from '../types';
+import { OPERATION_STATUS, OPERATION_TYPE } from '../constants';
+import { OperationParams, OperationResult } from '../types';
 import SharpManipulationFactory from './SharpManipulationFactory';
 import { SharpConfig } from './types';
 
@@ -15,7 +15,7 @@ import { SharpConfig } from './types';
 class Sharp extends OperationBase<Buffer, SharpConfig> {
   readonly contentTypes = CONTENT_TYPE.BINARY;
 
-  async operate(content: Buffer, params: OperationParams): Promise<Buffer> {
+  async operate(content: Buffer, params: OperationParams): Promise<OperationResult<Buffer>> {
     const config = this._config;
     const { options, manipulations } = config;
     let sharp = SharpLib(content, options);
@@ -29,7 +29,13 @@ class Sharp extends OperationBase<Buffer, SharpConfig> {
       }
     }
 
-    return await sharp.toBuffer();
+    const buffer = await sharp.toBuffer();
+
+    const status =
+      content.length !== buffer.length || content.equals(buffer)
+        ? OPERATION_STATUS.CHANGED
+        : OPERATION_STATUS.UNCHANGED;
+    return { status, content: buffer };
   }
 }
 export default Sharp;

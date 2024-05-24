@@ -6,16 +6,16 @@ import asArray from '../../utils/asArray';
 import assignParams from '../../utils/assignParams';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
 import inheritConfig from '../../utils/inheritConfig';
+import OperationBundlerBase from '../OperationBundlerBase';
 import OperationFactory from '../OperationFactory';
-import ParentOperationBase from '../ParentOperationBase';
 import { OPERATION_TYPE } from '../constants';
-import { OperationParams } from '../types';
+import { OperationParams, OperationResult } from '../types';
 import { ReadConfig } from './types';
 
 /**
  * ファイルを入力して内容をparamsに設定する操作
  */
-class Read extends ParentOperationBase<Content, ReadConfig> {
+class Read extends OperationBundlerBase<Content, ReadConfig> {
   /**
    * 入力処理
    */
@@ -39,7 +39,7 @@ class Read extends ParentOperationBase<Content, ReadConfig> {
     this._paramNameOptions = { ...rest, preserveString: preserveParamName };
   }
 
-  async operate(content: Content, params: OperationParams): Promise<Content> {
+  async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     const resources: DiffParams = {};
     const paramNames: any = {};
 

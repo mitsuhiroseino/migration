@@ -97,3 +97,35 @@ export const OPERATION_TYPE = {
    */
   WRITE: 'write',
 } as const;
+
+export const OPERATION_STATUS = {
+  /**
+   * 処理対象外
+   */
+  SKIPPED: 'skipped',
+
+  /**
+   * 変更なし
+   */
+  UNCHANGED: 'unchanged',
+
+  /**
+   * 変更あり
+   */
+  CHANGED: 'changed',
+
+  /**
+   * 削除
+   */
+  REMOVED: 'removed',
+} as const;
+
+/**
+ * ステータスの優先順位
+ */
+export const OPERATION_STATUS_PRIORITY = {
+  [OPERATION_STATUS.SKIPPED]: -1,
+  [OPERATION_STATUS.UNCHANGED]: 0,
+  [OPERATION_STATUS.CHANGED]: 1,
+  [OPERATION_STATUS.REMOVED]: 2,
+} as const;

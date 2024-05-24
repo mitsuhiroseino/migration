@@ -44,7 +44,8 @@ export default async function operateContent(
   if (operations) {
     // 操作
     try {
-      content = await operate(content, operations, params);
+      const result = await operate(content, operations, params);
+      content = result.content;
     } catch (e) {
       catchError(e, 'Error in operation', config);
       return content;

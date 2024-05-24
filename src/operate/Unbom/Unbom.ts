@@ -1,6 +1,6 @@
 import { CONTENT_TYPE } from '../../constants';
 import replace from '../../utils/replace';
-import OperationBase from '../OperationBase';
+import ImmutableOperationBase from '../ImmutableOperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import { OperationParams } from '../types';
@@ -9,10 +9,10 @@ import { UnbomConfig } from './types';
 /**
  * Bomを削除する操作
  */
-class Unbom extends OperationBase<string, UnbomConfig> {
+class Unbom extends ImmutableOperationBase<string, UnbomConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
-  async operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operate(content: string, params: OperationParams): Promise<string> {
     // BOMの置換
     return replace(content, /^\ufeff/, '');
   }

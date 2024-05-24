@@ -5,7 +5,7 @@ import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import operate from '../operate';
-import { Operation, OperationParams } from '../types';
+import { Operation, OperationParams, OperationResult } from '../types';
 import { IfConfig } from './types';
 
 /**
@@ -21,7 +21,7 @@ class If extends OperationBase<Content, IfConfig> {
     this._else = toOperations(config.else, config);
   }
 
-  async operate(content: Content, params: OperationParams): Promise<Content> {
+  async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     const { condition } = this._config;
     let operations;
     if (isMatch(content, condition, params)) {

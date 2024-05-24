@@ -14,7 +14,7 @@ class Factory<P> {
   /**
    * 管理する製品
    */
-  private _products: {
+  protected _products: {
     [type: string]: P;
   } = {};
 

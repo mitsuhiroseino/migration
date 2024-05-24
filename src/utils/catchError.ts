@@ -7,9 +7,9 @@ export default function catchError(error: any, message: string, config: CommonLo
     log('error', message, config);
   } else {
     if ('message' in error) {
-      error.message = `${message} (${error.message})`;
+      error.message = `${message} [${error.message}]`;
     } else {
-      error = new Error(`${message} (${error})`);
+      error = new Error(`${message} [${error}]`);
     }
     throw error;
   }

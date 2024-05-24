@@ -1,7 +1,7 @@
 import Handlebars from 'handlebars';
 import helpers from 'handlebars-helpers';
 import { CONTENT_TYPE } from '../../constants';
-import OperationBase from '../OperationBase';
+import ImmutableOperationBase from '../ImmutableOperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import { OperationParams } from '../types';
@@ -12,12 +12,12 @@ helpers();
 /**
  * テンプレートエンジンを使用した生成の操作
  */
-class Generate extends OperationBase<string, GenerateConfig> {
+class Generate extends ImmutableOperationBase<string, GenerateConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
   private _templates: Record<string, ReturnType<typeof Handlebars.compile>> = {};
 
-  async operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operate(content: string, params: OperationParams): Promise<string> {
     const { operationId, type, filter, ...compileOptions } = this._config;
     let template = this._templates[content];
     if (!template) {

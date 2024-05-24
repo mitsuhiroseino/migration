@@ -4,8 +4,8 @@ import asArray from '../../utils/asArray';
 import throwError from '../../utils/throwError';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
-import { OPERATION_TYPE } from '../constants';
-import { OperationParams } from '../types';
+import { OPERATION_STATUS, OPERATION_TYPE } from '../constants';
+import { OperationParams, OperationResult } from '../types';
 import GmManipulationFactory from './GmManipulationFactory';
 import { GmConfig } from './types';
 
@@ -16,7 +16,7 @@ import { GmConfig } from './types';
 class Gm extends OperationBase<Buffer, GmConfig> {
   readonly contentTypes = CONTENT_TYPE.BINARY;
 
-  async operate(content: Buffer, params: OperationParams): Promise<Buffer> {
+  async operate(content: Buffer, params: OperationParams): Promise<OperationResult<Buffer>> {
     const config = this._config;
     const { manipulations, fileFormat } = config;
     let state = gm(content);
@@ -30,11 +30,15 @@ class Gm extends OperationBase<Buffer, GmConfig> {
       }
     }
     return await new Promise((resolve, reject) => {
-      const callback = (err, buffer) => {
+      const callback = (err, buffer: Buffer) => {
         if (err) {
           reject(err);
         } else {
-          resolve(buffer);
+          const status =
+            content.length !== buffer.length || content.equals(buffer)
+              ? OPERATION_STATUS.CHANGED
+              : OPERATION_STATUS.UNCHANGED;
+          resolve({ status, content: buffer });
         }
       };
       if (fileFormat != null) {

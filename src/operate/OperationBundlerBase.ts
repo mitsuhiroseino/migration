@@ -2,14 +2,14 @@ import { Content } from '../types';
 import toOperations from '../utils/toOperations';
 import OperationBase from './OperationBase';
 import operate from './operate';
-import { Operation, OperationParams, ParentOperationConfig, TypedOperationConfig } from './types';
+import { Operation, OperationBundlerConfig, OperationParams, OperationResult, TypedOperationConfig } from './types';
 
 /**
- * 子要素を持つ操作の基盤
+ * 複数の操作を纏める操作の基盤
  */
-export default abstract class ParentOperationBase<
+export default abstract class OperationBundlerBase<
   C extends Content = Content,
-  OC extends TypedOperationConfig & ParentOperationConfig = TypedOperationConfig & ParentOperationConfig,
+  OC extends TypedOperationConfig & OperationBundlerConfig = TypedOperationConfig & OperationBundlerConfig,
 > extends OperationBase<C, OC> {
   protected _operations: Operation<any>[];
 
@@ -24,7 +24,7 @@ export default abstract class ParentOperationBase<
    * @param content
    * @param params
    */
-  async operate(content: C, params: OperationParams): Promise<C | Content> {
+  async operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>> {
     const result = await operate(content, this._operations, params);
     return result;
   }

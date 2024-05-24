@@ -10,7 +10,7 @@ export type HttpInputConfig = InputConfigBase<typeof IO_TYPE.HTTP> & {
   /**
    * URL
    */
-  url?: VariableString;
+  url: VariableString;
 
   /**
    * inputItemに設定する値はindexを除外する
@@ -19,7 +19,7 @@ export type HttpInputConfig = InputConfigBase<typeof IO_TYPE.HTTP> & {
    * - false: inputItem='index.html'
    * - true: inputItem='foo'
    */
-  removeIndex?: boolean;
+  removeIndexHtml?: boolean;
 
   /**
    * 入力のファイル名から削除する拡張子

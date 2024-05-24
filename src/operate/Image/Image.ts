@@ -4,8 +4,8 @@ import asArray from '../../utils/asArray';
 import throwError from '../../utils/throwError';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
-import { OPERATION_TYPE } from '../constants';
-import { OperationParams } from '../types';
+import { OPERATION_STATUS, OPERATION_TYPE } from '../constants';
+import { OperationParams, OperationResult } from '../types';
 import ImageManipulationFactory from './ImageManipulationFactory';
 import { ImageConfig } from './types';
 
@@ -15,7 +15,7 @@ import { ImageConfig } from './types';
 class Image extends OperationBase<Buffer, ImageConfig> {
   readonly contentTypes = CONTENT_TYPE.BINARY;
 
-  async operate(content: Buffer, params: OperationParams): Promise<Buffer> {
+  async operate(content: Buffer, params: OperationParams): Promise<OperationResult<Buffer>> {
     const config = this._config;
     const { manipulations, mime } = config;
     let jimp = await Jimp.read(content);
@@ -36,7 +36,12 @@ class Image extends OperationBase<Buffer, ImageConfig> {
       mimeType = jimp.getMIME();
     }
 
-    return await jimp.getBufferAsync(mimeType);
+    const buffer = await jimp.getBufferAsync(mimeType);
+    const status =
+      content.length !== buffer.length || content.equals(buffer)
+        ? OPERATION_STATUS.CHANGED
+        : OPERATION_STATUS.UNCHANGED;
+    return { status, content: buffer };
   }
 }
 export default Image;

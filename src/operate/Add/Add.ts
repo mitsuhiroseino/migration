@@ -2,7 +2,7 @@ import isString from 'lodash/isString';
 import { CONTENT_TYPE } from '../../constants';
 import finishDynamicValue from '../../utils/finishDynamicValue';
 import replace, { FlexiblePattern, StaticPattern } from '../../utils/replace';
-import OperationBase from '../OperationBase';
+import ImmutableOperationBase from '../ImmutableOperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import { OperationParams } from '../types';
@@ -11,10 +11,10 @@ import { AddConfig } from './types';
 /**
  * 文字列を追加する操作
  */
-class Add extends OperationBase<string, AddConfig> {
+class Add extends ImmutableOperationBase<string, AddConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
-  async operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operate(content: string, params: OperationParams): Promise<string> {
     let {
       pattern,
       preservePattern,

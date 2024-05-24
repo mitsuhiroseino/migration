@@ -4,7 +4,7 @@ import asArray from '../utils/asArray';
 import getContentType from '../utils/getContentType';
 import isMatch from '../utils/isMatch';
 import uuid from '../utils/uuid';
-import { Operation, OperationParams, TypedOperationConfig } from './types';
+import { Operation, OperationParams, OperationResult, TypedOperationConfig } from './types';
 
 export default abstract class OperationBase<
   C extends Content = Content,
@@ -47,5 +47,5 @@ export default abstract class OperationBase<
    * @param content
    * @param params
    */
-  abstract operate(content: C, params: OperationParams): Promise<C | Content>;
+  abstract operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>>;
 }

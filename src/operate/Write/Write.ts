@@ -6,8 +6,8 @@ import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finis
 import inheritConfig from '../../utils/inheritConfig';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
-import { OPERATION_TYPE } from '../constants';
-import { OperationParams } from '../types';
+import { OPERATION_STATUS, OPERATION_TYPE } from '../constants';
+import { OperationParams, OperationResult } from '../types';
 import { WriteConfig } from './types';
 
 /**
@@ -37,7 +37,7 @@ class Write extends OperationBase<Content, WriteConfig> {
     this._paramNameOptions = { ...rest, preserveString: preserveParamName };
   }
 
-  async operate(content: Content, params: OperationParams): Promise<Content> {
+  async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     if (this._config.dryRun) {
       return content;
     }
@@ -55,7 +55,7 @@ class Write extends OperationBase<Content, WriteConfig> {
     // 完了処理
     await this._output.complete(params);
 
-    return content;
+    return { status: OPERATION_STATUS.UNCHANGED, content };
   }
 }
 export default Write;
