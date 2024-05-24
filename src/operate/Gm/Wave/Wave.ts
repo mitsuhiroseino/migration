@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { WaveConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { WaveConfig } from './types';
  * @param config Waveのコンフィグ
  * @returns gmのインスタンス
  */
-const Wave: GmManipulation<WaveConfig> = (state, config) => {
+const Wave: GmManipulationFn<WaveConfig> = (state, config) => {
   const { amplitude, wavelength } = config;
   return state.wave(amplitude, wavelength);
 };

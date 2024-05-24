@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { DefineConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { DefineConfig } from './types';
  * @param config Defineのコンフィグ
  * @returns gmのインスタンス
  */
-const Define: GmManipulation<DefineConfig> = (state, config) => {
+const Define: GmManipulationFn<DefineConfig> = (state, config) => {
   const { value } = config;
   return state.define(value);
 };

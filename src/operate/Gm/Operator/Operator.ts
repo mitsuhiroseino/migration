@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { OperatorConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { OperatorConfig } from './types';
  * @param config Operatorのコンフィグ
  * @returns gmのインスタンス
  */
-const Operator: GmManipulation<OperatorConfig> = (state, config) => {
+const Operator: GmManipulationFn<OperatorConfig> = (state, config) => {
   const { channel, operator, rvalue, percent } = config;
   return state.operator(channel, operator, rvalue, percent);
 };

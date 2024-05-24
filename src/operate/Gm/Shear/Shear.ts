@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ShearConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ShearConfig } from './types';
  * @param config Shearのコンフィグ
  * @returns gmのインスタンス
  */
-const Shear: GmManipulation<ShearConfig> = (state, config) => {
+const Shear: GmManipulationFn<ShearConfig> = (state, config) => {
   const { xDegrees, yDegress } = config;
   return state.shear(xDegrees, yDegress);
 };

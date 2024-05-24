@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { OpaqueConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { OpaqueConfig } from './types';
  * @param config Opaqueのコンフィグ
  * @returns gmのインスタンス
  */
-const Opaque: GmManipulation<OpaqueConfig> = (state, config) => {
+const Opaque: GmManipulationFn<OpaqueConfig> = (state, config) => {
   const { color } = config;
   return state.opaque(color);
 };

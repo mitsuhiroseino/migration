@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { NoiseConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { NoiseConfig } from './types';
  * @param config Noiseのコンフィグ
  * @returns gmのインスタンス
  */
-const Noise: GmManipulation<NoiseConfig> = (state, config) => {
+const Noise: GmManipulationFn<NoiseConfig> = (state, config) => {
   const { noiseType } = config;
   return state.noise(noiseType);
 };

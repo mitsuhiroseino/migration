@@ -1,6 +1,6 @@
 import ImageManipulationFactory from '../ImageManipulationFactory';
 import { IMAGE_MANIPULATION_TYPE } from '../constants';
-import { ImageManipulation } from '../types';
+import { ImageManipulationFn } from '../types';
 import { DitherConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { DitherConfig } from './types';
  * @param config Ditherのコンフィグ
  * @returns Jimpのインスタンス
  */
-const Dither: ImageManipulation<DitherConfig> = async (jimp, config) => {
+const Dither: ImageManipulationFn<DitherConfig> = async (jimp, config) => {
   const { callback } = config;
   return await jimp.dither565(callback);
 };

@@ -1,47 +1,41 @@
 import Jimp from 'jimp';
 import { CONTENT_TYPE } from '../../constants';
-import asArray from '../../utils/asArray';
-import throwError from '../../utils/throwError';
-import OperationBase from '../OperationBase';
+import ManipulativeOperationBase from '../ManipulativeOperationBase';
 import OperationFactory from '../OperationFactory';
-import { OPERATION_STATUS, OPERATION_TYPE } from '../constants';
-import { OperationParams, OperationResult } from '../types';
+import { OPERATION_TYPE } from '../constants';
+import { Manipulation, OperationParams } from '../types';
+import ImageManipulation from './ImageManipulation';
 import ImageManipulationFactory from './ImageManipulationFactory';
-import { ImageConfig } from './types';
+import { ImageConfig, ImageManipulationConfigBase } from './types';
 
 /**
  * 画像に対する操作
  */
-class Image extends OperationBase<Buffer, ImageConfig> {
+class Image extends ManipulativeOperationBase<Buffer, ImageConfig, Jimp> {
   readonly contentTypes = CONTENT_TYPE.BINARY;
 
-  async operate(content: Buffer, params: OperationParams): Promise<OperationResult<Buffer>> {
-    const config = this._config;
-    const { manipulations, mime } = config;
-    let jimp = await Jimp.read(content);
-
-    for (const manipulationConfig of asArray(manipulations)) {
-      const manipulation = ImageManipulationFactory.get(manipulationConfig.type);
-      if (manipulation) {
-        jimp = await manipulation(jimp, manipulationConfig);
-      } else {
-        throwError(`There was no manipulation "${manipulationConfig.type}".`, config);
-      }
+  protected _createManipuration(config: ImageManipulationConfigBase): Manipulation<Jimp> | undefined {
+    const manipulationFn = ImageManipulationFactory.get(config);
+    if (manipulationFn) {
+      return new ImageManipulation<ImageManipulationConfigBase>(manipulationFn, config);
     }
+  }
+
+  protected async _initialize(content: Buffer, params: OperationParams): Promise<Jimp> {
+    return await Jimp.read(content);
+  }
+
+  protected async _complete(instance: Jimp, params: OperationParams): Promise<Buffer> {
+    const { mime } = this._config;
 
     let mimeType;
     if (mime) {
       mimeType = mime;
     } else {
-      mimeType = jimp.getMIME();
+      mimeType = instance.getMIME();
     }
 
-    const buffer = await jimp.getBufferAsync(mimeType);
-    const status =
-      content.length !== buffer.length || content.equals(buffer)
-        ? OPERATION_STATUS.CHANGED
-        : OPERATION_STATUS.UNCHANGED;
-    return { status, content: buffer };
+    return await instance.getBufferAsync(mimeType);
   }
 }
 export default Image;

@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { ExtractConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ExtractConfig } from './types';
  * @param config Extractのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Extract: SharpManipulation<ExtractConfig> = (sharp, config) => {
+const Extract: SharpManipulationFn<ExtractConfig> = (sharp, config) => {
   const { region } = config;
   return sharp.extract(region);
 };

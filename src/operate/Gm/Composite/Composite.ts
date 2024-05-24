@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { CompositeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { CompositeConfig } from './types';
  * @param config Compositeのコンフィグ
  * @returns gmのインスタンス
  */
-const Composite: GmManipulation<CompositeConfig> = (state, config) => {
+const Composite: GmManipulationFn<CompositeConfig> = (state, config) => {
   const { changeImagePath, maskImagePath } = config;
   return state.composite(changeImagePath, maskImagePath);
 };

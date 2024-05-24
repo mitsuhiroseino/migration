@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { GreyscaleConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { GreyscaleConfig } from './types';
  * @param config Greyscaleのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Greyscale: SharpManipulation<GreyscaleConfig> = (sharp, config) => {
+const Greyscale: SharpManipulationFn<GreyscaleConfig> = (sharp, config) => {
   const { greyscale } = config;
   return sharp.greyscale(greyscale);
 };

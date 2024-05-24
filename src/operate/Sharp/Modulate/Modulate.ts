@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { ModulateConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ModulateConfig } from './types';
  * @param config Modulateのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Modulate: SharpManipulation<ModulateConfig> = (sharp, config) => {
+const Modulate: SharpManipulationFn<ModulateConfig> = (sharp, config) => {
   const { type, ...options } = config;
   return sharp.modulate(options);
 };

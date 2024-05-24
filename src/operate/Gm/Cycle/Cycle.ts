@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { CycleConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { CycleConfig } from './types';
  * @param config Cycleのコンフィグ
  * @returns gmのインスタンス
  */
-const Cycle: GmManipulation<CycleConfig> = (state, config) => {
+const Cycle: GmManipulationFn<CycleConfig> = (state, config) => {
   const { amount } = config;
   return state.cycle(amount);
 };

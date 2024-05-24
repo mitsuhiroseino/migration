@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { DeconstructConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { DeconstructConfig } from './types';
  * @param config Deconstructのコンフィグ
  * @returns gmのインスタンス
  */
-const Deconstruct: GmManipulation<DeconstructConfig> = (state, config) => {
+const Deconstruct: GmManipulationFn<DeconstructConfig> = (state, config) => {
   const {} = config;
   return state.deconstruct();
 };

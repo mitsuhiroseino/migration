@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { TreeDepthConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { TreeDepthConfig } from './types';
  * @param config TreeDepthのコンフィグ
  * @returns gmのインスタンス
  */
-const TreeDepth: GmManipulation<TreeDepthConfig> = (state, config) => {
+const TreeDepth: GmManipulationFn<TreeDepthConfig> = (state, config) => {
   const { depth } = config;
   return state.treeDepth(depth);
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { NegativeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { NegativeConfig } from './types';
  * @param config Negativeのコンフィグ
  * @returns gmのインスタンス
  */
-const Negative: GmManipulation<NegativeConfig> = (state, config) => {
+const Negative: GmManipulationFn<NegativeConfig> = (state, config) => {
   const {} = config;
   return state.negative();
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { FlattenConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { FlattenConfig } from './types';
  * @param config Flattenのコンフィグ
  * @returns gmのインスタンス
  */
-const Flatten: GmManipulation<FlattenConfig> = (state, config) => {
+const Flatten: GmManipulationFn<FlattenConfig> = (state, config) => {
   const {} = config;
   return state.flatten();
 };

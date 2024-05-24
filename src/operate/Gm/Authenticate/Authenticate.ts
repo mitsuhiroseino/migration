@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { AuthenticateConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { AuthenticateConfig } from './types';
  * @param config Authenticateのコンフィグ
  * @returns gmのインスタンス
  */
-const Authenticate: GmManipulation<AuthenticateConfig> = (state, config) => {
+const Authenticate: GmManipulationFn<AuthenticateConfig> = (state, config) => {
   const { password } = config;
   return state.authenticate(password);
 };

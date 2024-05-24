@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { BackdropConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { BackdropConfig } from './types';
  * @param config Backdropのコンフィグ
  * @returns gmのインスタンス
  */
-const Backdrop: GmManipulation<BackdropConfig> = (state, config) => {
+const Backdrop: GmManipulationFn<BackdropConfig> = (state, config) => {
   const {} = config;
   return state.backdrop();
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { QualityConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { QualityConfig } from './types';
  * @param config Qualityのコンフィグ
  * @returns gmのインスタンス
  */
-const Quality: GmManipulation<QualityConfig> = (state, config) => {
+const Quality: GmManipulationFn<QualityConfig> = (state, config) => {
   const { level } = config;
   return state.quality(level);
 };

@@ -1,6 +1,6 @@
 import ImageManipulationFactory from '../ImageManipulationFactory';
 import { IMAGE_MANIPULATION_TYPE } from '../constants';
-import { ImageManipulation } from '../types';
+import { ImageManipulationFn } from '../types';
 import { CoverConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { CoverConfig } from './types';
  * @param config Coverのコンフィグ
  * @returns Jimpのインスタンス
  */
-const Cover: ImageManipulation<CoverConfig> = async (jimp, config) => {
+const Cover: ImageManipulationFn<CoverConfig> = async (jimp, config) => {
   const { width, height, alignBits, mode, callback } = config;
   return await jimp.cover(width, height, alignBits, mode, callback);
 };

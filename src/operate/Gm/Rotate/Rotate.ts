@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { RotateConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { RotateConfig } from './types';
  * @param config Rotateのコンフィグ
  * @returns gmのインスタンス
  */
-const Rotate: GmManipulation<RotateConfig> = (state, config) => {
+const Rotate: GmManipulationFn<RotateConfig> = (state, config) => {
   const { backgroundColor, degrees } = config;
   return state.rotate(backgroundColor, degrees);
 };

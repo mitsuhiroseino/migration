@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { AutoOrientConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { AutoOrientConfig } from './types';
  * @param config AutoOrientのコンフィグ
  * @returns gmのインスタンス
  */
-const AutoOrient: GmManipulation<AutoOrientConfig> = (state, config) => {
+const AutoOrient: GmManipulationFn<AutoOrientConfig> = (state, config) => {
   const {} = config;
   return state.autoOrient();
 };

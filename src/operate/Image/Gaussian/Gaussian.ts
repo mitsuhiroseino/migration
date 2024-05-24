@@ -1,6 +1,6 @@
 import ImageManipulationFactory from '../ImageManipulationFactory';
 import { IMAGE_MANIPULATION_TYPE } from '../constants';
-import { ImageManipulation } from '../types';
+import { ImageManipulationFn } from '../types';
 import { GaussianConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { GaussianConfig } from './types';
  * @param config Gaussianのコンフィグ
  * @returns Jimpのインスタンス
  */
-const Gaussian: ImageManipulation<GaussianConfig> = async (jimp, config) => {
+const Gaussian: ImageManipulationFn<GaussianConfig> = async (jimp, config) => {
   const { radius, callback } = config;
   return await jimp.gaussian(radius, callback);
 };

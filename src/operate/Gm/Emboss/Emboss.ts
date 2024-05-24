@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { EmbossConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { EmbossConfig } from './types';
  * @param config Embossのコンフィグ
  * @returns gmのインスタンス
  */
-const Emboss: GmManipulation<EmbossConfig> = (state, config) => {
+const Emboss: GmManipulationFn<EmbossConfig> = (state, config) => {
   const { radius } = config;
   return state.emboss(radius);
 };

@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { NormalizeConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { NormalizeConfig } from './types';
  * @param config Normalizeのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Normalize: SharpManipulation<NormalizeConfig> = (sharp, config) => {
+const Normalize: SharpManipulationFn<NormalizeConfig> = (sharp, config) => {
   const { type, ...options } = config;
   return sharp.normalize(options);
 };

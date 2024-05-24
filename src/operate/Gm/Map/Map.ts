@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MapConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MapConfig } from './types';
  * @param config Mapのコンフィグ
  * @returns gmのインスタンス
  */
-const Map: GmManipulation<MapConfig> = (state, config) => {
+const Map: GmManipulationFn<MapConfig> = (state, config) => {
   const { filename } = config;
   return state.map(filename);
 };

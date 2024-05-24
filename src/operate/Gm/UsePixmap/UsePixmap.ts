@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { UsePixmapConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { UsePixmapConfig } from './types';
  * @param config UsePixmapのコンフィグ
  * @returns gmのインスタンス
  */
-const UsePixmap: GmManipulation<UsePixmapConfig> = (state, config) => {
+const UsePixmap: GmManipulationFn<UsePixmapConfig> = (state, config) => {
   const {} = config;
   return state.usePixmap();
 };

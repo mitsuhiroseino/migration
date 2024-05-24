@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { TrimConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { TrimConfig } from './types';
  * @param config Trimのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Trim: SharpManipulation<TrimConfig> = (sharp, config) => {
+const Trim: SharpManipulationFn<TrimConfig> = (sharp, config) => {
   const { type, ...options } = config;
   return sharp.trim(options);
 };

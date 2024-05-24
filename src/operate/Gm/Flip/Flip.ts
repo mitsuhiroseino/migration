@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { FlipConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { FlipConfig } from './types';
  * @param config Flipのコンフィグ
  * @returns gmのインスタンス
  */
-const Flip: GmManipulation<FlipConfig> = (state, config) => {
+const Flip: GmManipulationFn<FlipConfig> = (state, config) => {
   const {} = config;
   return state.flip();
 };

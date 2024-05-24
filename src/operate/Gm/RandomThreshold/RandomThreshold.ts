@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { RandomThresholdConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { RandomThresholdConfig } from './types';
  * @param config RandomThresholdのコンフィグ
  * @returns gmのインスタンス
  */
-const RandomThreshold: GmManipulation<RandomThresholdConfig> = (state, config) => {
+const RandomThreshold: GmManipulationFn<RandomThresholdConfig> = (state, config) => {
   const { channelType, LOWxHIGH } = config;
   return state.randomThreshold(channelType, LOWxHIGH);
 };

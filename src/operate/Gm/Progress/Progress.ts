@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ProgressConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ProgressConfig } from './types';
  * @param config Progressのコンフィグ
  * @returns gmのインスタンス
  */
-const Progress: GmManipulation<ProgressConfig> = (state, config) => {
+const Progress: GmManipulationFn<ProgressConfig> = (state, config) => {
   const {} = config;
   return state.progress();
 };

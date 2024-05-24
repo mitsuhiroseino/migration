@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { EnhanceConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { EnhanceConfig } from './types';
  * @param config Enhanceのコンフィグ
  * @returns gmのインスタンス
  */
-const Enhance: GmManipulation<EnhanceConfig> = (state, config) => {
+const Enhance: GmManipulationFn<EnhanceConfig> = (state, config) => {
   const {} = config;
   return state.enhance();
 };

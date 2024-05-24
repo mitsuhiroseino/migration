@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { TextureConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { TextureConfig } from './types';
  * @param config Textureのコンフィグ
  * @returns gmのインスタンス
  */
-const Texture: GmManipulation<TextureConfig> = (state, config) => {
+const Texture: GmManipulationFn<TextureConfig> = (state, config) => {
   const { filename } = config;
   return state.texture(filename);
 };

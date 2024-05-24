@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SolarizeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SolarizeConfig } from './types';
  * @param config Solarizeのコンフィグ
  * @returns gmのインスタンス
  */
-const Solarize: GmManipulation<SolarizeConfig> = (state, config) => {
+const Solarize: GmManipulationFn<SolarizeConfig> = (state, config) => {
   const { threshold } = config;
   return state.solarize(threshold);
 };

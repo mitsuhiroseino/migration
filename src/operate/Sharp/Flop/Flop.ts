@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { FlopConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { FlopConfig } from './types';
  * @param config Flopのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Flop: SharpManipulation<FlopConfig> = (sharp, config) => {
+const Flop: SharpManipulationFn<FlopConfig> = (sharp, config) => {
   const { flop } = config;
   return sharp.flop(flop);
 };

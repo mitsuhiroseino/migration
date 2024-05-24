@@ -1,41 +1,32 @@
 import SharpLib from 'sharp';
 import { CONTENT_TYPE } from '../../constants';
-import asArray from '../../utils/asArray';
-import throwError from '../../utils/throwError';
-import OperationBase from '../OperationBase';
+import ManipulativeOperationBase from '../ManipulativeOperationBase';
 import OperationFactory from '../OperationFactory';
-import { OPERATION_STATUS, OPERATION_TYPE } from '../constants';
-import { OperationParams, OperationResult } from '../types';
+import { OPERATION_TYPE } from '../constants';
+import { Manipulation, OperationParams } from '../types';
+import SharpManipulation from './SharpManipulation';
 import SharpManipulationFactory from './SharpManipulationFactory';
-import { SharpConfig } from './types';
+import { SharpConfig, SharpManipulationConfigBase } from './types';
 
 /**
  * sharpを用いた画像の操作
  */
-class Sharp extends OperationBase<Buffer, SharpConfig> {
+class Sharp extends ManipulativeOperationBase<Buffer, SharpConfig, SharpLib.Sharp> {
   readonly contentTypes = CONTENT_TYPE.BINARY;
 
-  async operate(content: Buffer, params: OperationParams): Promise<OperationResult<Buffer>> {
-    const config = this._config;
-    const { options, manipulations } = config;
-    let sharp = SharpLib(content, options);
-
-    for (const manipulationConfig of asArray(manipulations)) {
-      const manipulation = SharpManipulationFactory.get(manipulationConfig.type);
-      if (manipulation) {
-        sharp = manipulation(sharp, manipulationConfig);
-      } else {
-        throwError(`There was no manipulation "${manipulationConfig.type}".`, config);
-      }
+  protected _createManipuration(config: SharpManipulationConfigBase): Manipulation<SharpLib.Sharp> | undefined {
+    const manipulationFn = SharpManipulationFactory.get(config);
+    if (manipulationFn) {
+      return new SharpManipulation<SharpManipulationConfigBase>(manipulationFn, config);
     }
+  }
 
-    const buffer = await sharp.toBuffer();
+  protected async _initialize(content: Buffer, params: OperationParams): Promise<SharpLib.Sharp> {
+    return SharpLib(content, this._config.options);
+  }
 
-    const status =
-      content.length !== buffer.length || content.equals(buffer)
-        ? OPERATION_STATUS.CHANGED
-        : OPERATION_STATUS.UNCHANGED;
-    return { status, content: buffer };
+  protected async _complete(instance: SharpLib.Sharp, params: OperationParams): Promise<Buffer> {
+    return await instance.toBuffer();
   }
 }
 export default Sharp;

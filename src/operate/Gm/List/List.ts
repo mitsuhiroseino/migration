@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ListConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ListConfig } from './types';
  * @param config Listのコンフィグ
  * @returns gmのインスタンス
  */
-const List: GmManipulation<ListConfig> = (state, config) => {
+const List: GmManipulationFn<ListConfig> = (state, config) => {
   const { listType } = config;
   return state.list(listType);
 };

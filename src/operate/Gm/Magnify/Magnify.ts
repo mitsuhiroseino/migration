@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MagnifyConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MagnifyConfig } from './types';
  * @param config Magnifyのコンフィグ
  * @returns gmのインスタンス
  */
-const Magnify: GmManipulation<MagnifyConfig> = (state, config) => {
+const Magnify: GmManipulationFn<MagnifyConfig> = (state, config) => {
   const { factor } = config;
   return state.magnify(factor);
 };

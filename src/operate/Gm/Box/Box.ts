@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { BoxConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { BoxConfig } from './types';
  * @param config Boxのコンフィグ
  * @returns gmのインスタンス
  */
-const Box: GmManipulation<BoxConfig> = (state, config) => {
+const Box: GmManipulationFn<BoxConfig> = (state, config) => {
   const { color } = config;
   return state.box(color);
 };

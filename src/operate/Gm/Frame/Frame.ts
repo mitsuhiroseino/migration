@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { FrameConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { FrameConfig } from './types';
  * @param config Frameのコンフィグ
  * @returns gmのインスタンス
  */
-const Frame: GmManipulation<FrameConfig> = (state, config) => {
+const Frame: GmManipulationFn<FrameConfig> = (state, config) => {
   const { width, height, outerBevelWidth, outBevelHeight } = config;
   return state.frame(width, height, outerBevelWidth, outBevelHeight);
 };

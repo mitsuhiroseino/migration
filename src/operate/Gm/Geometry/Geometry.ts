@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { GeometryConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { GeometryConfig } from './types';
  * @param config Geometryのコンフィグ
  * @returns gmのインスタンス
  */
-const Geometry: GmManipulation<GeometryConfig> = (state, config) => {
+const Geometry: GmManipulationFn<GeometryConfig> = (state, config) => {
   const { width, height, option, geometry } = config;
   if (geometry == null) {
     return state.geometry(width, height, option);

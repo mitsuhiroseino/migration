@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { LabelConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { LabelConfig } from './types';
  * @param config Labelのコンフィグ
  * @returns gmのインスタンス
  */
-const Label: GmManipulation<LabelConfig> = (state, config) => {
+const Label: GmManipulationFn<LabelConfig> = (state, config) => {
   const { name } = config;
   return state.label(name);
 };

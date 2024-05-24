@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { ClaheConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ClaheConfig } from './types';
  * @param config Claheのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Clahe: SharpManipulation<ClaheConfig> = (sharp, config) => {
+const Clahe: SharpManipulationFn<ClaheConfig> = (sharp, config) => {
   const { type, ...options } = config;
   return sharp.clahe(options);
 };

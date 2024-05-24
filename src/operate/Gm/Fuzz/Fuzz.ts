@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { FuzzConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { FuzzConfig } from './types';
  * @param config Fuzzのコンフィグ
  * @returns gmのインスタンス
  */
-const Fuzz: GmManipulation<FuzzConfig> = (state, config) => {
+const Fuzz: GmManipulationFn<FuzzConfig> = (state, config) => {
   const { distance, percent } = config;
   return state.fuzz(distance, percent);
 };

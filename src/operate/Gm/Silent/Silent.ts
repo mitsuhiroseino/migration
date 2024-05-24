@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SilentConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SilentConfig } from './types';
  * @param config Silentのコンフィグ
  * @returns gmのインスタンス
  */
-const Silent: GmManipulation<SilentConfig> = (state, config) => {
+const Silent: GmManipulationFn<SilentConfig> = (state, config) => {
   const {} = config;
   return state.silent();
 };

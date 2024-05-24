@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SelectFrameConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SelectFrameConfig } from './types';
  * @param config SelectFrameのコンフィグ
  * @returns gmのインスタンス
  */
-const SelectFrame: GmManipulation<SelectFrameConfig> = (state, config) => {
+const SelectFrame: GmManipulationFn<SelectFrameConfig> = (state, config) => {
   const { frame } = config;
   return state.selectFrame(frame);
 };

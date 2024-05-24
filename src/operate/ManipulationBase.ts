@@ -3,10 +3,8 @@ import isMatch from '../utils/isMatch';
 import uuid from '../utils/uuid';
 import { Manipulation, ManipulationConfigBase, OperationParams, OperationResult, OperationStatus } from './types';
 
-export default abstract class ManipulationBase<
-  C extends Content = Content,
-  OC extends ManipulationConfigBase = ManipulationConfigBase,
-> implements Manipulation<C>
+export default abstract class ManipulationBase<C = Content, OC extends ManipulationConfigBase = ManipulationConfigBase>
+  implements Manipulation<C>
 {
   protected _config: Optional<OC, 'type'>;
 

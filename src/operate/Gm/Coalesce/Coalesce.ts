@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { CoalesceConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { CoalesceConfig } from './types';
  * @param config Coalesceのコンフィグ
  * @returns gmのインスタンス
  */
-const Coalesce: GmManipulation<CoalesceConfig> = (state, config) => {
+const Coalesce: GmManipulationFn<CoalesceConfig> = (state, config) => {
   const {} = config;
   return state.coalesce();
 };

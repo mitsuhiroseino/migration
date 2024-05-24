@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { NoProfileConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { NoProfileConfig } from './types';
  * @param config NoProfileのコンフィグ
  * @returns gmのインスタンス
  */
-const NoProfile: GmManipulation<NoProfileConfig> = (state, config) => {
+const NoProfile: GmManipulationFn<NoProfileConfig> = (state, config) => {
   const {} = config;
   return state.noProfile();
 };

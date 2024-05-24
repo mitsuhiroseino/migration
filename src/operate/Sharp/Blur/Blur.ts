@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { BlurConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { BlurConfig } from './types';
  * @param config Blurのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Blur: SharpManipulation<BlurConfig> = (sharp, config) => {
+const Blur: SharpManipulationFn<BlurConfig> = (sharp, config) => {
   const { sigma } = config;
   return sharp.blur(sigma);
 };

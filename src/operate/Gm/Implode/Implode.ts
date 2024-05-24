@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ImplodeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ImplodeConfig } from './types';
  * @param config Implodeのコンフィグ
  * @returns gmのインスタンス
  */
-const Implode: GmManipulation<ImplodeConfig> = (state, config) => {
+const Implode: GmManipulationFn<ImplodeConfig> = (state, config) => {
   const { factor } = config;
   return state.implode(factor);
 };

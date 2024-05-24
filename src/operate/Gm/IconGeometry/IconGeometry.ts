@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { IconGeometryConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { IconGeometryConfig } from './types';
  * @param config IconGeometryのコンフィグ
  * @returns gmのインスタンス
  */
-const IconGeometry: GmManipulation<IconGeometryConfig> = (state, config) => {
+const IconGeometry: GmManipulationFn<IconGeometryConfig> = (state, config) => {
   const { geometry } = config;
   return state.iconGeometry(geometry);
 };

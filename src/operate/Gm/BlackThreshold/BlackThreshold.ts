@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { BlackThresholdConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { BlackThresholdConfig } from './types';
  * @param config BlackThresholdのコンフィグ
  * @returns gmのインスタンス
  */
-const BlackThreshold: GmManipulation<BlackThresholdConfig> = (state, config) => {
+const BlackThreshold: GmManipulationFn<BlackThresholdConfig> = (state, config) => {
   const { intensity, red, green, blue, opacity } = config;
   if (intensity == null) {
     return state.blackThreshold(red, green, blue, opacity);

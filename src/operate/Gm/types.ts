@@ -1,7 +1,8 @@
 import { State } from 'gm';
+import { CommonConfig } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
 import { OPERATION_TYPE } from '../constants';
-import { OperationConfigBase } from '../types';
+import { ManipulationSyncFn, OperationConfigBase, OperationResult } from '../types';
 import GmManipulationConfig from './GmManipulationConfig';
 import { GM_MANIPULATION_TYPE, GM_OUTPUT_FORMAT } from './constants';
 
@@ -32,9 +33,14 @@ export type GmConfig = OperationConfigBase<typeof OPERATION_TYPE.IMAGE> & {
   fileFormat?: string;
 };
 
-export type GmManipulationConfigBase<T = GmManipulationType> = FactoriableConfig<T>;
+export type GmManipulationConfigBase<T = GmManipulationType> = FactoriableConfig<T> & CommonConfig;
 
 /**
  * 画像操作関数
  */
-export type GmManipulation<C = GmManipulationConfigBase> = (instance: State, config: C) => State;
+export type GmManipulationFn<MC extends GmManipulationConfigBase = GmManipulationConfigBase> = ManipulationSyncFn<
+  State,
+  MC
+>;
+
+export type GmManipulationResult = OperationResult<Buffer> & { instance: State };

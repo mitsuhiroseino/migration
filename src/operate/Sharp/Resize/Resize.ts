@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { ResizeConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ResizeConfig } from './types';
  * @param config Resizeのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Resize: SharpManipulation<ResizeConfig> = (sharp, config) => {
+const Resize: SharpManipulationFn<ResizeConfig> = (sharp, config) => {
   const { type, ...options } = config;
   return sharp.resize(options);
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { BorderColorConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { BorderColorConfig } from './types';
  * @param config BorderColorのコンフィグ
  * @returns gmのインスタンス
  */
-const BorderColor: GmManipulation<BorderColorConfig> = (state, config) => {
+const BorderColor: GmManipulationFn<BorderColorConfig> = (state, config) => {
   const { color } = config;
   return state.borderColor(color);
 };

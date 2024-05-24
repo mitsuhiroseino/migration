@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SpreadConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SpreadConfig } from './types';
  * @param config Spreadのコンフィグ
  * @returns gmのインスタンス
  */
-const Spread: GmManipulation<SpreadConfig> = (state, config) => {
+const Spread: GmManipulationFn<SpreadConfig> = (state, config) => {
   const { amount } = config;
   return state.spread(amount);
 };

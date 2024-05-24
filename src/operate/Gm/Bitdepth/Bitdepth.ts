@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { BitdepthConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { BitdepthConfig } from './types';
  * @param config Bitdepthのコンフィグ
  * @returns gmのインスタンス
  */
-const Bitdepth: GmManipulation<BitdepthConfig> = (state, config) => {
+const Bitdepth: GmManipulationFn<BitdepthConfig> = (state, config) => {
   const { bits } = config;
   return state.bitdepth(bits);
 };

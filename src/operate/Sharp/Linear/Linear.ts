@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { LinearConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { LinearConfig } from './types';
  * @param config Linearのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Linear: SharpManipulation<LinearConfig> = (sharp, config) => {
+const Linear: SharpManipulationFn<LinearConfig> = (sharp, config) => {
   const { multiplier, offset } = config;
   return sharp.linear(multiplier, offset);
 };

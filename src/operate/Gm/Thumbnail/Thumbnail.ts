@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ThumbnailConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ThumbnailConfig } from './types';
  * @param config Thumbnailのコンフィグ
  * @returns gmのインスタンス
  */
-const Thumbnail: GmManipulation<ThumbnailConfig> = (state, config) => {
+const Thumbnail: GmManipulationFn<ThumbnailConfig> = (state, config) => {
   const { width, height, options } = config;
   return state.thumbnail(width, height, options);
 };

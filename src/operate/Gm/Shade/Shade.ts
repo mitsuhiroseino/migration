@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ShadeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ShadeConfig } from './types';
  * @param config Shadeのコンフィグ
  * @returns gmのインスタンス
  */
-const Shade: GmManipulation<ShadeConfig> = (state, config) => {
+const Shade: GmManipulationFn<ShadeConfig> = (state, config) => {
   const { azimuth, elevation } = config;
   return state.shade(azimuth, elevation);
 };

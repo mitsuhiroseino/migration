@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { DisplaceConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { DisplaceConfig } from './types';
  * @param config Displaceのコンフィグ
  * @returns gmのインスタンス
  */
-const Displace: GmManipulation<DisplaceConfig> = (state, config) => {
+const Displace: GmManipulationFn<DisplaceConfig> = (state, config) => {
   const { horizontal, vertical } = config;
   return state.displace(horizontal, vertical);
 };

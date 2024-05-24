@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { PageConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { PageConfig } from './types';
  * @param config Pageのコンフィグ
  * @returns gmのインスタンス
  */
-const Page: GmManipulation<PageConfig> = (state, config) => {
+const Page: GmManipulationFn<PageConfig> = (state, config) => {
   const { width, height, arg } = config;
   return state.page(width, height, arg);
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { WhitePointConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { WhitePointConfig } from './types';
  * @param config WhitePointのコンフィグ
  * @returns gmのインスタンス
  */
-const WhitePoint: GmManipulation<WhitePointConfig> = (state, config) => {
+const WhitePoint: GmManipulationFn<WhitePointConfig> = (state, config) => {
   const { x, y } = config;
   return state.whitePoint(x, y);
 };

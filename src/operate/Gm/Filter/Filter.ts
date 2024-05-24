@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { FilterConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { FilterConfig } from './types';
  * @param config Filterのコンフィグ
  * @returns gmのインスタンス
  */
-const Filter: GmManipulation<FilterConfig> = (state, config) => {
+const Filter: GmManipulationFn<FilterConfig> = (state, config) => {
   const { filterType } = config;
   return state.filter(filterType);
 };

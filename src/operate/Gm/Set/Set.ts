@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SetConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SetConfig } from './types';
  * @param config Setのコンフィグ
  * @returns gmのインスタンス
  */
-const Set: GmManipulation<SetConfig> = (state, config) => {
+const Set: GmManipulationFn<SetConfig> = (state, config) => {
   const { attribute, value } = config;
   return state.set(attribute, value);
 };

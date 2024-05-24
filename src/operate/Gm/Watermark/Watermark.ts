@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { WatermarkConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { WatermarkConfig } from './types';
  * @param config Watermarkのコンフィグ
  * @returns gmのインスタンス
  */
-const Watermark: GmManipulation<WatermarkConfig> = (state, config) => {
+const Watermark: GmManipulationFn<WatermarkConfig> = (state, config) => {
   const { brightness, saturation } = config;
   return state.watermark(brightness, saturation);
 };

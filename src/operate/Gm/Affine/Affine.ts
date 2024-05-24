@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { AffineConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { AffineConfig } from './types';
  * @param config Affineのコンフィグ
  * @returns gmのインスタンス
  */
-const Affine: GmManipulation<AffineConfig> = (state, config) => {
+const Affine: GmManipulationFn<AffineConfig> = (state, config) => {
   const { matrix } = config;
   return state.affine(matrix);
 };

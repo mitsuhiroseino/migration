@@ -1,6 +1,6 @@
 import ImageManipulationFactory from '../ImageManipulationFactory';
 import { IMAGE_MANIPULATION_TYPE } from '../constants';
-import { ImageManipulation } from '../types';
+import { ImageManipulationFn } from '../types';
 import { FlipConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { FlipConfig } from './types';
  * @param config Flipのコンフィグ
  * @returns Jimpのインスタンス
  */
-const Flip: ImageManipulation<FlipConfig> = async (jimp, config) => {
+const Flip: ImageManipulationFn<FlipConfig> = async (jimp, config) => {
   const { horizontal, vertical, callback } = config;
   return await jimp.flip(horizontal, vertical, callback);
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SharedMemoryConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SharedMemoryConfig } from './types';
  * @param config SharedMemoryのコンフィグ
  * @returns gmのインスタンス
  */
-const SharedMemory: GmManipulation<SharedMemoryConfig> = (state, config) => {
+const SharedMemory: GmManipulationFn<SharedMemoryConfig> = (state, config) => {
   const {} = config;
   return state.sharedMemory();
 };

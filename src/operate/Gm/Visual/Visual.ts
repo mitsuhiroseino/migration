@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { VisualConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { VisualConfig } from './types';
  * @param config Visualのコンフィグ
  * @returns gmのインスタンス
  */
-const Visual: GmManipulation<VisualConfig> = (state, config) => {
+const Visual: GmManipulationFn<VisualConfig> = (state, config) => {
   const { visualType } = config;
   return state.visual(visualType);
 };

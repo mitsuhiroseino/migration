@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { CompressConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { CompressConfig } from './types';
  * @param config Compressのコンフィグ
  * @returns gmのインスタンス
  */
-const Compress: GmManipulation<CompressConfig> = (state, config) => {
+const Compress: GmManipulationFn<CompressConfig> = (state, config) => {
   const { compressionType } = config;
   return state.compress(compressionType);
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { LatConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { LatConfig } from './types';
  * @param config Latのコンフィグ
  * @returns gmのインスタンス
  */
-const Lat: GmManipulation<LatConfig> = (state, config) => {
+const Lat: GmManipulationFn<LatConfig> = (state, config) => {
   const { width, height, offset, percent } = config;
   return state.lat(width, height, offset, percent);
 };

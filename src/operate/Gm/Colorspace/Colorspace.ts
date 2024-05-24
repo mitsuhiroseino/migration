@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ColorspaceConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ColorspaceConfig } from './types';
  * @param config Colorspaceのコンフィグ
  * @returns gmのインスタンス
  */
-const Colorspace: GmManipulation<ColorspaceConfig> = (state, config) => {
+const Colorspace: GmManipulationFn<ColorspaceConfig> = (state, config) => {
   const { space } = config;
   return state.colorspace(space);
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { DitherConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { DitherConfig } from './types';
  * @param config Ditherのコンフィグ
  * @returns gmのインスタンス
  */
-const Dither: GmManipulation<DitherConfig> = (state, config) => {
+const Dither: GmManipulationFn<DitherConfig> = (state, config) => {
   const { enable } = config;
   return state.dither(enable);
 };

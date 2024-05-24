@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { StripConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { StripConfig } from './types';
  * @param config Stripのコンフィグ
  * @returns gmのインスタンス
  */
-const Strip: GmManipulation<StripConfig> = (state, config) => {
+const Strip: GmManipulationFn<StripConfig> = (state, config) => {
   const {} = config;
   return state.strip();
 };

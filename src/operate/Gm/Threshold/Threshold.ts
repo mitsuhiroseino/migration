@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ThresholdConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ThresholdConfig } from './types';
  * @param config Thresholdのコンフィグ
  * @returns gmのインスタンス
  */
-const Threshold: GmManipulation<ThresholdConfig> = (state, config) => {
+const Threshold: GmManipulationFn<ThresholdConfig> = (state, config) => {
   const { value, percent } = config;
   return state.threshold(value, percent);
 };

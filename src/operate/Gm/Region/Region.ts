@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { RegionConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { RegionConfig } from './types';
  * @param config Regionのコンフィグ
  * @returns gmのインスタンス
  */
-const Region: GmManipulation<RegionConfig> = (state, config) => {
+const Region: GmManipulationFn<RegionConfig> = (state, config) => {
   const { width, height, x, y } = config;
   return state.region(width, height, x, y);
 };

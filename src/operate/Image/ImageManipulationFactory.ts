@@ -1,6 +1,6 @@
 import Factory from '../../utils/Factory';
-import { ImageManipulation } from './types';
+import { ImageManipulationFn } from './types';
 
-class ImageManipulationFactory extends Factory<ImageManipulation<any>> {}
+class ImageManipulationFactory extends Factory<ImageManipulationFn<any>> {}
 
 export default new ImageManipulationFactory();

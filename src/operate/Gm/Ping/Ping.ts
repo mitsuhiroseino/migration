@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { PingConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { PingConfig } from './types';
  * @param config Pingのコンフィグ
  * @returns gmのインスタンス
  */
-const Ping: GmManipulation<PingConfig> = (state, config) => {
+const Ping: GmManipulationFn<PingConfig> = (state, config) => {
   const {} = config;
   return state.ping();
 };

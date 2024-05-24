@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { FlopConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { FlopConfig } from './types';
  * @param config Flopのコンフィグ
  * @returns gmのインスタンス
  */
-const Flop: GmManipulation<FlopConfig> = (state, config) => {
+const Flop: GmManipulationFn<FlopConfig> = (state, config) => {
   const {} = config;
   return state.flop();
 };

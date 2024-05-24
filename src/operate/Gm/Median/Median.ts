@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MedianConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MedianConfig } from './types';
  * @param config Medianのコンフィグ
  * @returns gmのインスタンス
  */
-const Median: GmManipulation<MedianConfig> = (state, config) => {
+const Median: GmManipulationFn<MedianConfig> = (state, config) => {
   const { radius } = config;
   return state.median(radius);
 };

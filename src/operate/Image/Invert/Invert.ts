@@ -1,6 +1,6 @@
 import ImageManipulationFactory from '../ImageManipulationFactory';
 import { IMAGE_MANIPULATION_TYPE } from '../constants';
-import { ImageManipulation } from '../types';
+import { ImageManipulationFn } from '../types';
 import { InvertConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { InvertConfig } from './types';
  * @param config Invertのコンフィグ
  * @returns Jimpのインスタンス
  */
-const Invert: ImageManipulation<InvertConfig> = async (jimp, config) => {
+const Invert: ImageManipulationFn<InvertConfig> = async (jimp, config) => {
   const { callback } = config;
   return await jimp.invert(callback);
 };

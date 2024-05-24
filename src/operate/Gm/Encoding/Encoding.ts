@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { EncodingConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { EncodingConfig } from './types';
  * @param config Encodingのコンフィグ
  * @returns gmのインスタンス
  */
-const Encoding: GmManipulation<EncodingConfig> = (state, config) => {
+const Encoding: GmManipulationFn<EncodingConfig> = (state, config) => {
   const { encoding } = config;
   return state.encoding(encoding);
 };

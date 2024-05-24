@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { TileConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { TileConfig } from './types';
  * @param config Tileのコンフィグ
  * @returns gmのインスタンス
  */
-const Tile: GmManipulation<TileConfig> = (state, config) => {
+const Tile: GmManipulationFn<TileConfig> = (state, config) => {
   const { filename } = config;
   return state.tile(filename);
 };

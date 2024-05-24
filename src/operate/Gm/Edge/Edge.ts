@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { EdgeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { EdgeConfig } from './types';
  * @param config Edgeのコンフィグ
  * @returns gmのインスタンス
  */
-const Edge: GmManipulation<EdgeConfig> = (state, config) => {
+const Edge: GmManipulationFn<EdgeConfig> = (state, config) => {
   const { radius } = config;
   return state.edge(radius);
 };

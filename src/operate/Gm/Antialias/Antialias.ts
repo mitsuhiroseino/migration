@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { AntialiasConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { AntialiasConfig } from './types';
  * @param config Antialiasのコンフィグ
  * @returns gmのインスタンス
  */
-const Antialias: GmManipulation<AntialiasConfig> = (state, config) => {
+const Antialias: GmManipulationFn<AntialiasConfig> = (state, config) => {
   const { enable } = config;
   return state.antialias(enable);
 };

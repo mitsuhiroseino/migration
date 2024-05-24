@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ComposeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ComposeConfig } from './types';
  * @param config Composeのコンフィグ
  * @returns gmのインスタンス
  */
-const Compose: GmManipulation<ComposeConfig> = (state, config) => {
+const Compose: GmManipulationFn<ComposeConfig> = (state, config) => {
   const { operator } = config;
   return state.compose(operator);
 };

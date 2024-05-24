@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { EnsureAlphaConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { EnsureAlphaConfig } from './types';
  * @param config EnsureAlphaのコンフィグ
  * @returns Sharpのインスタンス
  */
-const EnsureAlpha: SharpManipulation<EnsureAlphaConfig> = (sharp, config) => {
+const EnsureAlpha: SharpManipulationFn<EnsureAlphaConfig> = (sharp, config) => {
   const { alpha } = config;
   return sharp.ensureAlpha(alpha);
 };

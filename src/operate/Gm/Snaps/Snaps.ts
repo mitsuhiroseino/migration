@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SnapsConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SnapsConfig } from './types';
  * @param config Snapsのコンフィグ
  * @returns gmのインスタンス
  */
-const Snaps: GmManipulation<SnapsConfig> = (state, config) => {
+const Snaps: GmManipulationFn<SnapsConfig> = (state, config) => {
   const { count } = config;
   return state.snaps(count);
 };

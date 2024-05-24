@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { JoinChannelConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { JoinChannelConfig } from './types';
  * @param config JoinChannelのコンフィグ
  * @returns Sharpのインスタンス
  */
-const JoinChannel: SharpManipulation<JoinChannelConfig> = (sharp, config) => {
+const JoinChannel: SharpManipulationFn<JoinChannelConfig> = (sharp, config) => {
   const { type, images, ...options } = config;
   return sharp.joinChannel(images, options);
 };

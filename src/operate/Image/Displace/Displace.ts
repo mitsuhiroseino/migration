@@ -1,7 +1,7 @@
 import Jimp from 'jimp';
 import ImageManipulationFactory from '../ImageManipulationFactory';
 import { IMAGE_MANIPULATION_TYPE } from '../constants';
-import { ImageManipulation } from '../types';
+import { ImageManipulationFn } from '../types';
 import { DisplaceConfig } from './types';
 
 /**
@@ -10,7 +10,7 @@ import { DisplaceConfig } from './types';
  * @param config Displaceのコンフィグ
  * @returns Jimpのインスタンス
  */
-const Displace: ImageManipulation<DisplaceConfig> = async (jimp, config) => {
+const Displace: ImageManipulationFn<DisplaceConfig> = async (jimp, config) => {
   const { map, offset, callback } = config;
   const mapJimp = await Jimp.read(map);
   return await jimp.displace(mapJimp, offset, callback);

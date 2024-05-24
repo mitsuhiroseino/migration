@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { BandboolConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { BandboolConfig } from './types';
  * @param config Bandboolのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Bandbool: SharpManipulation<BandboolConfig> = (sharp, config) => {
+const Bandbool: SharpManipulationFn<BandboolConfig> = (sharp, config) => {
   const { boolOp } = config;
   return sharp.bandbool(boolOp);
 };

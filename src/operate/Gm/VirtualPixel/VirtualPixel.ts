@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { VirtualPixelConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { VirtualPixelConfig } from './types';
  * @param config VirtualPixelのコンフィグ
  * @returns gmのインスタンス
  */
-const VirtualPixel: GmManipulation<VirtualPixelConfig> = (state, config) => {
+const VirtualPixel: GmManipulationFn<VirtualPixelConfig> = (state, config) => {
   const { method } = config;
   return state.virtualPixel(method);
 };

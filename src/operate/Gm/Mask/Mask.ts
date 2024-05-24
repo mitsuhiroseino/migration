@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MaskConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MaskConfig } from './types';
  * @param config Maskのコンフィグ
  * @returns gmのインスタンス
  */
-const Mask: GmManipulation<MaskConfig> = (state, config) => {
+const Mask: GmManipulationFn<MaskConfig> = (state, config) => {
   const { filename } = config;
   return state.mask(filename);
 };

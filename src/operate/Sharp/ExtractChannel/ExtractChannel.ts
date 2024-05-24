@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { ExtractChannelConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ExtractChannelConfig } from './types';
  * @param config ExtractChannelのコンフィグ
  * @returns Sharpのインスタンス
  */
-const ExtractChannel: SharpManipulation<ExtractChannelConfig> = (sharp, config) => {
+const ExtractChannel: SharpManipulationFn<ExtractChannelConfig> = (sharp, config) => {
   const { channel } = config;
   return sharp.extractChannel(channel);
 };

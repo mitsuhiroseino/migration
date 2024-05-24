@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { BooleanConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { BooleanConfig } from './types';
  * @param config Booleanのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Boolean: SharpManipulation<BooleanConfig> = (sharp, config) => {
+const Boolean: SharpManipulationFn<BooleanConfig> = (sharp, config) => {
   const { operand, operator, raw } = config;
   let options;
   if (raw) {

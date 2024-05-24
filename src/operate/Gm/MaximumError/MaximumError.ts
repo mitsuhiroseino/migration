@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MaximumErrorConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MaximumErrorConfig } from './types';
  * @param config MaximumErrorのコンフィグ
  * @returns gmのインスタンス
  */
-const MaximumError: GmManipulation<MaximumErrorConfig> = (state, config) => {
+const MaximumError: GmManipulationFn<MaximumErrorConfig> = (state, config) => {
   const { limit } = config;
   return state.maximumError(limit);
 };

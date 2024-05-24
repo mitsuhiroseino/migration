@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ChopConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ChopConfig } from './types';
  * @param config Chopのコンフィグ
  * @returns gmのインスタンス
  */
-const Chop: GmManipulation<ChopConfig> = (state, config) => {
+const Chop: GmManipulationFn<ChopConfig> = (state, config) => {
   const { width, height, x, y } = config;
   return state.chop(width, height, x, y);
 };

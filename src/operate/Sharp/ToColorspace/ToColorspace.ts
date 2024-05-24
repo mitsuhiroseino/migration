@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { ToColorspaceConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ToColorspaceConfig } from './types';
  * @param config ToColorspaceのコンフィグ
  * @returns Sharpのインスタンス
  */
-const ToColorspace: SharpManipulation<ToColorspaceConfig> = (sharp, config) => {
+const ToColorspace: SharpManipulationFn<ToColorspaceConfig> = (sharp, config) => {
   const { colorspace } = config;
   return sharp.toColorspace(colorspace);
 };

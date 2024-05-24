@@ -1,6 +1,6 @@
 import Factory from '../../utils/Factory';
-import { SharpManipulation } from './types';
+import { SharpManipulationFn } from './types';
 
-class SharpManipulationFactory extends Factory<SharpManipulation<any, any>> {}
+class SharpManipulationFactory extends Factory<SharpManipulationFn<any>> {}
 
 export default new SharpManipulationFactory();

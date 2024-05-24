@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ColorsConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ColorsConfig } from './types';
  * @param config Colorsのコンフィグ
  * @returns gmのインスタンス
  */
-const Colors: GmManipulation<ColorsConfig> = (state, config) => {
+const Colors: GmManipulationFn<ColorsConfig> = (state, config) => {
   const { colors } = config;
   return state.colors(colors);
 };

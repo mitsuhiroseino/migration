@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { ConvolveConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ConvolveConfig } from './types';
  * @param config Convolveのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Convolve: SharpManipulation<ConvolveConfig> = (sharp, config) => {
+const Convolve: SharpManipulationFn<ConvolveConfig> = (sharp, config) => {
   const { kernel } = config;
   return sharp.convolve(kernel);
 };

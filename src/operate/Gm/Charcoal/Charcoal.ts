@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { CharcoalConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { CharcoalConfig } from './types';
  * @param config Charcoalのコンフィグ
  * @returns gmのインスタンス
  */
-const Charcoal: GmManipulation<CharcoalConfig> = (state, config) => {
+const Charcoal: GmManipulationFn<CharcoalConfig> = (state, config) => {
   const { factor } = config;
   return state.charcoal(factor);
 };

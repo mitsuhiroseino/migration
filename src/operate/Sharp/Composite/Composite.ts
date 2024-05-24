@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { CompositeConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { CompositeConfig } from './types';
  * @param config Compositeのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Composite: SharpManipulation<CompositeConfig> = (sharp, config) => {
+const Composite: SharpManipulationFn<CompositeConfig> = (sharp, config) => {
   const { images } = config;
   return sharp.composite(images);
 };

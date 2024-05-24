@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { CropConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { CropConfig } from './types';
  * @param config Cropのコンフィグ
  * @returns gmのインスタンス
  */
-const Crop: GmManipulation<CropConfig> = (state, config) => {
+const Crop: GmManipulationFn<CropConfig> = (state, config) => {
   const { width, height, x, y, percent } = config;
   return state.crop(width, height, x, y, percent);
 };

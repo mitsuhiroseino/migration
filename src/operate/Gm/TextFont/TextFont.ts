@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { TextFontConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { TextFontConfig } from './types';
  * @param config TextFontのコンフィグ
  * @returns gmのインスタンス
  */
-const TextFont: GmManipulation<TextFontConfig> = (state, config) => {
+const TextFont: GmManipulationFn<TextFontConfig> = (state, config) => {
   const { font } = config;
   return state.textFont(font);
 };

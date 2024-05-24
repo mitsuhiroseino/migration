@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { BluePrimaryConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { BluePrimaryConfig } from './types';
  * @param config BluePrimaryのコンフィグ
  * @returns gmのインスタンス
  */
-const BluePrimary: GmManipulation<BluePrimaryConfig> = (state, config) => {
+const BluePrimary: GmManipulationFn<BluePrimaryConfig> = (state, config) => {
   const { x, y } = config;
   return state.bluePrimary(x, y);
 };

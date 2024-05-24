@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { LoopConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { LoopConfig } from './types';
  * @param config Loopのコンフィグ
  * @returns gmのインスタンス
  */
-const Loop: GmManipulation<LoopConfig> = (state, config) => {
+const Loop: GmManipulationFn<LoopConfig> = (state, config) => {
   const { iterations } = config;
   return state.loop(iterations);
 };

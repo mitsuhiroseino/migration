@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { RaiseConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { RaiseConfig } from './types';
  * @param config Raiseのコンフィグ
  * @returns gmのインスタンス
  */
-const Raise: GmManipulation<RaiseConfig> = (state, config) => {
+const Raise: GmManipulationFn<RaiseConfig> = (state, config) => {
   const { width, height } = config;
   return state.raise(width, height);
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ResizeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ResizeConfig } from './types';
  * @param config Resizeのコンフィグ
  * @returns gmのインスタンス
  */
-const Resize: GmManipulation<ResizeConfig> = (state, config) => {
+const Resize: GmManipulationFn<ResizeConfig> = (state, config) => {
   const { width, height, option } = config;
   return state.resize(width, height, option);
 };

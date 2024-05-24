@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { TrimConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { TrimConfig } from './types';
  * @param config Trimのコンフィグ
  * @returns gmのインスタンス
  */
-const Trim: GmManipulation<TrimConfig> = (state, config) => {
+const Trim: GmManipulationFn<TrimConfig> = (state, config) => {
   const {} = config;
   return state.trim();
 };

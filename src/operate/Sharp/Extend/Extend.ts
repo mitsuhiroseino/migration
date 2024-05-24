@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { ExtendConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ExtendConfig } from './types';
  * @param config Extendのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Extend: SharpManipulation<ExtendConfig> = (sharp, config) => {
+const Extend: SharpManipulationFn<ExtendConfig> = (sharp, config) => {
   const { type, extend, ...options } = config;
   let arg;
   if (extend != null) {

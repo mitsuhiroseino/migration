@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { GammaConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { GammaConfig } from './types';
  * @param config Gammaのコンフィグ
  * @returns gmのインスタンス
  */
-const Gamma: GmManipulation<GammaConfig> = (state, config) => {
+const Gamma: GmManipulationFn<GammaConfig> = (state, config) => {
   const { r, g, b } = config;
   return state.gamma(r, g, b);
 };

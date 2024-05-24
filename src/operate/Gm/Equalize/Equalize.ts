@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { EqualizeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { EqualizeConfig } from './types';
  * @param config Equalizeのコンフィグ
  * @returns gmのインスタンス
  */
-const Equalize: GmManipulation<EqualizeConfig> = (state, config) => {
+const Equalize: GmManipulationFn<EqualizeConfig> = (state, config) => {
   const {} = config;
   return state.equalize();
 };

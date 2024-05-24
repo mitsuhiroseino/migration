@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { DissolveConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { DissolveConfig } from './types';
  * @param config Dissolveのコンフィグ
  * @returns gmのインスタンス
  */
-const Dissolve: GmManipulation<DissolveConfig> = (state, config) => {
+const Dissolve: GmManipulationFn<DissolveConfig> = (state, config) => {
   const { percent } = config;
   return state.dissolve(percent);
 };

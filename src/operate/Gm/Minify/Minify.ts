@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MinifyConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MinifyConfig } from './types';
  * @param config Minifyのコンフィグ
  * @returns gmのインスタンス
  */
-const Minify: GmManipulation<MinifyConfig> = (state, config) => {
+const Minify: GmManipulationFn<MinifyConfig> = (state, config) => {
   const { factor } = config;
   return state.minify(factor);
 };

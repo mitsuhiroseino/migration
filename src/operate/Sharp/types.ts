@@ -1,8 +1,8 @@
 import SharpLib from 'sharp';
-import { Content } from '../../types';
+import { CommonConfig, Content } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
 import { OPERATION_TYPE } from '../constants';
-import { OperationConfigBase, OperationParams } from '../types';
+import { ManipulationSyncFn, OperationConfigBase, OperationParams, OperationResult } from '../types';
 import SharpManipulationConfig from './SharpManipulationConfig';
 import { SHARP_MANIPULATION_TYPE, SHARP_OUTPUT_FORMAT } from './constants';
 
@@ -128,12 +128,12 @@ export type SharpConfig = OperationConfigBase<typeof OPERATION_TYPE.SHARP> & {
   timeout?: number;
 };
 
-/**
- * 画像に対する操作
- */
-export type SharpManipulationConfigBase<T = SharpManipulationType> = FactoriableConfig<T>;
+export type SharpManipulationConfigBase<T = SharpManipulationType> = FactoriableConfig<T> & CommonConfig;
 
 /**
  * 画像操作関数
  */
-export type SharpManipulation<C = SharpManipulationConfigBase, I = SharpLib.Sharp> = (instance: I, config: C) => I;
+export type SharpManipulationFn<MC extends SharpManipulationConfigBase = SharpManipulationConfigBase> =
+  ManipulationSyncFn<SharpLib.Sharp, MC>;
+
+export type SharpManipulationResult = OperationResult<Buffer>;

@@ -1,7 +1,7 @@
 import Jimp from 'jimp';
 import ImageManipulationFactory from '../ImageManipulationFactory';
 import { IMAGE_MANIPULATION_TYPE } from '../constants';
-import { ImageManipulation } from '../types';
+import { ImageManipulationFn } from '../types';
 import { BlitConfig } from './types';
 
 /**
@@ -10,7 +10,7 @@ import { BlitConfig } from './types';
  * @param config Blitのコンフィグ
  * @returns Jimpのインスタンス
  */
-const Blit: ImageManipulation<BlitConfig> = async (jimp, config) => {
+const Blit: ImageManipulationFn<BlitConfig> = async (jimp, config) => {
   const { src, x, y, srcX, srcY, srcWidth, srcHeight, callback } = config;
   const srcJimp = await Jimp.read(src);
   return await jimp.blit(srcJimp, x, y, srcX, srcY, srcWidth, srcHeight, callback);

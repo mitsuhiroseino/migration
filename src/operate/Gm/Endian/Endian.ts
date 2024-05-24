@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { EndianConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { EndianConfig } from './types';
  * @param config Endianのコンフィグ
  * @returns gmのインスタンス
  */
-const Endian: GmManipulation<EndianConfig> = (state, config) => {
+const Endian: GmManipulationFn<EndianConfig> = (state, config) => {
   const { endianType } = config;
   return state.endian(endianType);
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SampleConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SampleConfig } from './types';
  * @param config Sampleのコンフィグ
  * @returns gmのインスタンス
  */
-const Sample: GmManipulation<SampleConfig> = (state, config) => {
+const Sample: GmManipulationFn<SampleConfig> = (state, config) => {
   const { geometry } = config;
   return state.sample(geometry);
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { BorderConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { BorderConfig } from './types';
  * @param config Borderのコンフィグ
  * @returns gmのインスタンス
  */
-const Border: GmManipulation<BorderConfig> = (state, config) => {
+const Border: GmManipulationFn<BorderConfig> = (state, config) => {
   const { width, height } = config;
   return state.border(width, height);
 };

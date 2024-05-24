@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { AffineConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { AffineConfig } from './types';
  * @param config Affineのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Affine: SharpManipulation<AffineConfig> = (sharp, config) => {
+const Affine: SharpManipulationFn<AffineConfig> = (sharp, config) => {
   const { type, matrix, ...options } = config;
   return sharp.affine(matrix, options);
 };

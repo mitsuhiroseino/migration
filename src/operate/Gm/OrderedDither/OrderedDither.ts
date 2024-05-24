@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { OrderedDitherConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { OrderedDitherConfig } from './types';
  * @param config OrderedDitherのコンフィグ
  * @returns gmのインスタンス
  */
-const OrderedDither: GmManipulation<OrderedDitherConfig> = (state, config) => {
+const OrderedDither: GmManipulationFn<OrderedDitherConfig> = (state, config) => {
   const { channelType, NxN } = config;
   return state.orderedDither(channelType, NxN);
 };

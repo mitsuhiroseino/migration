@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { LimitConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { LimitConfig } from './types';
  * @param config Limitのコンフィグ
  * @returns gmのインスタンス
  */
-const Limit: GmManipulation<LimitConfig> = (state, config) => {
+const Limit: GmManipulationFn<LimitConfig> = (state, config) => {
   const { limitType, val } = config;
   return state.limit(limitType, val);
 };

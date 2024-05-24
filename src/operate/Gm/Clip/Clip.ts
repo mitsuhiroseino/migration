@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ClipConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ClipConfig } from './types';
  * @param config Clipのコンフィグ
  * @returns gmのインスタンス
  */
-const Clip: GmManipulation<ClipConfig> = (state, config) => {
+const Clip: GmManipulationFn<ClipConfig> = (state, config) => {
   const {} = config;
   return state.clip();
 };

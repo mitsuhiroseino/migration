@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { PreviewConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { PreviewConfig } from './types';
  * @param config Previewのコンフィグ
  * @returns gmのインスタンス
  */
-const Preview: GmManipulation<PreviewConfig> = (state, config) => {
+const Preview: GmManipulationFn<PreviewConfig> = (state, config) => {
   const { previewType } = config;
   return state.preview(previewType);
 };

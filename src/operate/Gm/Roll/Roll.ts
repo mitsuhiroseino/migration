@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { RollConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { RollConfig } from './types';
  * @param config Rollのコンフィグ
  * @returns gmのインスタンス
  */
-const Roll: GmManipulation<RollConfig> = (state, config) => {
+const Roll: GmManipulationFn<RollConfig> = (state, config) => {
   const { horizontal, vertical } = config;
   return state.roll(horizontal, vertical);
 };

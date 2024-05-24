@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { PaintConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { PaintConfig } from './types';
  * @param config Paintのコンフィグ
  * @returns gmのインスタンス
  */
-const Paint: GmManipulation<PaintConfig> = (state, config) => {
+const Paint: GmManipulationFn<PaintConfig> = (state, config) => {
   const { radius } = config;
   return state.paint(radius);
 };

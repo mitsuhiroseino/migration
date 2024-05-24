@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { DelayConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { DelayConfig } from './types';
  * @param config Delayのコンフィグ
  * @returns gmのインスタンス
  */
-const Delay: GmManipulation<DelayConfig> = (state, config) => {
+const Delay: GmManipulationFn<DelayConfig> = (state, config) => {
   const { centiseconds } = config;
   return state.delay(centiseconds);
 };

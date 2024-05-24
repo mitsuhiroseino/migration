@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ScaleConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ScaleConfig } from './types';
  * @param config Scaleのコンフィグ
  * @returns gmのインスタンス
  */
-const Scale: GmManipulation<ScaleConfig> = (state, config) => {
+const Scale: GmManipulationFn<ScaleConfig> = (state, config) => {
   const { width, height } = config;
   return state.scale(width, height);
 };

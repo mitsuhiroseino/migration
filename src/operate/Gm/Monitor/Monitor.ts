@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MonitorConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MonitorConfig } from './types';
  * @param config Monitorのコンフィグ
  * @returns gmのインスタンス
  */
-const Monitor: GmManipulation<MonitorConfig> = (state, config) => {
+const Monitor: GmManipulationFn<MonitorConfig> = (state, config) => {
   const {} = config;
   return state.monitor();
 };

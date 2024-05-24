@@ -1,4 +1,4 @@
-import { CommonConfig, Content, ContentType } from '../types';
+import { CommonConfig, Content, ContentType, Optional } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { Condition } from '../utils/isMatch';
 import { OPERATION_STATUS, OPERATION_TYPE } from './constants';
@@ -129,7 +129,7 @@ export type ManipulativeOperationConfig<MC extends ManipulationConfigBase = Mani
 /**
  * 内容に対する詳細な操作
  */
-export interface Manipulation<C extends Content = Content> {
+export interface Manipulation<C = Content> {
   getManipulationId(): string;
 
   /**
@@ -146,3 +146,19 @@ export interface Manipulation<C extends Content = Content> {
    */
   manipulate(content: C, params: OperationParams): Promise<OperationResult<C | Content>>;
 }
+
+/**
+ * 操作関数
+ */
+export type ManipulationAsyncFn<I, MC extends ManipulationConfigBase = ManipulationConfigBase> = (
+  instance: I,
+  config: Optional<MC, 'type'>,
+) => Promise<I>;
+
+/**
+ * 操作関数
+ */
+export type ManipulationSyncFn<I, MC extends ManipulationConfigBase = ManipulationConfigBase> = (
+  instance: I,
+  config: Optional<MC, 'type'>,
+) => I;

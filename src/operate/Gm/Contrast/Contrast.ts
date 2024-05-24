@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ContrastConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ContrastConfig } from './types';
  * @param config Contrastのコンフィグ
  * @returns gmのインスタンス
  */
-const Contrast: GmManipulation<ContrastConfig> = (state, config) => {
+const Contrast: GmManipulationFn<ContrastConfig> = (state, config) => {
   const { multiplier } = config;
   return state.contrast(multiplier);
 };

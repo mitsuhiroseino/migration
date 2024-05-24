@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { TransparentConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { TransparentConfig } from './types';
  * @param config Transparentのコンフィグ
  * @returns gmのインスタンス
  */
-const Transparent: GmManipulation<TransparentConfig> = (state, config) => {
+const Transparent: GmManipulationFn<TransparentConfig> = (state, config) => {
   const { color } = config;
   return state.transparent(color);
 };

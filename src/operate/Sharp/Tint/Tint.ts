@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { TintConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { TintConfig } from './types';
  * @param config Tintのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Tint: SharpManipulation<TintConfig> = (sharp, config) => {
+const Tint: SharpManipulationFn<TintConfig> = (sharp, config) => {
   const { tint } = config;
   return sharp.tint(tint);
 };

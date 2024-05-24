@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { IntentConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { IntentConfig } from './types';
  * @param config Intentのコンフィグ
  * @returns gmのインスタンス
  */
-const Intent: GmManipulation<IntentConfig> = (state, config) => {
+const Intent: GmManipulationFn<IntentConfig> = (state, config) => {
   const { intentType } = config;
   return state.intent(intentType);
 };

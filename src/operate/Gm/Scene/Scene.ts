@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SceneConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SceneConfig } from './types';
  * @param config Sceneのコンフィグ
  * @returns gmのインスタンス
  */
-const Scene: GmManipulation<SceneConfig> = (state, config) => {
+const Scene: GmManipulationFn<SceneConfig> = (state, config) => {
   const { index } = config;
   return state.scene(index);
 };

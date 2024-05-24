@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SteganoConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SteganoConfig } from './types';
  * @param config Steganoのコンフィグ
  * @returns gmのインスタンス
  */
-const Stegano: GmManipulation<SteganoConfig> = (state, config) => {
+const Stegano: GmManipulationFn<SteganoConfig> = (state, config) => {
   const { offset } = config;
   return state.stegano(offset);
 };

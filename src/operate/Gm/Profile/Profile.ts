@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ProfileConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ProfileConfig } from './types';
  * @param config Profileのコンフィグ
  * @returns gmのインスタンス
  */
-const Profile: GmManipulation<ProfileConfig> = (state, config) => {
+const Profile: GmManipulationFn<ProfileConfig> = (state, config) => {
   const { filename } = config;
   return state.profile(filename);
 };

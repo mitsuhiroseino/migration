@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { LevelConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { LevelConfig } from './types';
  * @param config Levelのコンフィグ
  * @returns gmのインスタンス
  */
-const Level: GmManipulation<LevelConfig> = (state, config) => {
+const Level: GmManipulationFn<LevelConfig> = (state, config) => {
   const { blackPoint, gamma, whitePoint, percent } = config;
   return state.level(blackPoint, gamma, whitePoint, percent);
 };

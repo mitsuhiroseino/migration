@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SwirlConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SwirlConfig } from './types';
  * @param config Swirlのコンフィグ
  * @returns gmのインスタンス
  */
-const Swirl: GmManipulation<SwirlConfig> = (state, config) => {
+const Swirl: GmManipulationFn<SwirlConfig> = (state, config) => {
   const { degrees } = config;
   return state.swirl(degrees);
 };

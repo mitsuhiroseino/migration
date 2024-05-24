@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { GravityConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { GravityConfig } from './types';
  * @param config Gravityのコンフィグ
  * @returns gmのインスタンス
  */
-const Gravity: GmManipulation<GravityConfig> = (state, config) => {
+const Gravity: GmManipulationFn<GravityConfig> = (state, config) => {
   const { direction } = config;
   return state.gravity(direction);
 };

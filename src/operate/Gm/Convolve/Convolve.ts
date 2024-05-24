@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ConvolveConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ConvolveConfig } from './types';
  * @param config Convolveのコンフィグ
  * @returns gmのインスタンス
  */
-const Convolve: GmManipulation<ConvolveConfig> = (state, config) => {
+const Convolve: GmManipulationFn<ConvolveConfig> = (state, config) => {
   const { kernel } = config;
   return state.convolve(kernel);
 };

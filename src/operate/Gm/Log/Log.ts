@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { LogConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { LogConfig } from './types';
  * @param config Logのコンフィグ
  * @returns gmのインスタンス
  */
-const Log: GmManipulation<LogConfig> = (state, config) => {
+const Log: GmManipulationFn<LogConfig> = (state, config) => {
   const { format } = config;
   return state.log(format);
 };

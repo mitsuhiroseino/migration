@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SamplingFactorConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SamplingFactorConfig } from './types';
  * @param config SamplingFactorのコンフィグ
  * @returns gmのインスタンス
  */
-const SamplingFactor: GmManipulation<SamplingFactorConfig> = (state, config) => {
+const SamplingFactor: GmManipulationFn<SamplingFactorConfig> = (state, config) => {
   const { horizontalFactor, verticalFactor } = config;
   return state.samplingFactor(horizontalFactor, verticalFactor);
 };

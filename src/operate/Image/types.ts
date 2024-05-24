@@ -1,7 +1,8 @@
 import Jimp from 'jimp';
+import { CommonConfig } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
 import { OPERATION_TYPE } from '../constants';
-import { OperationConfigBase } from '../types';
+import { ManipulationAsyncFn, OperationConfigBase, OperationResult } from '../types';
 import ImageManipulationConfig from './ImageManipulationConfig';
 import { IMAGE_MANIPULATION_TYPE, IMAGE_OUTPUT_FORMAT } from './constants';
 
@@ -32,9 +33,12 @@ export type ImageConfig = OperationConfigBase<typeof OPERATION_TYPE.IMAGE> & {
   mime?: string;
 };
 
-export type ImageManipulationConfigBase<T = ImageManipulationType> = FactoriableConfig<T>;
+export type ImageManipulationConfigBase<T = ImageManipulationType> = FactoriableConfig<T> & CommonConfig;
 
 /**
  * 画像操作関数
  */
-export type ImageManipulation<C = ImageManipulationConfigBase> = (instance: Jimp, config: C) => Promise<Jimp>;
+export type ImageManipulationFn<MC extends ImageManipulationConfigBase = ImageManipulationConfigBase> =
+  ManipulationAsyncFn<Jimp, MC>;
+
+export type ImageManipulationResult = OperationResult<Buffer> & { instance: Jimp };

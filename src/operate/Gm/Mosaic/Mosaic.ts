@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MosaicConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MosaicConfig } from './types';
  * @param config Mosaicのコンフィグ
  * @returns gmのインスタンス
  */
-const Mosaic: GmManipulation<MosaicConfig> = (state, config) => {
+const Mosaic: GmManipulationFn<MosaicConfig> = (state, config) => {
   const {} = config;
   return state.mosaic();
 };

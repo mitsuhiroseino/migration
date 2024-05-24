@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { GaussianConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { GaussianConfig } from './types';
  * @param config Gaussianのコンフィグ
  * @returns gmのインスタンス
  */
-const Gaussian: GmManipulation<GaussianConfig> = (state, config) => {
+const Gaussian: GmManipulationFn<GaussianConfig> = (state, config) => {
   const { radius, sigma } = config;
   return state.gaussian(radius, sigma);
 };

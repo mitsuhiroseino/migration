@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { HighlightColorConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { HighlightColorConfig } from './types';
  * @param config HighlightColorのコンフィグ
  * @returns gmのインスタンス
  */
-const HighlightColor: GmManipulation<HighlightColorConfig> = (state, config) => {
+const HighlightColor: GmManipulationFn<HighlightColorConfig> = (state, config) => {
   const { color } = config;
   return state.highlightColor(color);
 };

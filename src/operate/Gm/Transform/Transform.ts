@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { TransformConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { TransformConfig } from './types';
  * @param config Transformのコンフィグ
  * @returns gmのインスタンス
  */
-const Transform: GmManipulation<TransformConfig> = (state, config) => {
+const Transform: GmManipulationFn<TransformConfig> = (state, config) => {
   const { color } = config;
   return state.transform(color);
 };

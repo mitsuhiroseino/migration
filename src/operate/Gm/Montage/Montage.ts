@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MontageConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MontageConfig } from './types';
  * @param config Montageのコンフィグ
  * @returns gmのインスタンス
  */
-const Montage: GmManipulation<MontageConfig> = (state, config) => {
+const Montage: GmManipulationFn<MontageConfig> = (state, config) => {
   const { otherImg } = config;
   return state.montage(otherImg);
 };

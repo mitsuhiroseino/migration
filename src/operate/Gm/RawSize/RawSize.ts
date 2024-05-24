@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { RawSizeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { RawSizeConfig } from './types';
  * @param config RawSizeのコンフィグ
  * @returns gmのインスタンス
  */
-const RawSize: GmManipulation<RawSizeConfig> = (state, config) => {
+const RawSize: GmManipulationFn<RawSizeConfig> = (state, config) => {
   const { width, height, offset } = config;
   return state.rawSize(width, height, offset);
 };

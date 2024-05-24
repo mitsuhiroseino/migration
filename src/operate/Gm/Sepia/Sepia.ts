@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SepiaConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SepiaConfig } from './types';
  * @param config Sepiaのコンフィグ
  * @returns gmのインスタンス
  */
-const Sepia: GmManipulation<SepiaConfig> = (state, config) => {
+const Sepia: GmManipulationFn<SepiaConfig> = (state, config) => {
   const {} = config;
   return state.sepia();
 };

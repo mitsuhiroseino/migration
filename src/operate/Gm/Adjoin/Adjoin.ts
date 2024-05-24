@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { AdjoinConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { AdjoinConfig } from './types';
  * @param config Adjoinのコンフィグ
  * @returns gmのインスタンス
  */
-const Adjoin: GmManipulation<AdjoinConfig> = (state, config) => {
+const Adjoin: GmManipulationFn<AdjoinConfig> = (state, config) => {
   const {} = config;
   return state.adjoin();
 };

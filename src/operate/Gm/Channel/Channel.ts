@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ChannelConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ChannelConfig } from './types';
  * @param config Channelのコンフィグ
  * @returns gmのインスタンス
  */
-const Channel: GmManipulation<ChannelConfig> = (state, config) => {
+const Channel: GmManipulationFn<ChannelConfig> = (state, config) => {
   const { channelType } = config;
   return state.channel(channelType);
 };

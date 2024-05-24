@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { TitleConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { TitleConfig } from './types';
  * @param config Titleのコンフィグ
  * @returns gmのインスタンス
  */
-const Title: GmManipulation<TitleConfig> = (state, config) => {
+const Title: GmManipulationFn<TitleConfig> = (state, config) => {
   const { title } = config;
   return state.title(title);
 };

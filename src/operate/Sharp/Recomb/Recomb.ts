@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { RecombConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { RecombConfig } from './types';
  * @param config Recombのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Recomb: SharpManipulation<RecombConfig> = (sharp, config) => {
+const Recomb: SharpManipulationFn<RecombConfig> = (sharp, config) => {
   const { inputMatrix } = config;
   return sharp.recomb(inputMatrix);
 };

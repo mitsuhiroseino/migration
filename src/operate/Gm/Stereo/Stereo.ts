@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { StereoConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { StereoConfig } from './types';
  * @param config Stereoのコンフィグ
  * @returns gmのインスタンス
  */
-const Stereo: GmManipulation<StereoConfig> = (state, config) => {
+const Stereo: GmManipulationFn<StereoConfig> = (state, config) => {
   const {} = config;
   return state.stereo();
 };

@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { UnsharpConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { UnsharpConfig } from './types';
  * @param config Unsharpのコンフィグ
  * @returns gmのインスタンス
  */
-const Unsharp: GmManipulation<UnsharpConfig> = (state, config) => {
+const Unsharp: GmManipulationFn<UnsharpConfig> = (state, config) => {
   const { radius, sigma, amount, threshold } = config;
   return state.unsharp(radius, sigma, amount, threshold);
 };

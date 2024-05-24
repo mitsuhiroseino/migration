@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { PointSizeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { PointSizeConfig } from './types';
  * @param config PointSizeのコンフィグ
  * @returns gmのインスタンス
  */
-const PointSize: GmManipulation<PointSizeConfig> = (state, config) => {
+const PointSize: GmManipulationFn<PointSizeConfig> = (state, config) => {
   const { size } = config;
   return state.pointSize(size);
 };

@@ -1,6 +1,6 @@
 import ImageManipulationFactory from '../ImageManipulationFactory';
 import { IMAGE_MANIPULATION_TYPE } from '../constants';
-import { ImageManipulation } from '../types';
+import { ImageManipulationFn } from '../types';
 import { ColorConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ColorConfig } from './types';
  * @param config Colorのコンフィグ
  * @returns Jimpのインスタンス
  */
-const Color: ImageManipulation<ColorConfig> = async (jimp, config) => {
+const Color: ImageManipulationFn<ColorConfig> = async (jimp, config) => {
   const { actions, callback } = config;
   return await jimp.color(actions, callback);
 };

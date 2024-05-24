@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { NegateConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { NegateConfig } from './types';
  * @param config Negateのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Negate: SharpManipulation<NegateConfig> = (sharp, config) => {
+const Negate: SharpManipulationFn<NegateConfig> = (sharp, config) => {
   const { negate, alpha } = config;
   let arg;
   if (negate != null) {

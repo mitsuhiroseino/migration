@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ResampleConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ResampleConfig } from './types';
  * @param config Resampleのコンフィグ
  * @returns gmのインスタンス
  */
-const Resample: GmManipulation<ResampleConfig> = (state, config) => {
+const Resample: GmManipulationFn<ResampleConfig> = (state, config) => {
   const { horizontal, vertical } = config;
   return state.resample(horizontal, vertical);
 };

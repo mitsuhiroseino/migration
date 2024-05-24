@@ -1,6 +1,6 @@
 import ImageManipulationFactory from '../ImageManipulationFactory';
 import { IMAGE_MANIPULATION_TYPE } from '../constants';
-import { ImageManipulation } from '../types';
+import { ImageManipulationFn } from '../types';
 import { ScaleConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { ScaleConfig } from './types';
  * @param config Scaleのコンフィグ
  * @returns Jimpのインスタンス
  */
-const Scale: ImageManipulation<ScaleConfig> = async (jimp, config) => {
+const Scale: ImageManipulationFn<ScaleConfig> = async (jimp, config) => {
   const { fit, factor, width, height, mode, callback } = config;
   if (fit) {
     return await jimp.scaleToFit(width, height, mode, callback);

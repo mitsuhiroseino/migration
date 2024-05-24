@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { AverageConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { AverageConfig } from './types';
  * @param config Averageのコンフィグ
  * @returns gmのインスタンス
  */
-const Average: GmManipulation<AverageConfig> = (state, config) => {
+const Average: GmManipulationFn<AverageConfig> = (state, config) => {
   const {} = config;
   return state.average();
 };

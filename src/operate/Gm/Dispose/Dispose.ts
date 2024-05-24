@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { DisposeConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { DisposeConfig } from './types';
  * @param config Disposeのコンフィグ
  * @returns gmのインスタンス
  */
-const Dispose: GmManipulation<DisposeConfig> = (state, config) => {
+const Dispose: GmManipulationFn<DisposeConfig> = (state, config) => {
   const { method } = config;
   return state.dispose(method);
 };

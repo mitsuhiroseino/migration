@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MorphConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MorphConfig } from './types';
  * @param config Morphのコンフィグ
  * @returns gmのインスタンス
  */
-const Morph: GmManipulation<MorphConfig> = (state, config) => {
+const Morph: GmManipulationFn<MorphConfig> = (state, config) => {
   const { otherImg, outName, callback } = config;
   return state.morph(otherImg, outName, callback);
 };

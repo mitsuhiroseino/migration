@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ExtentConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ExtentConfig } from './types';
  * @param config Extentのコンフィグ
  * @returns gmのインスタンス
  */
-const Extent: GmManipulation<ExtentConfig> = (state, config) => {
+const Extent: GmManipulationFn<ExtentConfig> = (state, config) => {
   const { width, height, options } = config;
   return state.extent(width, height, options);
 };

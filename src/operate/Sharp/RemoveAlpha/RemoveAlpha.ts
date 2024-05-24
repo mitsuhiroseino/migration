@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { RemoveAlphaConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { RemoveAlphaConfig } from './types';
  * @param config RemoveAlphaのコンフィグ
  * @returns Sharpのインスタンス
  */
-const RemoveAlpha: SharpManipulation<RemoveAlphaConfig> = (sharp, config) => {
+const RemoveAlpha: SharpManipulationFn<RemoveAlphaConfig> = (sharp, config) => {
   return sharp.removeAlpha();
 };
 SharpManipulationFactory.register(SHARP_MANIPULATION_TYPE.REMOVE_ALPHA, RemoveAlpha);

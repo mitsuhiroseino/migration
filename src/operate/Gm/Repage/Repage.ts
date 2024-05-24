@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { RepageConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { RepageConfig } from './types';
  * @param config Repageのコンフィグ
  * @returns gmのインスタンス
  */
-const Repage: GmManipulation<RepageConfig> = (state, config) => {
+const Repage: GmManipulationFn<RepageConfig> = (state, config) => {
   const { width, height, xoff, yoff, arg, reset } = config;
   if (reset == null) {
     return state.repage(width, height, xoff, yoff, arg);

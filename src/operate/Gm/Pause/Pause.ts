@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { PauseConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { PauseConfig } from './types';
  * @param config Pauseのコンフィグ
  * @returns gmのインスタンス
  */
-const Pause: GmManipulation<PauseConfig> = (state, config) => {
+const Pause: GmManipulationFn<PauseConfig> = (state, config) => {
   const { seconds } = config;
   return state.pause(seconds);
 };

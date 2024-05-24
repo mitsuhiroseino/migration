@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { UnflattenConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { UnflattenConfig } from './types';
  * @param config Unflattenのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Unflatten: SharpManipulation<UnflattenConfig> = (sharp, config) => {
+const Unflatten: SharpManipulationFn<UnflattenConfig> = (sharp, config) => {
   return sharp.unflatten();
 };
 SharpManipulationFactory.register(SHARP_MANIPULATION_TYPE.UNFLATTEN, Unflatten);

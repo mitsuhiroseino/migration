@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { MotionBlurConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { MotionBlurConfig } from './types';
  * @param config MotionBlurのコンフィグ
  * @returns gmのインスタンス
  */
-const MotionBlur: GmManipulation<MotionBlurConfig> = (state, config) => {
+const MotionBlur: GmManipulationFn<MotionBlurConfig> = (state, config) => {
   const { radius, sigma, angle } = config;
   return state.motionBlur(radius, sigma, angle);
 };

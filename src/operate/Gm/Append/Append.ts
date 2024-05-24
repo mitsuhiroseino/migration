@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { AppendConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { AppendConfig } from './types';
  * @param config Appendのコンフィグ
  * @returns gmのインスタンス
  */
-const Append: GmManipulation<AppendConfig> = (state, config) => {
+const Append: GmManipulationFn<AppendConfig> = (state, config) => {
   const { image, ltr } = config;
   return state.append(image, ltr);
 };

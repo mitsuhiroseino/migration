@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ThumbConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ThumbConfig } from './types';
  * @param config Thumbのコンフィグ
  * @returns gmのインスタンス
  */
-const Thumb: GmManipulation<ThumbConfig> = (state, config) => {
+const Thumb: GmManipulationFn<ThumbConfig> = (state, config) => {
   const { width, height, outName, quality, align, callback } = config;
   return state.thumb(width, height, outName, quality, align, callback);
 };

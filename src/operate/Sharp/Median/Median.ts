@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { MedianConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { MedianConfig } from './types';
  * @param config Medianのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Median: SharpManipulation<MedianConfig> = (sharp, config) => {
+const Median: SharpManipulationFn<MedianConfig> = (sharp, config) => {
   const { size } = config;
   return sharp.median(size);
 };

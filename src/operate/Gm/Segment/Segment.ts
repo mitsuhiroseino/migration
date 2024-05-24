@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SegmentConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SegmentConfig } from './types';
  * @param config Segmentのコンフィグ
  * @returns gmのインスタンス
  */
-const Segment: GmManipulation<SegmentConfig> = (state, config) => {
+const Segment: GmManipulationFn<SegmentConfig> = (state, config) => {
   const { clustherThreshold, smoothingThreshold } = config;
   return state.segment(clustherThreshold, smoothingThreshold);
 };

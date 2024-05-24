@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ShadowConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ShadowConfig } from './types';
  * @param config Shadowのコンフィグ
  * @returns gmのインスタンス
  */
-const Shadow: GmManipulation<ShadowConfig> = (state, config) => {
+const Shadow: GmManipulationFn<ShadowConfig> = (state, config) => {
   const { radius, sigma } = config;
   return state.shadow(radius, sigma);
 };

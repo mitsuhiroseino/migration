@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { DespeckleConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { DespeckleConfig } from './types';
  * @param config Despeckleのコンフィグ
  * @returns gmのインスタンス
  */
-const Despeckle: GmManipulation<DespeckleConfig> = (state, config) => {
+const Despeckle: GmManipulationFn<DespeckleConfig> = (state, config) => {
   const {} = config;
   return state.despeckle();
 };

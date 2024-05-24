@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { InterlaceConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { InterlaceConfig } from './types';
  * @param config Interlaceのコンフィグ
  * @returns gmのインスタンス
  */
-const Interlace: GmManipulation<InterlaceConfig> = (state, config) => {
+const Interlace: GmManipulationFn<InterlaceConfig> = (state, config) => {
   const { interlaceType } = config;
   return state.interlace(interlaceType);
 };

@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { SharpenConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { SharpenConfig } from './types';
  * @param config Sharpenのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Sharpen: SharpManipulation<SharpenConfig> = (sharp, config) => {
+const Sharpen: SharpManipulationFn<SharpenConfig> = (sharp, config) => {
   const { type, ...options } = config;
   return sharp.sharpen(options);
 };

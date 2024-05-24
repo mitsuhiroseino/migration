@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SetFormatConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SetFormatConfig } from './types';
  * @param config SetFormatのコンフィグ
  * @returns gmのインスタンス
  */
-const SetFormat: GmManipulation<SetFormatConfig> = (state, config) => {
+const SetFormat: GmManipulationFn<SetFormatConfig> = (state, config) => {
   const { format } = config;
   return state.setFormat(format);
 };

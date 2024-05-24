@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { ProcessConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { ProcessConfig } from './types';
  * @param config Processのコンフィグ
  * @returns gmのインスタンス
  */
-const Process: GmManipulation<ProcessConfig> = (state, config) => {
+const Process: GmManipulationFn<ProcessConfig> = (state, config) => {
   const { command } = config;
   return state.process(command);
 };

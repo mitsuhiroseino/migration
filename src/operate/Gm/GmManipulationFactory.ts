@@ -1,6 +1,6 @@
 import Factory from '../../utils/Factory';
-import { GmManipulation } from './types';
+import { GmManipulationFn } from './types';
 
-class GmManipulationFactory extends Factory<GmManipulation<any>> {}
+class GmManipulationFactory extends Factory<GmManipulationFn<any>> {}
 
 export default new GmManipulationFactory();

@@ -1,6 +1,6 @@
 import SharpManipulationFactory from '../SharpManipulationFactory';
 import { SHARP_MANIPULATION_TYPE } from '../constants';
-import { SharpManipulation } from '../types';
+import { SharpManipulationFn } from '../types';
 import { RotateConfig } from './types';
 
 /**
@@ -9,7 +9,7 @@ import { RotateConfig } from './types';
  * @param config Rotateのコンフィグ
  * @returns Sharpのインスタンス
  */
-const Rotate: SharpManipulation<RotateConfig> = (sharp, config) => {
+const Rotate: SharpManipulationFn<RotateConfig> = (sharp, config) => {
   const { type, angle, ...options } = config;
   return sharp.rotate(angle, options);
 };

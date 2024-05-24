@@ -1,6 +1,6 @@
 import GmManipulationFactory from '../GmManipulationFactory';
 import { GM_MANIPULATION_TYPE } from '../constants';
-import { GmManipulation } from '../types';
+import { GmManipulationFn } from '../types';
 import { SharpenConfig } from './types';
 
 /**
@@ -14,7 +14,7 @@ import { SharpenConfig } from './types';
  * @param config Sharpenのコンフィグ
  * @returns gmのインスタンス
  */
-const Sharpen: GmManipulation<SharpenConfig> = (state, config) => {
+const Sharpen: GmManipulationFn<SharpenConfig> = (state, config) => {
   const { radius, sigma } = config;
   return state.sharpen(radius, sigma);
 };
