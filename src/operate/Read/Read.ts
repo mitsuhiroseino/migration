@@ -1,7 +1,7 @@
 import { Input, InputConfig } from '../../io';
 import getIoConfig from '../../io/helpers/getIoConfig';
 import { InputFactory } from '../../io/inputs';
-import { Content, DiffParams, VariableString } from '../../types';
+import { Content, DiffParams, OperationResult, VariableString } from '../../types';
 import asArray from '../../utils/asArray';
 import assignParams from '../../utils/assignParams';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
@@ -9,7 +9,7 @@ import inheritConfig from '../../utils/inheritConfig';
 import OperationBundlerBase from '../OperationBundlerBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
-import { OperationParams, OperationResult } from '../types';
+import { OperationParams } from '../types';
 import { ReadConfig } from './types';
 
 /**

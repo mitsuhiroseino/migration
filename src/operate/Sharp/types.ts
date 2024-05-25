@@ -1,8 +1,8 @@
 import SharpLib from 'sharp';
-import { CommonConfig, Content } from '../../types';
+import { CommonConfig, Content, OperationResult } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
 import { OPERATION_TYPE } from '../constants';
-import { ManipulationSyncFn, OperationConfigBase, OperationParams, OperationResult } from '../types';
+import { ManipulationSyncFn, OperationConfigBase, OperationParams } from '../types';
 import SharpManipulationConfig from './SharpManipulationConfig';
 import { SHARP_MANIPULATION_TYPE, SHARP_OUTPUT_FORMAT } from './constants';
 

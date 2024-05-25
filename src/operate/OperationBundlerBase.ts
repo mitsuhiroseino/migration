@@ -1,8 +1,8 @@
-import { Content } from '../types';
+import { Content, OperationResult } from '../types';
 import toOperations from '../utils/toOperations';
 import OperationBase from './OperationBase';
 import operate from './operate';
-import { Operation, OperationBundlerConfig, OperationParams, OperationResult, TypedOperationConfig } from './types';
+import { Operation, OperationBundlerConfig, OperationParams, TypedOperationConfig } from './types';
 
 /**
  * 複数の操作を纏める操作の基盤

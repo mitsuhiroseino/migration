@@ -145,9 +145,14 @@ export const ITEM_TYPE = {
  */
 export const MIGRATION_ITEM_STATUS = {
   /**
-   * コピー
+   * 処理対象なし
    */
-  COPIED: 'copied',
+  NONE: 'none',
+
+  /**
+   * スキップ
+   */
+  SKIPPED: 'skipped',
 
   /**
    * 変換
@@ -160,14 +165,9 @@ export const MIGRATION_ITEM_STATUS = {
   CREATED: 'created',
 
   /**
-   * 処理済
+   * コピー
    */
-  PROCESSED: 'processed',
-
-  /**
-   * スキップ
-   */
-  SKIPPED: 'skipped',
+  COPIED: 'copied',
 
   /**
    * 移動
@@ -175,15 +175,52 @@ export const MIGRATION_ITEM_STATUS = {
   MOVED: 'moved',
 
   /**
-   * 処理対象なし
+   * 削除
    */
-  NONE: 'none',
+  DELETED: 'deleted',
+} as const;
+
+export const MIGRATION_ITEM_STATUS_PRIORITY = {
+  [MIGRATION_ITEM_STATUS.NONE]: 0,
+  [MIGRATION_ITEM_STATUS.SKIPPED]: 1,
+  [MIGRATION_ITEM_STATUS.CONVERTED]: 2,
+  [MIGRATION_ITEM_STATUS.CREATED]: 3,
+  [MIGRATION_ITEM_STATUS.COPIED]: 4,
+  [MIGRATION_ITEM_STATUS.MOVED]: 5,
+  [MIGRATION_ITEM_STATUS.DELETED]: 6,
+};
+
+/**
+ * 内容に対する処理結果
+ */
+export const OPERATION_STATUS = {
+  /**
+   * スキップ
+   */
+  SKIPPED: 'skipped',
 
   /**
    * 未処理
    */
-  PENDING: 'pending',
+  UNPROCESSED: 'unprocessed',
+
+  /**
+   * 処理済
+   */
+  PROCESSED: 'processed',
+
+  /**
+   * エラー
+   */
+  ERROR: 'error',
 } as const;
+
+export const OPERATION_STATUS_PRIORITY = {
+  [OPERATION_STATUS.SKIPPED]: 0,
+  [OPERATION_STATUS.UNPROCESSED]: 1,
+  [OPERATION_STATUS.PROCESSED]: 2,
+  [OPERATION_STATUS.ERROR]: 3,
+};
 
 /**
  * 入出力対象そのものに対する操作

@@ -1,8 +1,8 @@
 import Jimp from 'jimp';
-import { CommonConfig } from '../../types';
+import { CommonConfig, OperationResult } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
 import { OPERATION_TYPE } from '../constants';
-import { ManipulationAsyncFn, OperationConfigBase, OperationResult } from '../types';
+import { ManipulationAsyncFn, OperationConfigBase } from '../types';
 import ImageManipulationConfig from './ImageManipulationConfig';
 import { IMAGE_MANIPULATION_TYPE, IMAGE_OUTPUT_FORMAT } from './constants';
 

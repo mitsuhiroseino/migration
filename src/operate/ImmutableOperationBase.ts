@@ -1,7 +1,7 @@
-import { Content } from '../types';
+import { OPERATION_STATUS } from '../constants';
+import { Content, OperationResult } from '../types';
 import OperationBase from './OperationBase';
-import { OPERATION_STATUS } from './constants';
-import { OperationParams, OperationResult, TypedOperationConfig } from './types';
+import { OperationParams, TypedOperationConfig } from './types';
 
 /**
  * 編集前と編集後のインスタンスが異なる値を扱う操作の基底クラス
@@ -18,9 +18,9 @@ export default abstract class ImmutableOperationBase<
   async operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>> {
     const result = await this._operate(content, params);
     if (content !== result) {
-      return { status: OPERATION_STATUS.CHANGED, content: result };
+      return { operationStatus: OPERATION_STATUS.PROCESSED, content: result };
     } else {
-      return { status: OPERATION_STATUS.UNCHANGED, content: result };
+      return { operationStatus: OPERATION_STATUS.UNPROCESSED, content: result };
     }
   }
 

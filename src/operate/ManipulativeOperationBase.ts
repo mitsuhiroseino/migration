@@ -1,15 +1,14 @@
-import { Content, Optional } from '../types';
+import { OPERATION_STATUS } from '../constants';
+import { Content, OperationResult, OperationStatus, Optional } from '../types';
 import asArray from '../utils/asArray';
+import getOperationStatus from '../utils/getOperationStatus';
 import throwError from '../utils/throwError';
 import OperationBase from './OperationBase';
-import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from './constants';
 import {
   Manipulation,
   ManipulationConfigBase,
   ManipulativeOperationConfig,
   OperationParams,
-  OperationResult,
-  OperationStatus,
   TypedOperationConfig,
 } from './types';
 
@@ -69,20 +68,17 @@ abstract class ManipulativeOperationBase<
   async operate(content: C, params: OperationParams): Promise<OperationResult<C>> {
     let currentInstance: I = await this._initialize(content, params);
 
-    let status: OperationStatus = OPERATION_STATUS.UNCHANGED;
+    let status: OperationStatus = OPERATION_STATUS.UNPROCESSED;
     for (const manipulation of this._manipulations) {
       if (manipulation.isManipulatable(currentInstance, params)) {
         const result = await manipulation.manipulate(currentInstance, params);
         currentInstance = result.content;
-        const manipulationStatus = result.status;
-        if (OPERATION_STATUS_PRIORITY[status] < OPERATION_STATUS_PRIORITY[manipulationStatus]) {
-          status = manipulationStatus;
-        }
+        status = getOperationStatus(status, result.operationStatus);
       }
     }
 
     const currentContent = await this._complete(currentInstance, params);
-    return { status, content: currentContent };
+    return { operationStatus: status, content: currentContent };
   }
 
   /**

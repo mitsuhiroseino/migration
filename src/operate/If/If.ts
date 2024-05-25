@@ -1,11 +1,11 @@
-import { Content } from '../../types';
+import { Content, OperationResult } from '../../types';
 import isMatch from '../../utils/isMatch';
 import toOperations from '../../utils/toOperations';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import operate from '../operate';
-import { Operation, OperationParams, OperationResult } from '../types';
+import { Operation, OperationParams } from '../types';
 import { IfConfig } from './types';
 
 /**

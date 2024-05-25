@@ -1,4 +1,11 @@
-import { CONTENT_TYPE, ITEM_TYPE, MANIPULATION_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from './constants';
+import {
+  CONTENT_TYPE,
+  ITEM_TYPE,
+  MANIPULATION_TYPE,
+  MIGRATION_ITEM_STATUS,
+  MIGRATION_STATUS,
+  OPERATION_STATUS,
+} from './constants';
 import { Input, InputConfig, InputResultBase, Output, OutputConfig, OutputResultBase } from './io/types';
 import { Operation, OperationConfigBase } from './operate/types';
 import { FormatOptions } from './utils/format';
@@ -252,6 +259,11 @@ export type OperateContentSpecificConfig = {
 };
 
 /**
+ * 内容の処理結果
+ */
+export type OperationStatus = (typeof OPERATION_STATUS)[keyof typeof OPERATION_STATUS];
+
+/**
  * 1ファイルorディレクトリ毎の処理結果
  */
 export type MigrationItemStatus = (typeof MIGRATION_ITEM_STATUS)[keyof typeof MIGRATION_ITEM_STATUS];
@@ -325,7 +337,27 @@ export type MigrationItemResult = InputResultBase &
      * 処理ステータス
      */
     status: MigrationItemStatus;
+
+    /**
+     * コンテンツの処理ステータス
+     */
+    operationStatus: OperationStatus;
   };
+
+/**
+ * 操作の結果
+ */
+export type OperationResult<C extends Content = Content> = {
+  /**
+   * コンテンツの処理ステータス
+   */
+  operationStatus: OperationStatus;
+
+  /**
+   * 処理後のコンテンツ
+   */
+  content: C;
+};
 
 /**
  * MigrationConfig以下で継承するコンフィグ

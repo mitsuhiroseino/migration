@@ -1,10 +1,10 @@
 import { CONTENT_TYPE } from '../constants';
-import { Content, ContentType, Optional } from '../types';
+import { Content, ContentType, OperationResult, Optional } from '../types';
 import asArray from '../utils/asArray';
 import getContentType from '../utils/getContentType';
 import isMatch from '../utils/isMatch';
 import uuid from '../utils/uuid';
-import { Operation, OperationParams, OperationResult, TypedOperationConfig } from './types';
+import { Operation, OperationParams, TypedOperationConfig } from './types';
 
 export default abstract class OperationBase<
   C extends Content = Content,

@@ -15,21 +15,21 @@ class Noop extends OutputBase<Content, NoopOutputConfig, NoopOutputResult> {
   async write(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
     return {
       result: {},
-      status: MIGRATION_ITEM_STATUS.PROCESSED,
+      status: MIGRATION_ITEM_STATUS.NONE,
     };
   }
 
   async copy(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
     return {
       result: {},
-      status: MIGRATION_ITEM_STATUS.PROCESSED,
+      status: MIGRATION_ITEM_STATUS.NONE,
     };
   }
 
   async move(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
     return {
       result: {},
-      status: MIGRATION_ITEM_STATUS.PROCESSED,
+      status: MIGRATION_ITEM_STATUS.NONE,
     };
   }
 }

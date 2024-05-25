@@ -1,7 +1,7 @@
-import { Content, Optional } from '../types';
+import { Content, OperationResult, Optional } from '../types';
 import isMatch from '../utils/isMatch';
 import uuid from '../utils/uuid';
-import { Manipulation, ManipulationConfigBase, OperationParams, OperationResult, OperationStatus } from './types';
+import { Manipulation, ManipulationConfigBase, OperationParams } from './types';
 
 export default abstract class ManipulationBase<C = Content, OC extends ManipulationConfigBase = ManipulationConfigBase>
   implements Manipulation<C>

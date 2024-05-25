@@ -1,5 +1,7 @@
-import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from './constants';
-import { Operation, OperationParams, OperationResult, OperationStatus } from './types';
+import { OPERATION_STATUS } from '../constants';
+import { OperationResult, OperationStatus } from '../types';
+import getOperationStatus from '../utils/getOperationStatus';
+import { Operation, OperationParams } from './types';
 
 /**
  * 処理対象内の文字列をコンフィグに従って置換する
@@ -14,7 +16,7 @@ export default async function operate<C>(
   params: OperationParams,
 ): Promise<OperationResult<C>> {
   // 処理対象の操作を行う
-  let status: OperationStatus = OPERATION_STATUS.UNCHANGED;
+  let status: OperationStatus = OPERATION_STATUS.UNPROCESSED;
   let currentContent = content;
   for (const operation of operations) {
     // 操作
@@ -22,11 +24,8 @@ export default async function operate<C>(
       // オペレーションを直列で実行
       const result = await operation.operate(currentContent, params);
       currentContent = result.content;
-      const operationStatus = result.status;
-      if (OPERATION_STATUS_PRIORITY[status] < OPERATION_STATUS_PRIORITY[operationStatus]) {
-        status = operationStatus;
-      }
+      status = getOperationStatus(status, result.operationStatus);
     }
   }
-  return { status, content: currentContent };
+  return { operationStatus: status, content: currentContent };
 }

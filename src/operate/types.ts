@@ -1,8 +1,8 @@
-import { CommonConfig, Content, ContentType, Optional } from '../types';
+import { CommonConfig, Content, ContentType, OperationResult, Optional } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { Condition } from '../utils/isMatch';
-import { OPERATION_STATUS, OPERATION_TYPE } from './constants';
 import OperationBase from './OperationBase';
+import { OPERATION_TYPE } from './constants';
 
 export { default as OperationConfig } from './OperationConfig';
 
@@ -10,11 +10,6 @@ export { default as OperationConfig } from './OperationConfig';
  * コンテンツを操作する際の種別
  */
 export type OperationType = (typeof OPERATION_TYPE)[keyof typeof OPERATION_TYPE];
-
-/**
- * 操作の結果
- */
-export type OperationStatus = (typeof OPERATION_STATUS)[keyof typeof OPERATION_STATUS];
 
 /**
  * 操作の設定
@@ -62,21 +57,6 @@ export type OperationParams = {
 };
 
 export type TypedOperationConfig = OperationConfigBase<OperationConfigBase['type'] | string>;
-
-/**
- * 操作の結果
- */
-export type OperationResult<C extends Content = Content> = {
-  /**
-   * 処理結果
-   */
-  status: OperationStatus;
-
-  /**
-   * 処理後のコンテンツ
-   */
-  content: C;
-};
 
 /**
  * 内容に対する操作

@@ -1,8 +1,8 @@
 import { State } from 'gm';
-import { CommonConfig } from '../../types';
+import { CommonConfig, OperationResult } from '../../types';
 import { FactoriableConfig } from '../../utils/Factory';
 import { OPERATION_TYPE } from '../constants';
-import { ManipulationSyncFn, OperationConfigBase, OperationResult } from '../types';
+import { ManipulationSyncFn, OperationConfigBase } from '../types';
 import GmManipulationConfig from './GmManipulationConfig';
 import { GM_MANIPULATION_TYPE, GM_OUTPUT_FORMAT } from './constants';
 

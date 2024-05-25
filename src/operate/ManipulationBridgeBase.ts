@@ -1,13 +1,6 @@
-import { Optional } from '../types';
+import { OperationResult, OperationStatus, Optional } from '../types';
 import ManipulationBase from './ManipulationBase';
-import {
-  ManipulationAsyncFn,
-  ManipulationConfigBase,
-  ManipulationSyncFn,
-  OperationParams,
-  OperationResult,
-  OperationStatus,
-} from './types';
+import { ManipulationAsyncFn, ManipulationConfigBase, ManipulationSyncFn, OperationParams } from './types';
 
 export default abstract class ManipulationBridgeBase<
   I,
@@ -32,9 +25,9 @@ export default abstract class ManipulationBridgeBase<
     const result = this._manipulate(instance, this._config);
     if (result instanceof Promise) {
       const content = await result;
-      return { status: this._getStatus(content, params), content };
+      return { operationStatus: this._getStatus(content, params), content };
     } else {
-      return { status: this._getStatus(result, params), content: result };
+      return { operationStatus: this._getStatus(result, params), content: result };
     }
   }
 

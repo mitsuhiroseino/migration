@@ -1,9 +1,11 @@
-import { Content } from '../../types';
+import { OPERATION_STATUS } from '../../constants';
+import { Content, OperationResult, OperationStatus } from '../../types';
+import getOperationStatus from '../../utils/getOperationStatus';
 import isMatch from '../../utils/isMatch';
 import OperationBundlerBase from '../OperationBundlerBase';
 import OperationFactory from '../OperationFactory';
-import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY, OPERATION_TYPE } from '../constants';
-import { OperationParams, OperationResult, OperationStatus } from '../types';
+import { OPERATION_TYPE } from '../constants';
+import { OperationParams } from '../types';
 import { WhileConfig } from './types';
 
 /**
@@ -12,7 +14,7 @@ import { WhileConfig } from './types';
 class While extends OperationBundlerBase<Content, WhileConfig> {
   async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     const { condition } = this._config;
-    let status: OperationStatus = OPERATION_STATUS.UNCHANGED;
+    let status: OperationStatus = OPERATION_STATUS.UNPROCESSED;
     let currentParams = params;
     let currentContent = content;
 
@@ -22,13 +24,10 @@ class While extends OperationBundlerBase<Content, WhileConfig> {
       const result = await super.operate(oldContent, currentParams);
       currentContent = result.content;
       currentParams._content = oldContent;
-      const operationStatus = result.status;
-      if (OPERATION_STATUS_PRIORITY[status] < OPERATION_STATUS_PRIORITY[operationStatus]) {
-        status = operationStatus;
-      }
+      status = getOperationStatus(status, result.operationStatus);
     }
 
-    return { status, content: currentContent };
+    return { operationStatus: status, content: currentContent };
   }
 }
 

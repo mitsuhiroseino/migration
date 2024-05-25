@@ -62,10 +62,10 @@ export default async function executeIteration(
         applyIf(onItemStart, [config, newParams]);
 
         // コンテンツを処理
-        const content = await operateContent(inputItem.content, rest, newParams);
+        const operationResult = await operateContent(inputItem.content, rest, newParams);
 
         // 出力処理
-        const outputItem = await ioHandler.write(content, newParams);
+        const outputItem = await ioHandler.write(operationResult.content, newParams);
         newParams = assignParams(newParams, outputItem.result);
 
         // 入力を削除
@@ -76,7 +76,13 @@ export default async function executeIteration(
         }
 
         // 要素の処理結果
-        const result = { ...inputItem.result, ...outputItem.result, ...deletedItem, status: outputItem.status };
+        const result = {
+          ...inputItem.result,
+          ...outputItem.result,
+          ...deletedItem,
+          status: outputItem.status,
+          operationStatus: operationResult.operationStatus,
+        };
         iterationResult.results.push(result);
 
         applyIf(onItemEnd, [result, config, newParams]);

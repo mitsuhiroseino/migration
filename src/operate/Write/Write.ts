@@ -1,13 +1,14 @@
+import { OPERATION_STATUS } from '../../constants';
 import { Output, OutputConfig } from '../../io';
 import getIoConfig from '../../io/helpers/getIoConfig';
 import { OutputFactory } from '../../io/outputs';
-import { Content, VariableString } from '../../types';
+import { Content, OperationResult, VariableString } from '../../types';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
 import inheritConfig from '../../utils/inheritConfig';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
-import { OPERATION_STATUS, OPERATION_TYPE } from '../constants';
-import { OperationParams, OperationResult } from '../types';
+import { OPERATION_TYPE } from '../constants';
+import { OperationParams } from '../types';
 import { WriteConfig } from './types';
 
 /**
@@ -55,7 +56,7 @@ class Write extends OperationBase<Content, WriteConfig> {
     // 完了処理
     await this._output.complete(params);
 
-    return { status: OPERATION_STATUS.UNCHANGED, content };
+    return { operationStatus: OPERATION_STATUS.UNPROCESSED, content };
   }
 }
 export default Write;
