@@ -278,14 +278,14 @@ export type MigrationStatus = (typeof MIGRATION_STATUS)[keyof typeof MIGRATION_S
  */
 export type MigrationResult = {
   /**
+   * 全体の処理ステータス
+   */
+  status: MigrationStatus;
+
+  /**
    * タスク毎の処理結果
    */
   results?: MigrationTaskResult[];
-
-  /**
-   * 全体の処理結果
-   */
-  status: MigrationStatus;
 
   /**
    * メッセージ
@@ -303,6 +303,11 @@ export type MigrationResult = {
  */
 export type MigrationTaskResult = {
   /**
+   * タスクの処理ステータス
+   */
+  status: MigrationStatus;
+
+  /**
    * ジョブ毎の処理結果
    */
   results: MigrationJobResult[];
@@ -313,6 +318,11 @@ export type MigrationTaskResult = {
  */
 export type MigrationJobResult = {
   /**
+   * ジョブの処理ステータス
+   */
+  status: MigrationStatus;
+
+  /**
    * イテレーション毎の処理結果
    */
   results: MigrationIterationResult[];
@@ -322,6 +332,11 @@ export type MigrationJobResult = {
  * イテレーションの処理結果
  */
 export type MigrationIterationResult = {
+  /**
+   * イテレーションの処理ステータス
+   */
+  status: MigrationStatus;
+
   /**
    * 要素毎の処理結果
    */

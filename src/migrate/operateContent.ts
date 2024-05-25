@@ -1,11 +1,11 @@
 import isString from 'lodash/isString';
-import { OPERATION_STATUS } from '../constants';
+import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
 import operate from '../operate';
 import { Content, IterationParams, OperateContentConfig, OperationResult, OperationStatus } from '../types';
 import catchError from '../utils/catchError';
 import finishFormattingOptions from '../utils/finishFormattingOptions';
 import format from '../utils/format';
-import getOperationStatus from '../utils/getOperationStatus';
+import updateStatus from '../utils/updateStatus';
 
 /**
  * コンテンツの変換処理を行う
@@ -44,7 +44,7 @@ export default async function operateContent(
       return { operationStatus: OPERATION_STATUS.ERROR, content };
     }
     if (before !== content) {
-      operationStatus = getOperationStatus(operationStatus, OPERATION_STATUS.PROCESSED);
+      operationStatus = updateStatus(operationStatus, OPERATION_STATUS.PROCESSED, OPERATION_STATUS_PRIORITY);
     }
   }
 
@@ -53,7 +53,7 @@ export default async function operateContent(
     try {
       const result = await operate(content, operations, params);
       content = result.content;
-      operationStatus = getOperationStatus(operationStatus, result.operationStatus);
+      operationStatus = updateStatus(operationStatus, result.operationStatus, OPERATION_STATUS_PRIORITY);
     } catch (e) {
       catchError(e, 'Error in operation', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
@@ -74,7 +74,7 @@ export default async function operateContent(
       return { operationStatus: OPERATION_STATUS.ERROR, content };
     }
     if (before !== content) {
-      operationStatus = getOperationStatus(operationStatus, OPERATION_STATUS.PROCESSED);
+      operationStatus = updateStatus(operationStatus, OPERATION_STATUS.PROCESSED, OPERATION_STATUS_PRIORITY);
     }
   }
 

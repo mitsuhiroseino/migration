@@ -41,6 +41,11 @@ export const CONTENT_TYPE = {
  */
 export const MIGRATION_STATUS = {
   /**
+   * 非活性
+   */
+  DISABLED: 'disabled',
+
+  /**
    * 処理完了
    */
   SUCCESS: 'success',
@@ -54,12 +59,14 @@ export const MIGRATION_STATUS = {
    * 想定外のエラー
    */
   FATAL: 'fatal',
-
-  /**
-   * 非活性
-   */
-  DISABLED: 'disabled',
 } as const;
+
+export const MIGRATION_STATUS_PRIORITY = {
+  [MIGRATION_STATUS.DISABLED]: 0,
+  [MIGRATION_STATUS.SUCCESS]: 1,
+  [MIGRATION_STATUS.ERROR]: 2,
+  [MIGRATION_STATUS.FATAL]: 3,
+};
 
 /**
  * 親から引き継ぐ設定
@@ -178,6 +185,11 @@ export const MIGRATION_ITEM_STATUS = {
    * 削除
    */
   DELETED: 'deleted',
+
+  /**
+   * エラー
+   */
+  ERROR: 'error',
 } as const;
 
 export const MIGRATION_ITEM_STATUS_PRIORITY = {
@@ -188,6 +200,7 @@ export const MIGRATION_ITEM_STATUS_PRIORITY = {
   [MIGRATION_ITEM_STATUS.COPIED]: 4,
   [MIGRATION_ITEM_STATUS.MOVED]: 5,
   [MIGRATION_ITEM_STATUS.DELETED]: 6,
+  [MIGRATION_ITEM_STATUS.ERROR]: 99,
 };
 
 /**
@@ -219,7 +232,7 @@ export const OPERATION_STATUS_PRIORITY = {
   [OPERATION_STATUS.SKIPPED]: 0,
   [OPERATION_STATUS.UNPROCESSED]: 1,
   [OPERATION_STATUS.PROCESSED]: 2,
-  [OPERATION_STATUS.ERROR]: 3,
+  [OPERATION_STATUS.ERROR]: 99,
 };
 
 /**

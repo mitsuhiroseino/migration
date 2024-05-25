@@ -1,8 +1,8 @@
-import { OPERATION_STATUS } from '../constants';
+import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
 import { Content, OperationResult, OperationStatus, Optional } from '../types';
 import asArray from '../utils/asArray';
-import getOperationStatus from '../utils/getOperationStatus';
 import throwError from '../utils/throwError';
+import updateStatus from '../utils/updateStatus';
 import OperationBase from './OperationBase';
 import {
   Manipulation,
@@ -73,7 +73,7 @@ abstract class ManipulativeOperationBase<
       if (manipulation.isManipulatable(currentInstance, params)) {
         const result = await manipulation.manipulate(currentInstance, params);
         currentInstance = result.content;
-        status = getOperationStatus(status, result.operationStatus);
+        status = updateStatus(status, result.operationStatus, OPERATION_STATUS_PRIORITY);
       }
     }
 

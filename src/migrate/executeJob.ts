@@ -1,6 +1,8 @@
+import { MIGRATION_STATUS, MIGRATION_STATUS_PRIORITY } from '../constants';
 import { MigrationIterationConfig, MigrationJobConfig, MigrationJobResult } from '../types';
 import applyIf from '../utils/applyIf';
 import toOperations from '../utils/toOperations';
+import updateStatus from '../utils/updateStatus';
 import executeIteration from './executeIteration';
 import getIterator from './helpers/getIterator';
 
@@ -11,10 +13,10 @@ import getIterator from './helpers/getIterator';
  */
 export default async function executeJob(config: MigrationJobConfig): Promise<MigrationJobResult | null> {
   const { jobId, operations, iteration, params: jobParams, onJobStart, onJobEnd, disabled, ...rest } = config;
+  const result: MigrationJobResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
   if (disabled) {
-    return {
-      results: [],
-    };
+    result.status = MIGRATION_STATUS.DISABLED;
+    return result;
   }
 
   const cfg: MigrationIterationConfig = rest;
@@ -26,17 +28,17 @@ export default async function executeJob(config: MigrationJobConfig): Promise<Mi
   // イテレーターを作成する
   const iterator = getIterator(iteration, config);
   // 対象の処理
-  const results = [];
   let i = 0;
   for (const iterationParams of iterator) {
     // iteratorの返す値で繰り返し処理
     const iterationCfg = { iterationId: `${jobId}[${i}]`, ...cfg };
     const params = { ...jobParams, ...iterationParams };
     // イテレーション間は直列実行
-    results.push(await executeIteration(iterationCfg, params));
+    const iterationResult = await executeIteration(iterationCfg, params);
+    result.results.push(iterationResult);
+    result.status = updateStatus(result.status, iterationResult.status, MIGRATION_STATUS_PRIORITY);
     i++;
   }
-  const result = { results };
 
   applyIf(onJobEnd, [result, config]);
   return result;

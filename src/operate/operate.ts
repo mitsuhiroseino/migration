@@ -1,6 +1,6 @@
-import { OPERATION_STATUS } from '../constants';
+import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
 import { OperationResult, OperationStatus } from '../types';
-import getOperationStatus from '../utils/getOperationStatus';
+import updateStatus from '../utils/updateStatus';
 import { Operation, OperationParams } from './types';
 
 /**
@@ -24,7 +24,7 @@ export default async function operate<C>(
       // オペレーションを直列で実行
       const result = await operation.operate(currentContent, params);
       currentContent = result.content;
-      status = getOperationStatus(status, result.operationStatus);
+      status = updateStatus(status, result.operationStatus, OPERATION_STATUS_PRIORITY);
     }
   }
   return { operationStatus: status, content: currentContent };

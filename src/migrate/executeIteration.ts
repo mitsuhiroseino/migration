@@ -1,8 +1,8 @@
-import { MANIPULATION_TYPE } from '../constants';
+import { MANIPULATION_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
 import { InputConfig, OutputConfig } from '../io';
 import IoHandler, { IoHandlerConfig } from '../io/IoHandler';
 import getIoConfig from '../io/helpers/getIoConfig';
-import { IterationParams, MigrationIterationConfig, MigrationIterationResult } from '../types';
+import { IterationParams, MigrationItemResult, MigrationIterationConfig, MigrationIterationResult } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
 import inheritConfig from '../utils/inheritConfig';
@@ -30,10 +30,10 @@ export default async function executeIteration(
     disabled,
     ...rest
   } = config;
+  const result: MigrationIterationResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
   if (disabled) {
-    return {
-      results: [],
-    };
+    result.status = MIGRATION_STATUS.DISABLED;
+    return result;
   }
 
   applyIf(onIterationStart, [config, params]);
@@ -47,8 +47,6 @@ export default async function executeIteration(
   // 入出力ハンドラー
   const ioHandlerConfig: IoHandlerConfig = inheritConfig({ manipulationType }, rest);
   const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
-  // 処理結果
-  const iterationResult: MigrationIterationResult = { results: [] };
 
   try {
     await ioHandler.initialize(params);
@@ -76,16 +74,19 @@ export default async function executeIteration(
         }
 
         // 要素の処理結果
-        const result = {
+        const itemResult: MigrationItemResult = {
           ...inputItem.result,
           ...outputItem.result,
           ...deletedItem,
           status: outputItem.status,
           operationStatus: operationResult.operationStatus,
         };
-        iterationResult.results.push(result);
+        result.results.push(itemResult);
+        if (itemResult.status === MIGRATION_ITEM_STATUS.ERROR) {
+          result.status = MIGRATION_STATUS.ERROR;
+        }
 
-        applyIf(onItemEnd, [result, config, newParams]);
+        applyIf(onItemEnd, [itemResult, config, newParams]);
       } catch (error) {
         await ioHandler.error(newParams);
         throw propagateError(error, `: ${newParams._inputItem}`);
@@ -97,6 +98,6 @@ export default async function executeIteration(
     throw error;
   }
 
-  applyIf(onIterationEnd, [iterationResult, config, params]);
-  return iterationResult;
+  applyIf(onIterationEnd, [result, config, params]);
+  return result;
 }

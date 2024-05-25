@@ -1,7 +1,7 @@
-import { OPERATION_STATUS } from '../../constants';
+import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../../constants';
 import { Content, OperationResult, OperationStatus } from '../../types';
-import getOperationStatus from '../../utils/getOperationStatus';
 import isMatch from '../../utils/isMatch';
+import updateStatus from '../../utils/updateStatus';
 import OperationBundlerBase from '../OperationBundlerBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
@@ -24,7 +24,7 @@ class While extends OperationBundlerBase<Content, WhileConfig> {
       const result = await super.operate(oldContent, currentParams);
       currentContent = result.content;
       currentParams._content = oldContent;
-      status = getOperationStatus(status, result.operationStatus);
+      status = updateStatus(status, result.operationStatus, OPERATION_STATUS_PRIORITY);
     }
 
     return { operationStatus: status, content: currentContent };
