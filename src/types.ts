@@ -116,13 +116,17 @@ export type MigrationIterationConfig = MigrationIterationSpecificConfig &
 export type OperateContentConfig<OP = Operation> = CommonConfig &
   OperateContentSpecificConfig & {
     /**
-     * フォーマットも含む編集処理前に実行される任意の処理
+     * フォーマットもや編集処理前に実行される任意の処理
      * @param content コンテンツ
      * @param config 当コンフィグ
      * @param params 繰り返し処理毎のパラメーター
-     * @returns 編集処理対象になるコンテンツ
+     * @returns パラメーター
      */
-    initialize?: <C = Content>(content: C, config: OperateContentConfig, params: IterationParams) => Promise<C>;
+    initialize?: <C = Content>(
+      content: C,
+      config: OperateContentConfig,
+      params: IterationParams,
+    ) => Promise<IterationParams | void>;
 
     /**
      * 操作の設定
@@ -130,13 +134,12 @@ export type OperateContentConfig<OP = Operation> = CommonConfig &
     operations?: OP[];
 
     /**
-     * フォーマットも含む編集処理後に実行される任意の処理
+     * フォーマットや編集処理後に実行される任意の処理
      * @param content 編集処理後のコンテンツ
      * @param config 当コンフィグ
      * @param params 繰り返し処理毎のパラメーター
-     * @returns 最終的なコンテンツ
      */
-    finalize?: <C = Content>(content: C, config: OperateContentConfig, params: IterationParams) => Promise<C>;
+    finalize?: <C = Content>(content: C, config: OperateContentConfig, params: IterationParams) => Promise<void>;
   };
 
 /**

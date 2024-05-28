@@ -26,7 +26,10 @@ export default async function operateContent(
   // 任意の前処理
   if (initialize) {
     try {
-      content = await initialize(content, { ...config }, { ...params });
+      const updatedParams = await initialize(content, { ...config }, { ...params });
+      if (updatedParams) {
+        params = updatedParams;
+      }
     } catch (e) {
       catchError(e, 'Error in initializing', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
@@ -81,7 +84,7 @@ export default async function operateContent(
   // 任意の後処理
   if (finalize) {
     try {
-      content = await finalize(content, { ...config }, { ...params });
+      await finalize(content, { ...config }, { ...params });
     } catch (e) {
       catchError(e, 'Error in finalizing', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
