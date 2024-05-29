@@ -40,10 +40,16 @@ class AsyncFnIterable<T> implements AsyncIterable<T> {
  * @param iterable
  * @returns
  */
-export default function toAsyncIterable<T>(target: Iterable<T> | Fn<T>, args?: any[]) {
+export default function toAsyncIterable<T>(target: Iterable<T> | Fn<T> | T, args?: any[]) {
   if (isFunction(target)) {
     return new AsyncFnIterable(target, args);
-  } else {
+  } else if (isIterable(target)) {
     return new AsyncIterableImpl(target);
+  } else {
+    return new AsyncIterableImpl([target]);
   }
+}
+
+function isIterable(value: unknown): value is Iterable<unknown> {
+  return value != null && typeof value[Symbol.iterator] === 'function';
 }

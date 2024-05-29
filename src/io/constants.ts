@@ -3,6 +3,11 @@
  */
 export const IO_TYPE = {
   /**
+   * データ
+   */
+  DATA: 'data',
+
+  /**
    * ファイルシステム
    */
   FS: 'fs',
