@@ -1,10 +1,11 @@
-import { Content, OperationResult, Optional } from '../types';
+import { OPERATION_STATUS } from '../constants';
+import { OperationResult, OperationStatus, Optional } from '../types';
 import isMatch from '../utils/isMatch';
 import uuid from '../utils/uuid';
 import { Manipulation, ManipulationConfigBase, OperationParams } from './types';
 
-export default abstract class ManipulationBase<C = Content, OC extends ManipulationConfigBase = ManipulationConfigBase>
-  implements Manipulation<C>
+export default abstract class ManipulationBase<I, OC extends ManipulationConfigBase = ManipulationConfigBase>
+  implements Manipulation<I>
 {
   protected _config: Optional<OC, 'type'>;
 
@@ -19,28 +20,28 @@ export default abstract class ManipulationBase<C = Content, OC extends Manipulat
     return this._manipulationId;
   }
 
-  isManipulatable(content: C, params: OperationParams): boolean {
+  isManipulatable(instance: I, params: OperationParams): boolean {
     const { disabled, filter } = this._config;
     if (disabled) {
       return false;
-    } else if (!isMatch(content, filter, params)) {
+    } else if (!isMatch(instance, filter, params)) {
       return false;
     }
     return true;
   }
 
-  initialize(content: C, params: OperationParams): Promise<void> {
-    return;
+  async setup(instance: I, params: OperationParams): Promise<OperationStatus> {
+    return OPERATION_STATUS.UNPROCESSED;
   }
 
   /**
    * コンテンツの操作
-   * @param content
+   * @param instance
    * @param params
    */
-  abstract manipulate(content: C, params: OperationParams): Promise<OperationResult<C>>;
+  abstract manipulate(instance: I, params: OperationParams): Promise<OperationResult<I>>;
 
-  complete(content: C, params: OperationParams): Promise<void> {
-    return;
+  async teardown(instance: I, params: OperationParams): Promise<OperationStatus> {
+    return OPERATION_STATUS.UNPROCESSED;
   }
 }

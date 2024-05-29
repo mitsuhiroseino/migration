@@ -59,10 +59,10 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * 初期化処理
    * @param params
    */
-  async initialize(params: IterationParams): Promise<DiffParams> {
-    const inputDiffParams = await this._input.initialize(params);
-    const outputDiffParams = await this._output.initialize(assignParams(params, inputDiffParams));
-    return { ...inputDiffParams, ...outputDiffParams };
+  async activate(params: IterationParams): Promise<DiffParams> {
+    const outputDiffParams = await this._output.activate(params);
+    const inputDiffParams = await this._input.activate(assignParams(params, outputDiffParams));
+    return { ...outputDiffParams, ...inputDiffParams };
   }
 
   /**
@@ -114,9 +114,9 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * 完了処理
    * @param params
    */
-  async complete(params: IterationParams): Promise<DiffParams> {
-    const inputDiffParams = await this._input.complete(params);
-    const outputDiffParams = await this._output.complete(assignParams(params, inputDiffParams));
+  async deactivate(params: IterationParams): Promise<DiffParams> {
+    const inputDiffParams = await this._input.deactivate(params);
+    const outputDiffParams = await this._output.deactivate(assignParams(params, inputDiffParams));
     this._active = false;
     return { ...inputDiffParams, ...outputDiffParams };
   }

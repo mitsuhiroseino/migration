@@ -21,11 +21,11 @@ class Sharp extends ManipulativeOperationBase<Buffer, SharpConfig, SharpLib.Shar
     }
   }
 
-  protected async _initialize(content: Buffer, params: OperationParams): Promise<SharpLib.Sharp> {
+  protected async _toInstance(content: Buffer, params: OperationParams): Promise<SharpLib.Sharp> {
     return SharpLib(content, this._config.options);
   }
 
-  protected async _complete(instance: SharpLib.Sharp, params: OperationParams): Promise<Buffer> {
+  protected async _toContent(instance: SharpLib.Sharp, params: OperationParams): Promise<Buffer> {
     return await instance.toBuffer();
   }
 }

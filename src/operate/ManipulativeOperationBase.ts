@@ -19,7 +19,7 @@ abstract class ManipulativeOperationBase<
   C extends Content = Content,
   OC extends TypedOperationConfig & ManipulativeOperationConfig = TypedOperationConfig & ManipulativeOperationConfig,
   I = C,
-  M extends Manipulation = Manipulation<I>,
+  M extends Manipulation<I> = Manipulation<I>,
 > extends OperationBase<C, OC> {
   /**
    * 操作
@@ -30,26 +30,23 @@ abstract class ManipulativeOperationBase<
 
   constructor(config: Optional<OC, 'type'>) {
     super(config);
-    this._construct();
+  }
+
+  async initialize(params: OperationParams): Promise<void> {
     const { manipulations: manipulationConfigs } = this._config;
     const manipulations: M[] = [];
     for (const manipulationConfig of asArray(manipulationConfigs)) {
-      manipulations.push(this._create(manipulationConfig));
+      manipulations.push(this._create(manipulationConfig, params));
     }
     this._manipulations = manipulations;
   }
 
   /**
-   * インスタンス作成開始時の処理
-   */
-  protected _construct(): void {}
-
-  /**
    * 操作のインスタンスを作成
    * @param config
    */
-  protected _create(config: ManipulationConfigBase): M {
-    const manipulation = this._createManipuration(config);
+  protected _create(config: ManipulationConfigBase, params: OperationParams): M {
+    const manipulation = this._createManipuration(config, params);
     if (manipulation) {
       return manipulation;
     } else {
@@ -61,22 +58,38 @@ abstract class ManipulativeOperationBase<
    * 操作のインスタンスを作成
    * @param config
    */
-  protected abstract _createManipuration(config: ManipulationConfigBase): M | undefined;
+  protected abstract _createManipuration(config: ManipulationConfigBase, params: OperationParams): M | undefined;
 
   /**
    * 前処理
    * @param content
    * @param params
-   * @param manipulations
    * @returns
    */
-  protected async _initialize(content: C, params: OperationParams): Promise<I> {
+  protected async _setup(content: C, params: OperationParams): Promise<OperationResult<I>> {
+    this._operationStatus = OPERATION_STATUS.UNPROCESSED;
+    const instance = await this._toInstance(content, params);
+    const operationStatuses = await Promise.all(
+      this._manipulations.map((manipulation) => manipulation.setup(instance, params)),
+    );
+    this._operationStatus = operationStatuses.reduce(
+      (result, operationStatus) => updateStatus(result, operationStatus, OPERATION_STATUS_PRIORITY),
+      this._operationStatus,
+    );
+
+    return {
+      operationStatus: this._operationStatus,
+      content: instance,
+    };
+  }
+
+  protected async _toInstance(content: C, params: OperationParams): Promise<I> {
     return content as unknown as I;
   }
 
   async operate(content: C, params: OperationParams): Promise<OperationResult<C>> {
-    this._operationStatus = OPERATION_STATUS.UNPROCESSED;
-    let currentInstance: I = await this._initialize(content, params);
+    const setupResult = await this._setup(content, params);
+    let currentInstance = setupResult.content;
 
     for (const manipulation of this._manipulations) {
       if (manipulation.isManipulatable(currentInstance, params)) {
@@ -86,19 +99,30 @@ abstract class ManipulativeOperationBase<
       }
     }
 
-    const currentContent = await this._complete(currentInstance, params);
-    return { operationStatus: this._operationStatus, content: currentContent };
+    const operationResult = await this._teardown(currentInstance, params);
+    return operationResult;
   }
 
   /**
    * 後処理
-   * @param content
+   * @param instance
    * @param params
-   * @param manipulations
    * @returns
    */
-  protected async _complete(content: I, params: OperationParams): Promise<C> {
-    return content as unknown as C;
+  protected async _teardown(instance: I, params: OperationParams): Promise<OperationResult<C>> {
+    const operationStatuses = await Promise.all(
+      this._manipulations.map((manipulation) => manipulation.teardown(instance, params)),
+    );
+    this._operationStatus = operationStatuses.reduce(
+      (result, operationStatus) => updateStatus(result, operationStatus, OPERATION_STATUS_PRIORITY),
+      this._operationStatus,
+    );
+    const content = await this._toContent(instance, params);
+    return { operationStatus: this._operationStatus, content };
+  }
+
+  protected async _toContent(instance: I, params: OperationParams): Promise<C> {
+    return instance as unknown as C;
   }
 }
 export default ManipulativeOperationBase;

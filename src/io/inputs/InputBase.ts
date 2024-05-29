@@ -16,7 +16,7 @@ abstract class InputBase<
     this._config = config;
   }
 
-  initialize(params: IterationParams): Promise<DiffParams> {
+  activate(params: IterationParams): Promise<DiffParams> {
     return Promise.resolve({});
   }
 
@@ -28,7 +28,7 @@ abstract class InputBase<
 
   abstract delete(params: IterationParams): Promise<DiffParams>;
 
-  complete(params: IterationParams): Promise<DiffParams> {
+  deactivate(params: IterationParams): Promise<DiffParams> {
     return Promise.resolve({});
   }
 

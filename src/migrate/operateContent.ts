@@ -19,19 +19,19 @@ export default async function operateContent(
   config: OperateContentConfig,
   params: IterationParams,
 ): Promise<OperationResult<Content>> {
-  const { initialize, preFormatting, postFormatting, formatterOptions, finalize, operations } = config;
+  const { onOperationStart, preFormatting, postFormatting, formatterOptions, onOperationEnd, operations } = config;
   const { _inputItem } = params;
   let operationStatus: OperationStatus = OPERATION_STATUS.UNPROCESSED;
 
   // 任意の前処理
-  if (initialize) {
+  if (onOperationStart) {
     try {
-      const updatedParams = await initialize(content, { ...config }, { ...params });
+      const updatedParams = await onOperationStart(content, { ...config }, { ...params });
       if (updatedParams) {
         params = updatedParams;
       }
     } catch (e) {
-      catchError(e, 'Error in initializing', config);
+      catchError(e, 'Error in operation start', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
     }
   }
@@ -82,11 +82,11 @@ export default async function operateContent(
   }
 
   // 任意の後処理
-  if (finalize) {
+  if (onOperationEnd) {
     try {
-      await finalize(content, { ...config }, { ...params });
+      await onOperationEnd(content, { ...config }, { ...params });
     } catch (e) {
-      catchError(e, 'Error in finalizing', config);
+      catchError(e, 'Error in operation end', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
     }
   }

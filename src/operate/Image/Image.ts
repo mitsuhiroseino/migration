@@ -21,11 +21,11 @@ class Image extends ManipulativeOperationBase<Buffer, ImageConfig, Jimp> {
     }
   }
 
-  protected async _initialize(content: Buffer, params: OperationParams): Promise<Jimp> {
+  protected async _toInstance(content: Buffer, params: OperationParams): Promise<Jimp> {
     return await Jimp.read(content);
   }
 
-  protected async _complete(instance: Jimp, params: OperationParams): Promise<Buffer> {
+  protected async _toContent(instance: Jimp, params: OperationParams): Promise<Buffer> {
     const { mime } = this._config;
 
     let mimeType;

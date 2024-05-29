@@ -122,7 +122,7 @@ export type OperateContentConfig<OP = Operation> = CommonConfig &
      * @param params 繰り返し処理毎のパラメーター
      * @returns パラメーター
      */
-    initialize?: <C = Content>(
+    onOperationStart?: <C = Content>(
       content: C,
       config: OperateContentConfig,
       params: IterationParams,
@@ -139,7 +139,7 @@ export type OperateContentConfig<OP = Operation> = CommonConfig &
      * @param config 当コンフィグ
      * @param params 繰り返し処理毎のパラメーター
      */
-    finalize?: <C = Content>(content: C, config: OperateContentConfig, params: IterationParams) => Promise<void>;
+    onOperationEnd?: <C = Content>(content: C, config: OperateContentConfig, params: IterationParams) => Promise<void>;
   };
 
 /**

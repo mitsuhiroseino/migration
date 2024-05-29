@@ -31,6 +31,10 @@ export default abstract class OperationBase<
     return this._operationId;
   }
 
+  initialize(params: OperationParams): Promise<void> {
+    return;
+  }
+
   isOperable(content: C, params: OperationParams): boolean {
     const { disabled, filter } = this._config;
     if (disabled) {
@@ -48,4 +52,8 @@ export default abstract class OperationBase<
    * @param params
    */
   abstract operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>>;
+
+  finalize(params: OperationParams): Promise<void> {
+    return;
+  }
 }

@@ -22,11 +22,11 @@ class Gm extends ManipulativeOperationBase<Buffer, GmConfig, State> {
     }
   }
 
-  protected async _initialize(content: Buffer, params: OperationParams): Promise<State> {
+  protected async _toInstance(content: Buffer, params: OperationParams): Promise<State> {
     return gm(content);
   }
 
-  protected async _complete(instance: State, params: OperationParams): Promise<Buffer> {
+  protected async _toContent(instance: gm.State, params: OperationParams): Promise<Buffer> {
     const { fileFormat } = this._config;
     return await new Promise((resolve, reject) => {
       const callback = (err, buffer: Buffer) => {

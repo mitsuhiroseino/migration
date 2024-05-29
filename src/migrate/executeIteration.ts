@@ -2,7 +2,13 @@ import { MANIPULATION_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../c
 import { InputConfig, OutputConfig } from '../io';
 import IoHandler, { IoHandlerConfig } from '../io/IoHandler';
 import getIoConfig from '../io/helpers/getIoConfig';
-import { IterationParams, MigrationItemResult, MigrationIterationConfig, MigrationIterationResult } from '../types';
+import {
+  IterationParams,
+  MigrationItemResult,
+  MigrationIterationConfig,
+  MigrationIterationResult,
+  OperateContentConfig,
+} from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
 import inheritConfig from '../utils/inheritConfig';
@@ -28,8 +34,10 @@ export default async function executeIteration(
     onItemStart,
     onItemEnd,
     disabled,
+    operations = [],
     ...rest
   } = config;
+  const operateContentConfig: OperateContentConfig = { ...rest, operations };
   const result: MigrationIterationResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
   if (disabled) {
     result.status = MIGRATION_STATUS.DISABLED;
@@ -37,6 +45,8 @@ export default async function executeIteration(
   }
 
   applyIf(onIterationStart, [config, params]);
+  // オペレーションの前処理
+  await Promise.all(operations.map((operation) => operation.initialize(params)));
 
   // 入力設定取得
   const inputCfg = getIoConfig(input, 'inputPath');
@@ -49,7 +59,7 @@ export default async function executeIteration(
   const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
 
   try {
-    await ioHandler.initialize(params);
+    await ioHandler.activate(params);
     // 入力を回す
     const inputItems = ioHandler.read(params);
     for await (const inputItem of inputItems) {
@@ -60,7 +70,7 @@ export default async function executeIteration(
         applyIf(onItemStart, [config, newParams]);
 
         // コンテンツを処理
-        const operationResult = await operateContent(inputItem.content, rest, newParams);
+        const operationResult = await operateContent(inputItem.content, operateContentConfig, newParams);
 
         // 出力処理
         const outputItem = await ioHandler.write(operationResult.content, newParams);
@@ -89,15 +99,18 @@ export default async function executeIteration(
         applyIf(onItemEnd, [itemResult, config, newParams]);
       } catch (error) {
         await ioHandler.error(newParams);
-        throw propagateError(error, `: ${newParams._inputItem}`);
+        throw propagateError(error, `${newParams._inputItem}`);
       }
     }
-    await ioHandler.complete(params);
+    await ioHandler.deactivate(params);
   } catch (error) {
     await ioHandler.error(params);
     throw error;
   }
 
+  // オペレーションの後処理
+  await Promise.all(operations.map((operation) => operation.finalize(params)));
   applyIf(onIterationEnd, [result, config, params]);
+
   return result;
 }

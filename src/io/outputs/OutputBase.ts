@@ -16,7 +16,7 @@ abstract class OutputBase<
     this._config = config;
   }
 
-  initialize(params: IterationParams): Promise<DiffParams> {
+  activate(params: IterationParams): Promise<DiffParams> {
     return Promise.resolve({});
   }
 
@@ -26,7 +26,7 @@ abstract class OutputBase<
 
   abstract move(params: IterationParams): Promise<OutputReturnValue<OR>>;
 
-  complete(params: IterationParams): Promise<DiffParams> {
+  deactivate(params: IterationParams): Promise<DiffParams> {
     return Promise.resolve({});
   }
 

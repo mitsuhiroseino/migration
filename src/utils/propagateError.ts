@@ -1,6 +1,9 @@
 export default function propagateError<E>(error: E, additionalMessage: string) {
   if (error instanceof Error) {
-    const message = error.message + ': ' + additionalMessage;
+    let message = error.message;
+    if (additionalMessage) {
+      message = message + ': ' + additionalMessage;
+    }
     const newError = new Error(message);
     newError.stack = error.stack;
 

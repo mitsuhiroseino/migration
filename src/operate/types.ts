@@ -1,4 +1,4 @@
-import { CommonConfig, Content, ContentType, OperationResult, Optional } from '../types';
+import { CommonConfig, Content, ContentType, OperationResult, OperationStatus, Optional } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { Condition } from '../utils/isMatch';
 import OperationBase from './OperationBase';
@@ -65,6 +65,12 @@ export interface Operation<C extends Content = Content> {
   getOperationId(): string;
 
   /**
+   * 1イテレーション毎に実行される前処理
+   * @param params
+   */
+  initialize(params: OperationParams): Promise<void>;
+
+  /**
    * 処理可能か判定する
    * @param content
    * @param params
@@ -77,6 +83,12 @@ export interface Operation<C extends Content = Content> {
    * @param params
    */
   operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>>;
+
+  /**
+   * 1イテレーション毎に実行される後処理
+   * @param params
+   */
+  finalize(params: OperationParams): Promise<void>;
 }
 
 /**
@@ -109,22 +121,36 @@ export type ManipulativeOperationConfig<MC extends ManipulationConfigBase = Mani
 /**
  * 内容に対する詳細な操作
  */
-export interface Manipulation<C = Content> {
+export interface Manipulation<I> {
   getManipulationId(): string;
 
   /**
    * 処理可能か判定する
-   * @param content
+   * @param instance
    * @param params
    */
-  isManipulatable(content: C, params: OperationParams): boolean;
+  isManipulatable(instance: I, params: OperationParams): boolean;
+
+  /**
+   * 初期処理
+   * @param instance
+   * @param params
+   */
+  setup(instance: I, params: OperationParams): Promise<OperationStatus>;
 
   /**
    * コンテンツを操作する
-   * @param content
+   * @param instance
    * @param params
    */
-  manipulate(content: C, params: OperationParams): Promise<OperationResult<C | Content>>;
+  manipulate(instance: I, params: OperationParams): Promise<OperationResult<I>>;
+
+  /**
+   * 後処理
+   * @param instance
+   * @param params
+   */
+  teardown(instance: I, params: OperationParams): Promise<OperationStatus>;
 }
 
 /**

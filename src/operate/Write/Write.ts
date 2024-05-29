@@ -44,7 +44,7 @@ class Write extends OperationBase<Content, WriteConfig> {
     }
 
     // 初期化処理
-    await this._output.initialize(params);
+    await this._output.activate(params);
 
     // パラメーター名
     const prmsName: string = finishDynamicValue(this._paramName, params, this._paramNameOptions);
@@ -54,7 +54,7 @@ class Write extends OperationBase<Content, WriteConfig> {
     await this._output.write(resource, params);
 
     // 完了処理
-    await this._output.complete(params);
+    await this._output.deactivate(params);
 
     return { operationStatus: OPERATION_STATUS.UNPROCESSED, content };
   }

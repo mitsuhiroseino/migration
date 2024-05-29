@@ -44,7 +44,7 @@ class Read extends OperationBundlerBase<Content, ReadConfig> {
     const paramNames: any = {};
 
     // 初期化処理
-    await this._input.initialize(params);
+    await this._input.activate(params);
 
     // リソースの取得
     const inputItems = await this._input.read(params);
@@ -66,7 +66,7 @@ class Read extends OperationBundlerBase<Content, ReadConfig> {
     }
 
     // 完了処理
-    await this._input.complete(params);
+    await this._input.deactivate(params);
 
     // 子要素で処理
     return super.operate(content, { ...params, ...resources });

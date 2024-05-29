@@ -27,16 +27,16 @@ export type IoType = (typeof IO_TYPE)[keyof typeof IO_TYPE];
  */
 export interface IoBase {
   /**
-   * 初期化処理
+   * 開始処理
    * @param params
    */
-  initialize(params: IterationParams): Promise<DiffParams>;
+  activate(params: IterationParams): Promise<DiffParams>;
 
   /**
    * 完了処理
    * @param params
    */
-  complete(params: IterationParams): Promise<DiffParams>;
+  deactivate(params: IterationParams): Promise<DiffParams>;
 
   /**
    * 例外処理
