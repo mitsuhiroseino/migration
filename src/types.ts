@@ -120,13 +120,13 @@ export type OperateContentConfig<OP = Operation> = CommonConfig &
      * @param content コンテンツ
      * @param config 当コンフィグ
      * @param params 繰り返し処理毎のパラメーター
-     * @returns パラメーター
+     * @returns コンテンツ
      */
     onOperationsStart?: <C = Content>(
       content: C,
       config: OperateContentConfig,
       params: IterationParams,
-    ) => Promise<IterationParams | void>;
+    ) => Promise<C | any>;
 
     /**
      * 操作の設定
@@ -139,13 +139,14 @@ export type OperateContentConfig<OP = Operation> = CommonConfig &
      * @param content 編集処理後のコンテンツ
      * @param config 当コンフィグ
      * @param params 繰り返し処理毎のパラメーター
+     * @returns コンテンツ
      */
     onOperationsEnd?: <C = Content>(
       status: OperationStatus,
       content: C,
       config: OperateContentConfig,
       params: IterationParams,
-    ) => Promise<void>;
+    ) => Promise<C | any>;
   };
 
 /**

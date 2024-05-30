@@ -1,6 +1,6 @@
 import isFunction from 'lodash/isFunction';
 
-class AsyncIterableImpl<T> implements AsyncIterable<T> {
+export class AsyncIterableImpl<T> implements AsyncIterable<T> {
   private _iterable: Iterable<T>;
 
   constructor(iterable: Iterable<T>) {
@@ -16,7 +16,7 @@ class AsyncIterableImpl<T> implements AsyncIterable<T> {
 
 type Fn<T> = (...args: any[]) => Promise<T> | T;
 
-class AsyncFnIterable<T> implements AsyncIterable<T> {
+export class AsyncFnIterable<T> implements AsyncIterable<T> {
   private _fn: Fn<T>;
   private _args: any[];
 

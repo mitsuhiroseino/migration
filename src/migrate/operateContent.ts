@@ -26,9 +26,10 @@ export default async function operateContent(
   // 任意の前処理
   if (onOperationsStart) {
     try {
-      const updatedParams = await onOperationsStart(content, { ...config }, { ...params });
-      if (updatedParams) {
-        params = updatedParams;
+      const updatedContent = await onOperationsStart(content, { ...config }, { ...params });
+      if (updatedContent !== undefined && updatedContent !== content) {
+        content = updatedContent;
+        operationStatus = OPERATION_STATUS.PROCESSED;
       }
     } catch (e) {
       catchError(e, 'Error in operations start', config);
@@ -84,7 +85,11 @@ export default async function operateContent(
   // 任意の後処理
   if (onOperationsEnd) {
     try {
-      await onOperationsEnd(operationStatus, content, { ...config }, { ...params });
+      const updatedContent = await onOperationsEnd(operationStatus, content, { ...config }, { ...params });
+      if (updatedContent !== undefined && updatedContent !== content) {
+        content = updatedContent;
+        operationStatus = OPERATION_STATUS.PROCESSED;
+      }
     } catch (e) {
       catchError(e, 'Error in operations end', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };

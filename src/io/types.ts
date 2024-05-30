@@ -132,11 +132,15 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
 
   /**
    * コンテンツのコピー
+   * コンテンツ自体は読み込まず、コンテンツのコピーに必要な情報のみを返す
+   * 入出力のタイプが同じ場合にのみ動作する
    */
   copy(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
 
   /**
    * コンテンツの移動
+   * コンテンツ自体は読み込まず、コンテンツの移動に必要な情報のみを返す
+   * 入出力のタイプが同じ場合にのみ動作する
    */
   move(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
 
@@ -226,12 +230,16 @@ export interface Output<C extends Content, OR extends OutputResultBase = OutputR
 
   /**
    * コンテンツのコピー
+   * コンテンツの内容は含まず、コンテンツのコピーに必要な情報のみを受け取る
+   * 入出力のタイプが同じ場合にのみ動作する
    * @param params
    */
   copy(params: IterationParams): Promise<OutputReturnValue<OR>>;
 
   /**
    * コンテンツの移動
+   * コンテンツの内容は含まず、コンテンツの移動に必要な情報のみを受け取る
+   * 入出力のタイプが同じ場合にのみ動作する
    * @param params
    */
   move(params: IterationParams): Promise<OutputReturnValue<OR>>;
