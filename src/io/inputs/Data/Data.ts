@@ -6,25 +6,23 @@ import InputBase from '../InputBase';
 import InputFactory from '../InputFactory';
 import { DataInputConfig, DataInputResult } from './types';
 
-const getDataInputResult = (data: any, args?: any[]) => toAsyncIterable(data, args);
+const getDataInputResult = ({ content, result }: DataInputConfig, params: IterationParams) =>
+  toAsyncIterable({ content, result }, [params]);
 
 /**
  * データ
  */
 class Data extends InputBase<Content, DataInputConfig, DataInputResult> {
   read(params: IterationParams): AsyncIterable<InputReturnValue<Content, DataInputResult>> {
-    const { data } = this._config;
-    return getDataInputResult(data, [params]);
+    return getDataInputResult(this._config, params);
   }
 
   copy(params: IterationParams): AsyncIterable<InputReturnValue<Content, DataInputResult>> {
-    const { data } = this._config;
-    return getDataInputResult(data, [params]);
+    return getDataInputResult(this._config, params);
   }
 
   move(params: IterationParams): AsyncIterable<InputReturnValue<Content, DataInputResult>> {
-    const { data } = this._config;
-    return getDataInputResult(data, [params]);
+    return getDataInputResult(this._config, params);
   }
 
   async delete(params: IterationParams): Promise<DiffParams> {

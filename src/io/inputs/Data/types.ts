@@ -5,7 +5,15 @@ import { InputConfigBase, InputResultBase } from '../../types';
  * データ
  */
 export type DataInputConfig = InputConfigBase<typeof IO_TYPE.DATA> & {
-  data: any;
+  /**
+   * 任意のデータ
+   */
+  content: any;
+
+  /**
+   * データ入力時の処理結果
+   */
+  result?: DataInputResult;
 };
 
 /**
