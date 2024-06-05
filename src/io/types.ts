@@ -14,8 +14,8 @@ import {
 import { FactoriableConfig } from '../utils/Factory';
 import { IO_TYPE } from './constants';
 
-export { default as InputConfig } from './inputs/InputConfig';
-export { default as OutputConfig } from './outputs/OutputConfig';
+export { default as InputConfig } from './InputConfig';
+export { default as OutputConfig } from './OutputConfig';
 
 /**
  * 入出力の種別
@@ -31,6 +31,18 @@ export interface IoBase {
    * @param params
    */
   activate(params: IterationParams): Promise<DiffParams>;
+
+  /**
+   * 繰り返し毎の開始処理
+   * @param params
+   */
+  start(params: IterationParams): Promise<DiffParams>;
+
+  /**
+   * 繰り返し毎の終了処理
+   * @param params
+   */
+  end(params: IterationParams): Promise<DiffParams>;
 
   /**
    * 完了処理
@@ -128,21 +140,21 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
   /**
    * コンテンツの入力
    */
-  read(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
+  read(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
 
   /**
    * コンテンツのコピー
    * コンテンツ自体は読み込まず、コンテンツのコピーに必要な情報のみを返す
    * 入出力のタイプが同じ場合にのみ動作する
    */
-  copy(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
+  copy(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
 
   /**
    * コンテンツの移動
    * コンテンツ自体は読み込まず、コンテンツの移動に必要な情報のみを返す
    * 入出力のタイプが同じ場合にのみ動作する
    */
-  move(params: IterationParams): AsyncIterable<InputReturnValue<C, IR>>;
+  move(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
 
   /**
    * コンテンツの削除

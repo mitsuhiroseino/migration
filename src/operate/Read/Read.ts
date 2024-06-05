@@ -1,6 +1,6 @@
 import { Input, InputConfig } from '../../io';
+import InputFactory from '../../io/InputFactory';
 import getIoConfig from '../../io/helpers/getIoConfig';
-import { InputFactory } from '../../io/inputs';
 import { Content, DiffParams, OperationResult, VariableString } from '../../types';
 import asArray from '../../utils/asArray';
 import assignParams from '../../utils/assignParams';

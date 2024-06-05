@@ -1,7 +1,7 @@
 import { OPERATION_STATUS } from '../../constants';
 import { Output, OutputConfig } from '../../io';
+import OutputFactory from '../../io/OutputFactory';
 import getIoConfig from '../../io/helpers/getIoConfig';
-import { OutputFactory } from '../../io/outputs';
 import { Content, OperationResult, VariableString } from '../../types';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
 import inheritConfig from '../../utils/inheritConfig';

@@ -1,5 +1,5 @@
-import InputFactory from '../../io/inputs/InputFactory';
-import OutputFactory from '../../io/outputs/OutputFactory';
+import InputFactory from '../../io/InputFactory';
+import OutputFactory from '../../io/OutputFactory';
 import OperationFactory from '../../operate/OperationFactory';
 import { Plugin } from '../../types';
 import asArray from '../../utils/asArray';

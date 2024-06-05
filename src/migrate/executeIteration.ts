@@ -59,12 +59,26 @@ export default async function executeIteration(
   const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
 
   try {
+    // アクティベーション
     await ioHandler.activate(params);
+    // イテレーターを取得
+    const inputIterator = ioHandler.read(params);
     // 入力を回す
-    const inputItems = ioHandler.read(params);
-    for await (const inputItem of inputItems) {
+    while (true) {
       let newParams = params;
       try {
+        // 前処理
+        const startResult = await ioHandler.start(params);
+        newParams = assignParams(newParams, startResult);
+
+        const next = await inputIterator.next();
+
+        if (next.done) {
+          // イテレーターが終わった時はbreak
+          break;
+        }
+        const inputItem = next.value;
+
         // 入力時の結果をパラメーターにマージ
         newParams = assignParams(newParams, inputItem.result);
         applyIf(onItemStart, [config, newParams]);
@@ -96,14 +110,21 @@ export default async function executeIteration(
           result.status = MIGRATION_STATUS.ERROR;
         }
 
+        // 後処理
+        const endResult = await ioHandler.end(params);
+        newParams = assignParams(newParams, endResult);
+
         applyIf(onItemEnd, [itemResult, config, newParams]);
       } catch (error) {
+        // エラー処理
         await ioHandler.error(newParams);
         throw propagateError(error, `${newParams._inputItem}`);
       }
     }
+    // ディアクティベーション
     await ioHandler.deactivate(params);
   } catch (error) {
+    // エラー処理
     await ioHandler.error(params);
     throw error;
   }

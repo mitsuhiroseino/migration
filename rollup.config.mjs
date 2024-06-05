@@ -3,7 +3,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import * as path from 'path';
-import packagejson from 'rollup-plugin-generate-package-json';
 
 const SRC_DIR = './src',
   INPUT = path.join(SRC_DIR, 'index.ts'),
@@ -15,8 +14,7 @@ const SRC_DIR = './src',
   BUID_DIR = './build',
   OUTPUT = BUID_DIR,
   BABEL_CONFIG_PATH = path.resolve('babel.config.js'),
-  TEST_FILE = /.+\.test\..+/,
-  SOURCE_MAP = false;
+  TEST_FILE = /.+\.test\..+/;
 
 const getConfig = (input, output, format, ext, dev = false) => ({
   // エントリーポイント

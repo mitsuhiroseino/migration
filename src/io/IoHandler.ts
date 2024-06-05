@@ -1,8 +1,8 @@
 import { MANIPULATION_TYPE } from '../constants';
 import { CommonIoConfig, DiffParams, IterationParams } from '../types';
 import assignParams from '../utils/assignParams';
-import { InputFactory } from './inputs';
-import { OutputFactory } from './outputs';
+import InputFactory from './InputFactory';
+import OutputFactory from './OutputFactory';
 import { Input, InputConfig, InputReturnValue, IoBase, Output, OutputConfig, OutputReturnValue } from './types';
 
 export type IoHandlerConfig = CommonIoConfig;
@@ -60,9 +60,15 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @param params
    */
   async activate(params: IterationParams): Promise<DiffParams> {
-    const outputDiffParams = await this._output.activate(params);
-    const inputDiffParams = await this._input.activate(assignParams(params, outputDiffParams));
-    return { ...outputDiffParams, ...inputDiffParams };
+    const inputDiffParams = await this._input.activate(params);
+    const outputDiffParams = await this._output.activate(assignParams(params, inputDiffParams));
+    return { ...inputDiffParams, ...outputDiffParams };
+  }
+
+  async start(params: IterationParams): Promise<DiffParams> {
+    const inputDiffParams = await this._input.start(params);
+    const outputDiffParams = await this._output.start(assignParams(params, inputDiffParams));
+    return { ...inputDiffParams, ...outputDiffParams };
   }
 
   /**
@@ -70,7 +76,7 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @param params
    * @returns
    */
-  read(params: IterationParams): AsyncIterable<InputReturnValue<any, any>> {
+  read(params: IterationParams): AsyncIterableIterator<InputReturnValue<any, any>> {
     const manipulationType = this._config.manipulationType;
 
     if (manipulationType === MANIPULATION_TYPE.COPY) {
@@ -108,6 +114,12 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
     if (this._config.manipulationType === MANIPULATION_TYPE.DELETE) {
       return this._input.delete(params);
     }
+  }
+
+  async end(params: IterationParams): Promise<DiffParams> {
+    const inputDiffParams = await this._input.end(params);
+    const outputDiffParams = await this._output.end(assignParams(params, inputDiffParams));
+    return { ...inputDiffParams, ...outputDiffParams };
   }
 
   /**
