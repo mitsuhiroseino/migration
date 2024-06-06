@@ -90,6 +90,7 @@ export const INHERITED_CONFIGS: Required<{
   onItemStart: true,
   onItemEnd: true,
   iteration: true,
+  operateEach: true,
   preFormatting: true,
   postFormatting: true,
   formatterOptions: true,

@@ -1,4 +1,4 @@
-import { IterationParams, VariableString } from '../../types';
+import { Content, IterationParams, VariableString } from '../../types';
 import { FetchHttpInit } from '../../utils/fetchHttp';
 import { IO_TYPE } from '../constants';
 import { InputConfigBase, InputResultBase, OutputConfigBase, OutputResultBase } from '../types';
@@ -44,6 +44,13 @@ export type HttpInputConfig = InputConfigBase<typeof IO_TYPE.HTTP> & {
    * @param params
    */
   deleteInit?: FetchHttpInit | ((params: IterationParams) => FetchHttpInit);
+
+  /**
+   * レスポンスからコンテンツを取得する関数
+   * 未指定の場合のコンテンツはResponse.body
+   * @returns
+   */
+  getContent?: (response: Response) => Content;
 };
 
 /**

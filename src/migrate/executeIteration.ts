@@ -1,8 +1,8 @@
 import { HANDLING_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
 import { InputConfig, OutputConfig } from '../io';
 import IoHandler, { IoHandlerConfig } from '../io/IoHandler';
-import getIoConfig from '../io/helpers/getIoConfig';
 import {
+  Content,
   IterationParams,
   MigrationItemResult,
   MigrationIterationConfig,
@@ -11,9 +11,35 @@ import {
 } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
+import getIoConfig from '../utils/getIoConfig';
 import inheritConfig from '../utils/inheritConfig';
 import propagateError from '../utils/propagateError';
 import operateContent from './operateContent';
+
+// 操作関数の取得
+const getOperate = (operateEach: boolean, operateContentConfig: OperateContentConfig) =>
+  operateEach
+    ? // コンテンツが配列の場合は要素に対して操作を行う場合
+      async (content: Content, params: IterationParams) => {
+        if (Array.isArray(content)) {
+          // 配列の場合
+          const result: Content = [];
+          for (const item of content) {
+            try {
+              const operatedItem = await operateContent(item, operateContentConfig, params);
+              result.push(operatedItem);
+            } catch (error) {
+              throw error;
+            }
+          }
+          return result;
+        } else {
+          // 配列ではない場合
+          return await operateContent(content, operateContentConfig, params);
+        }
+      }
+    : // 常にコンテンツに対して操作を行う場合
+      async (content: Content, params: IterationParams) => await operateContent(content, operateContentConfig, params);
 
 /**
  * 繰り返し処理1回分の処理を行う
@@ -29,6 +55,7 @@ export default async function executeIteration(
     input,
     output,
     handlingType,
+    operateEach,
     onIterationStart,
     onIterationEnd,
     onItemStart,
@@ -38,7 +65,6 @@ export default async function executeIteration(
     operations = [],
     ...rest
   } = config;
-  const operateContentConfig: OperateContentConfig = { ...rest, operations };
   const result: MigrationIterationResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
   if (disabled) {
     result.status = MIGRATION_STATUS.DISABLED;
@@ -46,16 +72,20 @@ export default async function executeIteration(
   }
 
   applyIf(onIterationStart, [config, params]);
-  // オペレーションの前処理
-  await Promise.all(operations.map((operation) => operation.initialize(params)));
 
   // 入力設定取得
-  const inputConfig: InputConfig = getIoConfig(input, 'inputPath');
+  const inputConfig: InputConfig = getIoConfig(input);
   // 出力設定取得
-  const outputConfig: OutputConfig = getIoConfig(output, 'outputPath');
+  const outputConfig: OutputConfig = getIoConfig(output, true);
   // 入出力ハンドラー
   const ioHandlerConfig: IoHandlerConfig = inheritConfig({ handlingType }, rest);
   const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
+
+  // オペレーションの前処理
+  await Promise.all(operations.map((operation) => operation.initialize(params)));
+
+  // オペレーション実行関数の取得
+  const operate = getOperate(operateEach, { ...rest, operations });
 
   try {
     // アクティベーション
@@ -83,7 +113,7 @@ export default async function executeIteration(
         applyIf(onItemStart, [config, newParams]);
 
         // コンテンツを処理
-        const operationResult = await operateContent(inputItem.content, operateContentConfig, newParams);
+        const operationResult = await operate(inputItem.content, newParams);
 
         // 出力処理
         const outputItem = await ioHandler.write(operationResult.content, newParams);

@@ -223,6 +223,11 @@ export type MigrationIterationSpecificConfig = {
     config: MigrationIterationConfig,
     params: IterationParams,
   ) => void;
+
+  /**
+   * コンテンツが配列だった場合には配列の要素に対して操作を行う
+   */
+  operateEach?: boolean;
 };
 
 /**
@@ -399,7 +404,7 @@ export type CommonConfig = CommonReplacementConfig &
      * @param params イテレーションパラメーター
      * @returns
      */
-    onError?: (error: Error | unknown, config: any, params?: IterationParams) => void;
+    onError?: <E>(error: E, config: any, params?: IterationParams) => void;
   };
 
 /**

@@ -1,10 +1,10 @@
 import { Input, InputConfig } from '../../io';
 import InputFactory from '../../io/InputFactory';
-import getIoConfig from '../../io/helpers/getIoConfig';
 import { Content, DiffParams, OperationResult, VariableString } from '../../types';
 import asArray from '../../utils/asArray';
 import assignParams from '../../utils/assignParams';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
+import getIoConfig from '../../utils/getIoConfig';
 import inheritConfig from '../../utils/inheritConfig';
 import OperationBundlerBase from '../OperationBundlerBase';
 import OperationFactory from '../OperationFactory';
@@ -31,7 +31,7 @@ class Read extends OperationBundlerBase<Content, ReadConfig> {
     const { type, input, paramName = '_resource', preserveParamName, ...rest } = config;
 
     // 入力設定取得
-    const inputCfg = getIoConfig(input, 'inputPath');
+    const inputCfg = getIoConfig(input);
     const inputConfig: InputConfig = inheritConfig(inputCfg, rest);
     this._input = InputFactory.create(inputConfig);
 

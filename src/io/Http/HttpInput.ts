@@ -67,7 +67,7 @@ export default HttpInput;
  */
 function getRequestFn(config: HttpInputConfig) {
   return async (params: IterationParams): Promise<InputReturnValue<Content, HttpInputResult>> => {
-    const { url, removeIndexHtml, removeExtensions, requestInit } = config;
+    const { url, removeIndexHtml, removeExtensions, requestInit, getContent = getResponseBody } = config;
     const input: string = finishDynamicValue(url, params, config);
     const init = isFunction(requestInit) ? requestInit(params) : requestInit;
 
@@ -82,7 +82,7 @@ function getRequestFn(config: HttpInputConfig) {
     const inputItem = getItemNameFromUrl(input, removeIndexHtml, removeExtensions);
 
     return {
-      content: response.body,
+      content: getContent(response),
       result: {
         inputItem,
         inputItemType: ITEM_TYPE.NODE,
@@ -90,4 +90,8 @@ function getRequestFn(config: HttpInputConfig) {
       },
     };
   };
+}
+
+function getResponseBody(response: Response) {
+  return response.body;
 }
