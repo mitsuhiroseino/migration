@@ -1,6 +1,7 @@
 import { HANDLING_TYPE } from '../constants';
 import { CommonIoConfig, DiffParams, IterationParams } from '../types';
 import assignParams from '../utils/assignParams';
+import inheritConfig from '../utils/inheritConfig';
 import InputFactory from './InputFactory';
 import OutputFactory from './OutputFactory';
 import { Input, InputConfig, InputReturnValue, IoBase, Output, OutputConfig, OutputReturnValue } from './types';
@@ -40,6 +41,8 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @param config 入出力設定
    */
   constructor(inputConfig: IC, outputConfig: OC, config: IoHandlerConfig) {
+    inputConfig = inheritConfig(inputConfig, config);
+    outputConfig = inheritConfig(outputConfig, config);
     const { handlingType } = config;
     if (inputConfig.type !== outputConfig.type) {
       if (handlingType === HANDLING_TYPE.COPY) {

@@ -33,6 +33,7 @@ export default async function executeIteration(
     onIterationEnd,
     onItemStart,
     onItemEnd,
+    onError,
     disabled,
     operations = [],
     ...rest
@@ -49,11 +50,9 @@ export default async function executeIteration(
   await Promise.all(operations.map((operation) => operation.initialize(params)));
 
   // 入力設定取得
-  const inputCfg = getIoConfig(input, 'inputPath');
-  const inputConfig: InputConfig = inheritConfig(inputCfg, rest);
+  const inputConfig: InputConfig = getIoConfig(input, 'inputPath');
   // 出力設定取得
-  const outputCfg = getIoConfig(output, 'outputPath');
-  const outputConfig: OutputConfig = inheritConfig(outputCfg, rest);
+  const outputConfig: OutputConfig = getIoConfig(output, 'outputPath');
   // 入出力ハンドラー
   const ioHandlerConfig: IoHandlerConfig = inheritConfig({ handlingType }, rest);
   const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
@@ -118,6 +117,7 @@ export default async function executeIteration(
       } catch (error) {
         // エラー処理
         await ioHandler.error(newParams);
+        applyIf(onError, [error, config, params]);
         throw propagateError(error, `${newParams._inputItem}`);
       }
     }

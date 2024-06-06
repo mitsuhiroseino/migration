@@ -391,7 +391,16 @@ export type CommonConfig = CommonReplacementConfig &
   CommonInputConfig &
   CommonOutputConfig &
   CommonDevelopmentConfig &
-  CommonLogConfig;
+  CommonLogConfig & {
+    /**
+     * エラー時のハンドラー
+     * @param error エラー情報
+     * @param config 設定
+     * @param params イテレーションパラメーター
+     * @returns
+     */
+    onError?: (error: Error | unknown, config: any, params?: IterationParams) => void;
+  };
 
 /**
  * テキストの置換に関する設定

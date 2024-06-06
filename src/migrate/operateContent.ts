@@ -2,6 +2,7 @@ import isString from 'lodash/isString';
 import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
 import operate from '../operate';
 import { Content, IterationParams, OperateContentConfig, OperationResult, OperationStatus } from '../types';
+import applyIf from '../utils/applyIf';
 import catchError from '../utils/catchError';
 import finishFormattingOptions from '../utils/finishFormattingOptions';
 import format from '../utils/format';
@@ -19,7 +20,8 @@ export default async function operateContent(
   config: OperateContentConfig,
   params: IterationParams,
 ): Promise<OperationResult<Content>> {
-  const { onOperationsStart, preFormatting, postFormatting, formatterOptions, onOperationsEnd, operations } = config;
+  const { onOperationsStart, preFormatting, postFormatting, formatterOptions, onOperationsEnd, operations, onError } =
+    config;
   const { _inputItem } = params;
   let operationStatus: OperationStatus = OPERATION_STATUS.UNPROCESSED;
 
@@ -32,6 +34,7 @@ export default async function operateContent(
         operationStatus = OPERATION_STATUS.PROCESSED;
       }
     } catch (e) {
+      applyIf(onError, [e, config, params]);
       catchError(e, 'Error in operations start', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
     }
@@ -44,6 +47,7 @@ export default async function operateContent(
     try {
       content = await format(content, { filepath: _inputItem as string, ...preFormattingOptions });
     } catch (e) {
+      applyIf(onError, [e, config, params]);
       catchError(e, 'Error in pre-formatting', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
     }
@@ -59,6 +63,7 @@ export default async function operateContent(
       content = result.content;
       operationStatus = updateStatus(operationStatus, result.operationStatus, OPERATION_STATUS_PRIORITY);
     } catch (e) {
+      applyIf(onError, [e, config, params]);
       catchError(e, 'Error in operation', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
     }
@@ -74,6 +79,7 @@ export default async function operateContent(
         ...postFormattingOptions,
       });
     } catch (e) {
+      applyIf(onError, [e, config, params]);
       catchError(e, 'Error in post-formatting', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
     }
@@ -91,6 +97,7 @@ export default async function operateContent(
         operationStatus = OPERATION_STATUS.PROCESSED;
       }
     } catch (e) {
+      applyIf(onError, [e, config, params]);
       catchError(e, 'Error in operations end', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
     }

@@ -79,6 +79,7 @@ export const INHERITED_CONFIGS: Required<{
     OperateContentSpecificConfig &
     CommonConfig)]: boolean | ((config: any, baseConfig: any) => any);
 }> = {
+  onError: true,
   onTaskStart: true,
   onTaskEnd: true,
   parallelJobs: true,
