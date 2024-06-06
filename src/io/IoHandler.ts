@@ -1,4 +1,4 @@
-import { MANIPULATION_TYPE } from '../constants';
+import { HANDLING_TYPE } from '../constants';
 import { CommonIoConfig, DiffParams, IterationParams } from '../types';
 import assignParams from '../utils/assignParams';
 import InputFactory from './InputFactory';
@@ -40,11 +40,11 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @param config 入出力設定
    */
   constructor(inputConfig: IC, outputConfig: OC, config: IoHandlerConfig) {
-    const { manipulationType } = config;
+    const { handlingType } = config;
     if (inputConfig.type !== outputConfig.type) {
-      if (manipulationType === MANIPULATION_TYPE.COPY) {
+      if (handlingType === HANDLING_TYPE.COPY) {
         throw new Error('For copies, the IO type must be the same');
-      } else if (manipulationType === MANIPULATION_TYPE.MOVE) {
+      } else if (handlingType === HANDLING_TYPE.MOVE) {
         throw new Error('For moves, the IO type must be the same');
       }
     }
@@ -77,11 +77,11 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @returns
    */
   read(params: IterationParams): AsyncIterableIterator<InputReturnValue<any, any>> {
-    const manipulationType = this._config.manipulationType;
+    const handlingType = this._config.handlingType;
 
-    if (manipulationType === MANIPULATION_TYPE.COPY) {
+    if (handlingType === HANDLING_TYPE.COPY) {
       return this._input.copy(params);
-    } else if (manipulationType === MANIPULATION_TYPE.MOVE) {
+    } else if (handlingType === HANDLING_TYPE.MOVE) {
       return this._input.move(params);
     } else {
       return this._input.read(params);
@@ -94,11 +94,11 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @returns
    */
   write<C>(content: C, params: IterationParams): Promise<OutputReturnValue<IterationParams>> {
-    const manipulationType = this._config.manipulationType;
+    const handlingType = this._config.handlingType;
 
-    if (manipulationType === MANIPULATION_TYPE.COPY) {
+    if (handlingType === HANDLING_TYPE.COPY) {
       return this._output.copy(params);
-    } else if (manipulationType === MANIPULATION_TYPE.MOVE) {
+    } else if (handlingType === HANDLING_TYPE.MOVE) {
       return this._output.move(params);
     } else {
       return this._output.write(content, params);
@@ -111,7 +111,7 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @returns
    */
   delete(params: IterationParams): Promise<DiffParams> {
-    if (this._config.manipulationType === MANIPULATION_TYPE.DELETE) {
+    if (this._config.handlingType === HANDLING_TYPE.DELETE) {
       return this._input.delete(params);
     }
   }

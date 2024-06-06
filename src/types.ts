@@ -1,7 +1,7 @@
 import {
   CONTENT_TYPE,
+  HANDLING_TYPE,
   ITEM_TYPE,
-  MANIPULATION_TYPE,
   MIGRATION_ITEM_STATUS,
   MIGRATION_STATUS,
   OPERATION_STATUS,
@@ -26,7 +26,7 @@ export type ContentType = (typeof CONTENT_TYPE)[keyof typeof CONTENT_TYPE];
 /**
  * 入出力の対象に対する操作の種別
  */
-export type ManipulationType = (typeof MANIPULATION_TYPE)[keyof typeof MANIPULATION_TYPE];
+export type HandlingType = (typeof HANDLING_TYPE)[keyof typeof HANDLING_TYPE];
 
 /**
  * ファイルの内容の型
@@ -410,7 +410,7 @@ export type CommonIoConfig = {
   /**
    * 入出力の対象そのものに対する操作
    */
-  manipulationType?: ManipulationType;
+  handlingType?: HandlingType;
 };
 
 /**

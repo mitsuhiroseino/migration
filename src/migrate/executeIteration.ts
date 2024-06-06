@@ -1,4 +1,4 @@
-import { MANIPULATION_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
+import { HANDLING_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS } from '../constants';
 import { InputConfig, OutputConfig } from '../io';
 import IoHandler, { IoHandlerConfig } from '../io/IoHandler';
 import getIoConfig from '../io/helpers/getIoConfig';
@@ -28,7 +28,7 @@ export default async function executeIteration(
     iterationId,
     input,
     output,
-    manipulationType,
+    handlingType,
     onIterationStart,
     onIterationEnd,
     onItemStart,
@@ -55,7 +55,7 @@ export default async function executeIteration(
   const outputCfg = getIoConfig(output, 'outputPath');
   const outputConfig: OutputConfig = inheritConfig(outputCfg, rest);
   // 入出力ハンドラー
-  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ manipulationType }, rest);
+  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ handlingType }, rest);
   const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
 
   try {
@@ -92,7 +92,7 @@ export default async function executeIteration(
 
         // 入力を削除
         let deletedItem;
-        if (manipulationType === MANIPULATION_TYPE.DELETE) {
+        if (handlingType === HANDLING_TYPE.DELETE) {
           deletedItem = await ioHandler.delete(newParams);
           newParams = assignParams(newParams, deletedItem);
         }

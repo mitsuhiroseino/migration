@@ -245,7 +245,7 @@ export const OPERATION_STATUS_PRIORITY = {
  * 入出力対象そのものに対する操作
  * ファイルシステム(FS)の場合は、ファイル・ディレクトリに対する操作
  */
-export const MANIPULATION_TYPE = {
+export const HANDLING_TYPE = {
   /**
    * 複写
    */
