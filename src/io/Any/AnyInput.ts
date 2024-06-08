@@ -26,8 +26,11 @@ class AnyInput<C = Content> extends InputBase<C, AnyInputConfig, AnyInputResult>
   }
 
   async delete(params: IterationParams): Promise<DiffParams> {
-    const { delete: deleteFn = () => ({}) } = this._config;
-    return deleteFn(params, this._config);
+    if (!this._config.dryRun) {
+      const { delete: deleteFn = () => ({}) } = this._config;
+      return await deleteFn(params, this._config);
+    }
+    return {};
   }
 }
 InputFactory.register(IO_TYPE.ANY, AnyInput);

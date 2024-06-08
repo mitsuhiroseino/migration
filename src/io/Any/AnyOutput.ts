@@ -18,18 +18,36 @@ const getEmptyResult = () => ({
  */
 class AnyOutput extends OutputBase<Content, AnyOutputConfig, AnyOutputResult> {
   async write(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    const { write: writeFn = getEmptyResult } = this._config;
-    return writeFn(content, params, this._config);
+    if (!this._config.dryRun) {
+      const { write: writeFn = getEmptyResult } = this._config;
+      return await writeFn(content, params, this._config);
+    }
+    return {
+      status: MIGRATION_ITEM_STATUS.CONVERTED,
+      result: {},
+    };
   }
 
   async copy(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    const { copy: copyFn = getEmptyResult } = this._config;
-    return copyFn(params, this._config);
+    if (!this._config.dryRun) {
+      const { copy: copyFn = getEmptyResult } = this._config;
+      return await copyFn(params, this._config);
+    }
+    return {
+      status: MIGRATION_ITEM_STATUS.COPIED,
+      result: {},
+    };
   }
 
   async move(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    const { move: moveFn = getEmptyResult } = this._config;
-    return moveFn(params, this._config);
+    if (!this._config.dryRun) {
+      const { move: moveFn = getEmptyResult } = this._config;
+      return await moveFn(params, this._config);
+    }
+    return {
+      status: MIGRATION_ITEM_STATUS.MOVED,
+      result: {},
+    };
   }
 }
 

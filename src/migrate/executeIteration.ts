@@ -70,6 +70,7 @@ export default async function executeIteration(
     result.status = MIGRATION_STATUS.DISABLED;
     return result;
   }
+  const cfg = { ...rest, onError };
 
   applyIf(onIterationStart, [config, params]);
 
@@ -78,14 +79,14 @@ export default async function executeIteration(
   // 出力設定取得
   const outputConfig: OutputConfig = getIoConfig(output, true);
   // 入出力ハンドラー
-  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ handlingType }, rest);
+  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ handlingType }, cfg);
   const ioHandler = new IoHandler(inputConfig, outputConfig, ioHandlerConfig);
 
   // オペレーションの前処理
   await Promise.all(operations.map((operation) => operation.initialize(params)));
 
   // オペレーション実行関数の取得
-  const operate = getOperate(operateEach, { ...rest, operations });
+  const operate = getOperate(operateEach, { ...cfg, operations });
 
   try {
     // アクティベーション

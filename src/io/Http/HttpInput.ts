@@ -85,7 +85,7 @@ function getRequestFn(config: HttpInputConfig) {
       content: getContent(response),
       result: {
         inputItem,
-        inputItemType: ITEM_TYPE.NODE,
+        inputItemType: ITEM_TYPE.LEAF,
         inputPath: input,
       },
     };

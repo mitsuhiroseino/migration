@@ -147,6 +147,11 @@ export const ITEM_TYPE = {
    * 子要素を持たない要素
    */
   LEAF: 'leaf',
+
+  /**
+   * 要素の区別なし
+   */
+  ANY: 'any',
 } as const;
 
 /**

@@ -52,7 +52,7 @@ async function request(content: any, config: HttpOutputConfig, params: Iteration
 
   return {
     outputItem,
-    outputItemType: ITEM_TYPE.NODE,
+    outputItemType: ITEM_TYPE.LEAF,
     outputPath: output,
   };
 }

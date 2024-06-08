@@ -28,8 +28,17 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
   private _transaction: Transaction;
 
   async activate(params: IterationParams): Promise<DiffParams> {
-    const { database, username, password, options, modelConfig, transactionOptions, shareConnection, shareModel } =
-      this._config;
+    const {
+      database,
+      username,
+      password,
+      options,
+      modelConfig,
+      transactionOptions,
+      shareConnection,
+      shareModel,
+      dryRun,
+    } = this._config;
 
     let sequelize: Sequelize;
     let transaction: Transaction;
@@ -39,7 +48,9 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
     } else {
       // Sequelizeのインスタンス
       sequelize = new Sequelize(database, username, password, options);
-      transaction = await sequelize.transaction(transactionOptions);
+      if (!dryRun) {
+        transaction = await sequelize.transaction(transactionOptions);
+      }
     }
 
     let model: ModelStatic<M>;
@@ -52,7 +63,9 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
     }
 
     this._sequelize = sequelize;
-    this._transaction = transaction;
+    if (!dryRun) {
+      this._transaction = transaction;
+    }
     this._model = model;
     return {};
   }
@@ -61,14 +74,18 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
     const records = asArray(content);
     const { create, createOptions, updateOptions } = this._config;
     if (create) {
-      await this._model.bulkCreate(records, { ...createOptions, transaction: this._transaction });
+      if (!this._config.dryRun) {
+        await this._model.bulkCreate(records, { ...createOptions, transaction: this._transaction });
+      }
       return {
         result: {},
         status: MIGRATION_ITEM_STATUS.CREATED,
       };
     } else {
-      for (const record of records) {
-        await record.save({ ...updateOptions, transaction: this._transaction });
+      if (!this._config.dryRun) {
+        for (const record of records) {
+          await record.save({ ...updateOptions, transaction: this._transaction });
+        }
       }
       return {
         result: {},

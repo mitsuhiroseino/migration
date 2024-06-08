@@ -1,5 +1,4 @@
-import { Attributes, DestroyOptions, FindOptions, Model, ModelStatic, Sequelize, Transaction } from 'sequelize';
-import { ReplaceOptions } from 'src/utils/replace';
+import { FindOptions, Model, ModelStatic, Sequelize, Transaction } from 'sequelize';
 import { CONTENT_TYPE, ITEM_TYPE } from '../../constants';
 import { DiffParams, IterationParams } from '../../types';
 import InputBase from '../InputBase';
@@ -33,11 +32,12 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
   private _records: M[];
 
   async activate(params: IterationParams): Promise<DiffParams> {
-    const { database, username, password, options, modelConfig, beginTransaction, transactionOptions } = this._config;
+    const { database, username, password, options, modelConfig, beginTransaction, transactionOptions, dryRun } =
+      this._config;
     // Sequelizeのインスタンス
     const sequelize = new Sequelize(database, username, password, options);
     this._sequelize = sequelize;
-    if (beginTransaction) {
+    if (!dryRun && beginTransaction) {
       this._transaction = await sequelize.transaction(transactionOptions);
     }
 
@@ -139,7 +139,7 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
       sequelize: this._sequelize,
       model,
       inputItem: model.name,
-      inputItemType: ITEM_TYPE.NODE,
+      inputItemType: ITEM_TYPE.LEAF,
       inputContentType: CONTENT_TYPE.DATA,
     };
   }
@@ -153,13 +153,16 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
   }
 
   async delete(params: IterationParams): Promise<DiffParams> {
-    const records = this._records;
-    const promises = [];
-    for (const record of records) {
-      promises.push(record.destroy());
+    if (!this._config.dryRun) {
+      const records = this._records;
+      const promises = [];
+      for (const record of records) {
+        promises.push(record.destroy());
+      }
+      await Promise.all(promises);
+      return { sequelize: this._sequelize, records };
     }
-    await Promise.all(promises);
-    return { sequelize: this._sequelize, records };
+    return {};
   }
 
   async deactivate(params: IterationParams): Promise<DiffParams> {

@@ -22,7 +22,8 @@ export type FsInputConfig = InputConfigBase<typeof IO_TYPE.FS> &
      * 取得対象の種別
      * node: ディレクトリ
      * leaf: ファイル
-     * 未指定: ディレクトリ & ファイル
+     * any: ディレクトリ・ファイル
+     * 未指定: ファイル
      */
     itemType?: ItemType;
 

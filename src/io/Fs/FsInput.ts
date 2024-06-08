@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { ReplaceOptions } from 'src/utils/replace';
 import { CONTENT_TYPE, ITEM_TYPE } from '../../constants';
 import { Content, ContentType, DiffParams, IterationParams } from '../../types';
 import finishDynamicValue from '../../utils/finishDynamicValue';
@@ -28,6 +29,16 @@ type CallbackFn = (
  * ファイル・ディレクトリの読み込み、コピーを行うクラス
  */
 class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
+  /**
+   * 削除するディレクトリのパス
+   */
+  private _dirsToDelete: string[];
+
+  async activate(params: IterationParams): Promise<DiffParams> {
+    this._dirsToDelete = [];
+    return {};
+  }
+
   /**
    * ファイル・ディレクトリの読み込み
    * @param params
@@ -58,7 +69,26 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
   async delete(params: IterationParams): Promise<DiffParams> {
     if (!this._config.dryRun) {
       const _inputPath = params._inputPath as string;
-      await fs.remove(_inputPath);
+      if (params._inputItemType === ITEM_TYPE.LEAF) {
+        // ファイルは即削除
+        await fs.remove(_inputPath);
+      } else {
+        // ディレクトリは削除対象のパスを保持
+        this._dirsToDelete.push(_inputPath);
+      }
+    }
+    return {};
+  }
+
+  async deactivate(params: IterationParams): Promise<DiffParams> {
+    // ディレクトリを削除する
+    if (!this._config.dryRun) {
+      for (const dirPath of this._dirsToDelete) {
+        // 確実に処理を行うために同期処理
+        if (fs.existsSync(dirPath)) {
+          fs.removeSync(dirPath);
+        }
+      }
     }
     return {};
   }
@@ -107,15 +137,13 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
     depth: number = 0,
   ): InputGenerator<Content, FsInputResult> {
     const config = this._config;
-    const { filter, itemType, ignoreSymlinks } = config;
+    const { filter, itemType = ITEM_TYPE.LEAF, ignoreSymlinks } = config;
     const isTarget = isMatch(inputPath, filter, params);
 
     const stat = await fsStat(inputPath, { ignoreSymlinks });
     if (stat.isDirectory()) {
       // ディレクトリの場合
-      // 削除されることを考慮し、先に配下のディレクトリ、ファイルを再帰的に処理
-      yield* this._toNextDeps(this._readFs, inputPath, params, inputRootPath, depth);
-      if (isTarget && (!itemType || itemType === ITEM_TYPE.NODE)) {
+      if (isTarget && (itemType === ITEM_TYPE.ANY || itemType === ITEM_TYPE.NODE)) {
         // ディレクトリ自身を返す
         yield {
           result: {
@@ -126,9 +154,11 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
           },
         };
       }
+      // 配下のディレクトリ、ファイルを再帰的に処理
+      yield* this._toNextDeps(this._readFs, inputPath, params, inputRootPath, depth);
     } else if (stat.isFile()) {
       // ファイルの場合
-      if (isTarget && (!itemType || itemType === ITEM_TYPE.LEAF)) {
+      if (isTarget && (itemType === ITEM_TYPE.ANY || itemType === ITEM_TYPE.LEAF)) {
         // ファイルを読み込んで返す
         const { inputEncoding, removeExtensions } = config;
         // ファイルの入力
