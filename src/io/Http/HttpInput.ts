@@ -49,7 +49,7 @@ class HttpInput extends InputBase<Content, HttpInputConfig, HttpInputResult> {
     throw new Error('Cannot use move in HTTP');
   }
 
-  protected async _delete(params: HttpAssignedParams): Promise<void> {
+  protected async _delete(content: Content, params: HttpAssignedParams): Promise<void> {
     const { url, deleteInit, deleteUrl = url } = this._config;
     if (deleteInit) {
       // deleteInitが設定されているときのみ削除可能

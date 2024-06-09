@@ -12,9 +12,9 @@ import { NoopOutputConfig, NoopOutputResult } from './types';
  * @param params 1繰り返し毎のパラメーター
  */
 class NoopOutput extends OutputBase<Content, NoopOutputConfig, NoopOutputResult> {
-  protected async _write(content: any, params: IterationParams): Promise<void> {}
+  protected async _write(content: Content, params: IterationParams): Promise<void> {}
 
-  protected _getWriteResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
+  protected _getWriteResult(content: Content, params: IterationParams): OutputReturnValue<OutputResultBase> {
     return this._getResult(params);
   }
 

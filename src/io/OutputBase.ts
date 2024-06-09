@@ -18,7 +18,7 @@ abstract class OutputBase<
     if (!this._config.dryRun) {
       await this._write(content, params);
     }
-    return this._getWriteResult(params);
+    return this._getWriteResult(content, params);
   }
 
   /**
@@ -34,7 +34,7 @@ abstract class OutputBase<
    * @param params
    * @returns
    */
-  protected _getWriteResult(params: IterationParams): OutputReturnValue<OR> {
+  protected _getWriteResult(content: C, params: IterationParams): OutputReturnValue<OR> {
     return {
       status: MIGRATION_ITEM_STATUS.CONVERTED,
       result: {} as OR,

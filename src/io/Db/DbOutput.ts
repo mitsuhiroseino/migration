@@ -11,7 +11,7 @@ import { DbAssignedParams, DbOutputConfig, DbOutputResult } from './types';
 /**
  * DB出力
  */
-class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConfig, DbOutputResult> {
+class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M>, DbOutputResult<M>> {
   /**
    * Sequelizeのインスタンス
    */
@@ -77,19 +77,24 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
     };
   }
 
-  protected async _write(content: any, params: DbAssignedParams): Promise<void> {
+  protected async _write(content: M | M[], params: DbAssignedParams): Promise<void> {
     const records = asArray(content);
     const { create, createOptions, updateOptions } = this._config;
     if (create) {
-      await this._model.bulkCreate(records, { ...createOptions, transaction: this._transaction });
+      await this._model.bulkCreate(
+        records.map((record) => record.dataValues),
+        { ...createOptions, transaction: this._transaction },
+      );
     } else {
+      const promises: Promise<M>[] = [];
       for (const record of records) {
-        await record.save({ ...updateOptions, transaction: this._transaction });
+        promises.push(record.save({ ...updateOptions, transaction: this._transaction }));
       }
+      await Promise.all(promises);
     }
   }
 
-  protected _getWriteResult(params: IterationParams): OutputReturnValue<DbOutputResult> {
+  protected _getWriteResult(content: M | M[], params: IterationParams): OutputReturnValue<DbOutputResult> {
     return this._config.create
       ? { result: {}, status: MIGRATION_ITEM_STATUS.CREATED }
       : { result: {}, status: MIGRATION_ITEM_STATUS.CONVERTED };

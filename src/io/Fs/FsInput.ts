@@ -71,7 +71,7 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
     return this._generateFsInputResult(params);
   }
 
-  protected async _delete(params: FsAssignedParams): Promise<void> {
+  protected async _delete(content: Content, params: FsAssignedParams): Promise<void> {
     const { _inputItemPath, _inputItemType } = params;
     if (_inputItemType === ITEM_TYPE.LEAF) {
       // ファイルは即削除

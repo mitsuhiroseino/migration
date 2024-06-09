@@ -38,7 +38,7 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
       : (outputItem) => outputItem;
   }
 
-  async activate(params: IterationParams): Promise<DiffParams> {
+  protected async _activate(params: IterationParams): Promise<DiffParams> {
     // 処理前に設定から作る情報を取得しておく
     const config = this._config;
     const { outputPath } = config;
@@ -48,7 +48,7 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     };
   }
 
-  async start(params: IterationParams): Promise<DiffParams> {
+  protected async _start(params: IterationParams): Promise<DiffParams> {
     // 繰り返し毎に出力先の情報を作る
     return this._getOutputInfo(params);
   }

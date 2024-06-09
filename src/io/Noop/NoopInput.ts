@@ -22,7 +22,7 @@ class NoopInput extends InputBase<Content, NoopInputConfig, NoopInputResult> {
     return toAsyncGenerator({})();
   }
 
-  protected async _delete(params: IterationParams): Promise<void> {}
+  protected async _delete(content: Content, params: IterationParams): Promise<void> {}
 }
 InputFactory.register(IO_TYPE.NOOP, NoopInput);
 export default NoopInput;

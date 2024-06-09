@@ -56,6 +56,12 @@ abstract class InputBase<
   }
 
   /**
+   * 種別固有のコンテンツの削除
+   * @param params
+   */
+  protected abstract _delete(content: C, params: IterationParams): Promise<void>;
+
+  /**
    * 削除結果の取得
    * dryRun=trueの場合はこのメソッドのみ実行し結果を返す
    * @param params
@@ -64,11 +70,5 @@ abstract class InputBase<
   protected _getDeleteResult(content: C, params: IterationParams): DiffParams {
     return {};
   }
-
-  /**
-   * 種別固有のコンテンツの削除
-   * @param params
-   */
-  protected abstract _delete(content: C, params: IterationParams): Promise<void>;
 }
 export default InputBase;
