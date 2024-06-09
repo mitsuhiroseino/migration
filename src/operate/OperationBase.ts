@@ -56,4 +56,8 @@ export default abstract class OperationBase<
   finalize(params: OperationParams): Promise<void> {
     return;
   }
+
+  error(params: OperationParams): Promise<void> {
+    return;
+  }
 }

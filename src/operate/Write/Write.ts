@@ -2,9 +2,12 @@ import { OPERATION_STATUS } from '../../constants';
 import { Output, OutputConfig } from '../../io';
 import OutputFactory from '../../io/OutputFactory';
 import { Content, OperationResult, VariableString } from '../../types';
+import asArray from '../../utils/asArray';
+import assignParams from '../../utils/assignParams';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
 import getIoConfig from '../../utils/getIoConfig';
 import inheritConfig from '../../utils/inheritConfig';
+import propagateError from '../../utils/propagateError';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
@@ -43,18 +46,45 @@ class Write extends OperationBase<Content, WriteConfig> {
       return content;
     }
 
+    const output = this._output;
     // 初期化処理
-    await this._output.activate(params);
+    const activateResult = await output.activate(params);
+    const activatedParams = assignParams(params, activateResult);
 
-    // パラメーター名
-    const prmsName: string = finishDynamicValue(this._paramName, params, this._paramNameOptions);
+    let resources;
+    if (this._config.resourceType === 'content') {
+      // コンテンツをリソースとして取得
+      resources = asArray(content);
+    } else {
+      // パラメーター名
+      const prmsName: string = finishDynamicValue(this._paramName, activatedParams, this._paramNameOptions);
+      // パラメーターからリソースを取得
+      resources = asArray(params[prmsName]);
+    }
 
     // ファイルの出力
-    const resource = params[prmsName];
-    await this._output.write(resource, params);
+    for (const resource of resources) {
+      let newParams = activatedParams;
+      try {
+        // 前処理
+        const startResult = await output.start(newParams);
+        newParams = assignParams(newParams, startResult);
+
+        const writeResult = await output.write(resource, newParams);
+        newParams = assignParams(newParams, writeResult.result);
+
+        // 後処理
+        await output.end(newParams);
+      } catch (error) {
+        // エラー処理
+        const errorResult = await output.error(newParams);
+        newParams = assignParams(newParams, errorResult);
+        throw propagateError(error, `${newParams._outputItem}`);
+      }
+    }
 
     // 完了処理
-    await this._output.deactivate(params);
+    await output.deactivate(activatedParams);
 
     return { operationStatus: OPERATION_STATUS.UNPROCESSED, content };
   }

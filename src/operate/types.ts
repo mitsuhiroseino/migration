@@ -89,6 +89,12 @@ export interface Operation<C extends Content = Content> {
    * @param params
    */
   finalize(params: OperationParams): Promise<void>;
+
+  /**
+   * 1イテレーション毎に実行されるエラー処理
+   * @param params
+   */
+  error(params: OperationParams): Promise<void>;
 }
 
 /**

@@ -6,6 +6,7 @@ import assignParams from '../../utils/assignParams';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
 import getIoConfig from '../../utils/getIoConfig';
 import inheritConfig from '../../utils/inheritConfig';
+import propagateError from '../../utils/propagateError';
 import OperationBundlerBase from '../OperationBundlerBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
@@ -42,31 +43,57 @@ class Read extends OperationBundlerBase<Content, ReadConfig> {
   async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     const resources: DiffParams = {};
     const paramNames: any = {};
+    const input = this._input;
 
     // 初期化処理
-    await this._input.activate(params);
+    const activateResult = await input.activate(params);
+    const activatedParams = assignParams(params, activateResult);
 
     // リソースの取得
-    const inputItems = await this._input.read(params);
+    const inputIterator = await input.read(activatedParams);
 
-    for await (const inputItem of inputItems) {
-      // 入力時の結果をパラメーターにマージ
-      let newParams = assignParams(params, inputItem.result);
-      // パラメーター名
-      const prmsName: string = finishDynamicValue(this._paramName, newParams, this._paramNameOptions);
-      if (paramNames[prmsName]) {
-        // 以前と同じパラメーター名が帰ってきた時は配列にする
-        const resource = asArray(resources[prmsName]);
-        resource.push(inputItem.content);
-        resources[prmsName] = resource;
-      } else {
-        resources[prmsName] = inputItem.content;
+    // 入力を回す
+    while (true) {
+      let newParams = activatedParams;
+      try {
+        // 前処理
+        const startResult = await input.start(newParams);
+        newParams = assignParams(newParams, startResult);
+
+        const next = await inputIterator.next();
+
+        if (next.done) {
+          // イテレーターが終わった時はbreak
+          break;
+        }
+        const inputItem = next.value;
+
+        // 入力時の結果をパラメーターにマージ
+        newParams = assignParams(newParams, inputItem.result);
+
+        // パラメーター名
+        const prmsName: string = finishDynamicValue(this._paramName, newParams, this._paramNameOptions);
+        if (paramNames[prmsName]) {
+          // 以前と同じパラメーター名が帰ってきた時は配列にする
+          const resource = asArray(resources[prmsName]);
+          resource.push(inputItem.content);
+          resources[prmsName] = resource;
+        } else {
+          resources[prmsName] = inputItem.content;
+        }
+        paramNames[prmsName] = true;
+
+        // 後処理
+        await input.end(newParams);
+      } catch (error) {
+        // エラー処理
+        const errorResult = await input.error(newParams);
+        newParams = assignParams(newParams, errorResult);
+        throw propagateError(error, `${newParams._inputItem}`);
       }
-      paramNames[prmsName] = true;
     }
-
     // 完了処理
-    await this._input.deactivate(params);
+    await input.deactivate(activatedParams);
 
     // 子要素で処理
     return super.operate(content, { ...params, ...resources });

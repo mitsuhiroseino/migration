@@ -8,6 +8,12 @@ import { OperationConfigBase, OperationParams } from '../types';
 export type WriteConfig = OperationConfigBase<typeof OPERATION_TYPE.WRITE> &
   CommonOutputConfig & {
     /**
+     * リソースの取得元
+     * 未指定の場合はparams
+     */
+    resourceType?: 'params' | 'content';
+
+    /**
      * paramsからファイルの内容を取得する際のプロパティ名
      * デフォルトは_resource
      */

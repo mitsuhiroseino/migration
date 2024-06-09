@@ -90,15 +90,16 @@ export default async function executeIteration(
 
   try {
     // アクティベーション
-    await ioHandler.activate(params);
+    const activateResult = await ioHandler.activate(params);
+    const activatedParams = assignParams(params, activateResult);
     // イテレーターを取得
-    const inputIterator = ioHandler.read(params);
+    const inputIterator = ioHandler.read(activatedParams);
     // 入力を回す
     while (true) {
-      let newParams = params;
+      let newParams = activatedParams;
       try {
         // 前処理
-        const startResult = await ioHandler.start(params);
+        const startResult = await ioHandler.start(newParams);
         newParams = assignParams(newParams, startResult);
 
         const next = await inputIterator.next();
@@ -121,17 +122,17 @@ export default async function executeIteration(
         newParams = assignParams(newParams, outputItem.result);
 
         // 入力を削除
-        let deletedItem;
+        let deleteResult;
         if (handlingType === HANDLING_TYPE.DELETE) {
-          deletedItem = await ioHandler.delete(inputItem.content, newParams);
-          newParams = assignParams(newParams, deletedItem);
+          deleteResult = await ioHandler.delete(inputItem.content, newParams);
+          newParams = assignParams(newParams, deleteResult);
         }
 
         // 要素の処理結果
         const itemResult: MigrationItemResult = {
           ...inputItem.result,
           ...outputItem.result,
-          ...deletedItem,
+          ...deleteResult,
           status: outputItem.status,
           operationStatus: operationResult.operationStatus,
         };
@@ -141,27 +142,33 @@ export default async function executeIteration(
         }
 
         // 後処理
-        const endResult = await ioHandler.end(params);
+        const endResult = await ioHandler.end(newParams);
         newParams = assignParams(newParams, endResult);
 
         applyIf(onItemEnd, [itemResult, config, newParams]);
       } catch (error) {
         // エラー処理
-        await ioHandler.error(newParams);
-        applyIf(onError, [error, config, params]);
+        const errorResult = await ioHandler.error(newParams);
+        newParams = assignParams(newParams, errorResult);
+        // オペレーションのエラー処理
+        await Promise.all(operations.map((operation) => operation.error(newParams)));
+        applyIf(onError, [error, config, newParams]);
         throw propagateError(error, `${newParams._inputItem}`);
       }
     }
     // ディアクティベーション
-    await ioHandler.deactivate(params);
+    const deactivateResult = await ioHandler.deactivate(activatedParams);
+    const deactivatedParams = assignParams(activatedParams, deactivateResult);
+    // オペレーションの後処理
+    await Promise.all(operations.map((operation) => operation.finalize(deactivatedParams)));
   } catch (error) {
     // エラー処理
-    await ioHandler.error(params);
+    const errorResult = await ioHandler.error(params);
+    const errorParams = assignParams(params, errorResult);
+    // オペレーションのエラー処理
+    await Promise.all(operations.map((operation) => operation.error(errorParams)));
     throw error;
   }
-
-  // オペレーションの後処理
-  await Promise.all(operations.map((operation) => operation.finalize(params)));
   applyIf(onIterationEnd, [result, config, params]);
 
   return result;
