@@ -1,14 +1,13 @@
 import isFunction from 'lodash/isFunction';
-import { ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../constants';
-import { Content, IterationParams } from '../../types';
+import { ITEM_TYPE } from '../../constants';
+import { Content, DiffParams } from '../../types';
 import fetchHttp from '../../utils/fetchHttp';
 import finishDynamicValue from '../../utils/finishDynamicValue';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
 import { IO_TYPE } from '../constants';
-import { OutputReturnValue } from '../types';
 import getItemNameFromUrl from './getItemNameFromUrl';
-import { HttpOutputConfig, HttpOutputResult } from './types';
+import { HttpAssignedParams, HttpOutputConfig, HttpOutputResult } from './types';
 
 /**
  * HTTPによる出力
@@ -16,43 +15,39 @@ import { HttpOutputConfig, HttpOutputResult } from './types';
  * @param params 1繰り返し毎のパラメーター
  */
 class HttpOutput extends OutputBase<Content, HttpOutputConfig, HttpOutputResult> {
-  async write(content: any, params: IterationParams): Promise<OutputReturnValue<HttpOutputResult>> {
-    const result: HttpOutputResult = await request(content, this._config, params);
-    return { status: MIGRATION_ITEM_STATUS.CONVERTED, result };
+  protected async _activate(params: HttpAssignedParams): Promise<DiffParams> {
+    const config = this._config;
+    const { url, removeIndex, removeExtensions } = config;
+    const outputItemPath: string = finishDynamicValue(url, params, config);
+    return {
+      outputItemPath,
+      outputItem: getItemNameFromUrl(outputItemPath, removeIndex, removeExtensions),
+      outputItemType: ITEM_TYPE.LEAF,
+      outputRootPath: outputItemPath,
+    };
   }
 
-  async copy(params: IterationParams): Promise<OutputReturnValue<HttpOutputResult>> {
-    throw new Error('Cannot use copy in HTTP');
-  }
+  protected async _write(content: any, params: HttpAssignedParams): Promise<void> {
+    const { _outputItemPath } = params;
+    const { requestInit } = this._config;
 
-  async move(params: IterationParams): Promise<OutputReturnValue<HttpOutputResult>> {
-    throw new Error('Cannot use move in HTTP');
-  }
-}
-
-OutputFactory.register(IO_TYPE.NOOP, HttpOutput);
-export default HttpOutput;
-
-async function request(content: any, config: HttpOutputConfig, params: IterationParams): Promise<HttpOutputResult> {
-  const { dryRun, url, removeIndex, removeExtensions, requestInit } = config;
-  const output: string = finishDynamicValue(url, params, config);
-
-  // リクエストの送信
-  if (!dryRun) {
+    // リクエストの送信
     const init = isFunction(requestInit) ? requestInit(content, params) : requestInit;
-    const response = await fetchHttp(output, init);
+    const response = await fetchHttp(_outputItemPath, init);
 
     if (response.status !== 200) {
       throw new Error(`Error on HTTP output: ${response.statusText}`);
     }
   }
 
-  // itemNameの取得
-  const outputItem = getItemNameFromUrl(output, removeIndex, removeExtensions);
+  protected async _copy(params: HttpAssignedParams): Promise<void> {
+    throw new Error('Cannot use copy in HTTP');
+  }
 
-  return {
-    outputItem,
-    outputItemType: ITEM_TYPE.LEAF,
-    outputPath: output,
-  };
+  protected async _move(params: HttpAssignedParams): Promise<void> {
+    throw new Error('Cannot use move in HTTP');
+  }
 }
+
+OutputFactory.register(IO_TYPE.NOOP, HttpOutput);
+export default HttpOutput;

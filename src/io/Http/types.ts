@@ -1,7 +1,7 @@
-import { Content, IterationParams, VariableString } from '../../types';
+import { AssignedParams, Content, IterationParams, VariableString } from '../../types';
 import { FetchHttpInit } from '../../utils/fetchHttp';
 import { IO_TYPE } from '../constants';
-import { InputConfigBase, InputResultBase, OutputConfigBase, OutputResultBase } from '../types';
+import { InputConfigBase, OutputConfigBase, PathInputResultBase, PathOutputResultBase } from '../types';
 
 /**
  * HTTP入力の設定
@@ -56,7 +56,7 @@ export type HttpInputConfig = InputConfigBase<typeof IO_TYPE.HTTP> & {
 /**
  * HTTP入力時の処理結果
  */
-export type HttpInputResult = InputResultBase;
+export type HttpInputResult = PathInputResultBase;
 
 /**
  * HTTP出力の設定
@@ -91,4 +91,7 @@ export type HttpOutputConfig = OutputConfigBase<typeof IO_TYPE.HTTP> & {
 /**
  * HTTP出力の処理結果
  */
-export type HttpOutputResult = OutputResultBase;
+export type HttpOutputResult = PathOutputResultBase;
+
+export type HttpAssignedParams = AssignedParams<Partial<HttpInputResult> & Partial<HttpOutputResult>> &
+  IterationParams & {};

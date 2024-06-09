@@ -12,6 +12,7 @@ import {
   Transaction,
   TransactionOptions,
 } from 'sequelize';
+import { AssignedParams, IterationParams } from '../../types';
 import { IO_TYPE } from '../constants';
 import { InputConfigBase, InputResultBase, OutputConfigBase, OutputResultBase } from '../types';
 
@@ -45,18 +46,32 @@ export type DbInputConfig<M extends Model = any> = InputConfigBase<typeof IO_TYP
 /**
  * DB入力時の処理結果
  */
-export type DbInputResult<M extends Model = any> = InputResultBase &
-  DbResultBase<M> & {
-    /**
-     * 取得レコード数
-     */
-    limit?: number;
+export type DbInputResult<M extends Model = any> = InputResultBase & {
+  /**
+   * Sequelizeのインスタンス
+   */
+  inputSequelize?: Sequelize;
 
-    /**
-     * 取得位置
-     */
-    offset?: number;
-  };
+  /**
+   * モデルクラス
+   */
+  inputModel?: ModelStatic<M>;
+
+  /**
+   * トランザクション
+   */
+  inputTransaction?: Transaction;
+
+  /**
+   * 取得レコード数
+   */
+  inputLimit?: number;
+
+  /**
+   * 取得位置
+   */
+  inputOffset?: number;
+};
 
 /**
  * DB出力の設定
@@ -94,7 +109,22 @@ export type DbOutputConfig<M extends Model = any> = OutputConfigBase<typeof IO_T
 /**
  * DB入力時の処理結果
  */
-export type DbOutputResult = OutputResultBase & {};
+export type DbOutputResult<M extends Model = any> = OutputResultBase & {
+  /**
+   * Sequelizeのインスタンス
+   */
+  outputSequelize?: Sequelize;
+
+  /**
+   * モデルクラス
+   */
+  outputModel?: ModelStatic<M>;
+
+  /**
+   * トランザクション
+   */
+  outputTransaction?: Transaction;
+};
 
 /**
  * DB設定のベース
@@ -156,22 +186,4 @@ export type ModelConfig<M extends Model, TAttributes = Attributes<M>> = {
   options?: ModelOptions<M>;
 };
 
-/**
- * DBの処理結果のベース
- */
-export type DbResultBase<M extends Model = any> = {
-  /**
-   * Sequelizeのインスタンス
-   */
-  sequelize: Sequelize;
-
-  /**
-   * モデルクラス
-   */
-  model: ModelStatic<M>;
-
-  /**
-   * トランザクション
-   */
-  transaction?: Transaction;
-};
+export type DbAssignedParams = AssignedParams<Partial<DbInputResult> & Partial<DbOutputResult>> & IterationParams & {};

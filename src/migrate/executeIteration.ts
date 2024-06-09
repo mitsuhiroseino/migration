@@ -123,7 +123,7 @@ export default async function executeIteration(
         // 入力を削除
         let deletedItem;
         if (handlingType === HANDLING_TYPE.DELETE) {
-          deletedItem = await ioHandler.delete(newParams);
+          deletedItem = await ioHandler.delete(inputItem.content, newParams);
           newParams = assignParams(newParams, deletedItem);
         }
 

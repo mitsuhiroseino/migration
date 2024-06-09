@@ -1,12 +1,12 @@
 import { Model, ModelStatic, Sequelize, Transaction } from 'sequelize';
-import { MIGRATION_ITEM_STATUS } from '../../constants';
+import { CONTENT_TYPE, ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../constants';
 import { Content, DiffParams, IterationParams } from '../../types';
 import asArray from '../../utils/asArray';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
 import { IO_TYPE } from '../constants';
 import { OutputResultBase, OutputReturnValue } from '../types';
-import { DbOutputConfig, DbOutputResult } from './types';
+import { DbAssignedParams, DbOutputConfig, DbOutputResult } from './types';
 
 /**
  * DB出力
@@ -27,7 +27,7 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
    */
   private _transaction: Transaction;
 
-  async activate(params: IterationParams): Promise<DiffParams> {
+  protected async _activate(params: DbAssignedParams): Promise<DiffParams> {
     const {
       database,
       username,
@@ -43,8 +43,8 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
     let sequelize: Sequelize;
     let transaction: Transaction;
     if (shareConnection) {
-      sequelize = params._sequelize as Sequelize;
-      transaction = params._transaction as Transaction;
+      sequelize = params._inputSequelize as Sequelize;
+      transaction = params._inputTransaction as Transaction;
     } else {
       // Sequelizeのインスタンス
       sequelize = new Sequelize(database, username, password, options);
@@ -55,7 +55,7 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
 
     let model: ModelStatic<M>;
     if (shareModel) {
-      model = params._model as ModelStatic<M>;
+      model = params._inputModel as ModelStatic<M>;
     } else {
       // ModelStatic
       const { modelName, attributes, options: modelOptions } = modelConfig;
@@ -67,42 +67,43 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
       this._transaction = transaction;
     }
     this._model = model;
-    return {};
+    return {
+      outputItem: model.name,
+      outputItemType: ITEM_TYPE.LEAF,
+      outputContentType: CONTENT_TYPE.DATA,
+      outputSequelize: sequelize,
+      outputModel: model,
+      outputTransaction: this._transaction,
+    };
   }
 
-  async write(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
+  protected async _write(content: any, params: DbAssignedParams): Promise<void> {
     const records = asArray(content);
     const { create, createOptions, updateOptions } = this._config;
     if (create) {
-      if (!this._config.dryRun) {
-        await this._model.bulkCreate(records, { ...createOptions, transaction: this._transaction });
-      }
-      return {
-        result: {},
-        status: MIGRATION_ITEM_STATUS.CREATED,
-      };
+      await this._model.bulkCreate(records, { ...createOptions, transaction: this._transaction });
     } else {
-      if (!this._config.dryRun) {
-        for (const record of records) {
-          await record.save({ ...updateOptions, transaction: this._transaction });
-        }
+      for (const record of records) {
+        await record.save({ ...updateOptions, transaction: this._transaction });
       }
-      return {
-        result: {},
-        status: MIGRATION_ITEM_STATUS.CONVERTED,
-      };
     }
   }
 
-  async copy(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
+  protected _getWriteResult(params: IterationParams): OutputReturnValue<DbOutputResult> {
+    return this._config.create
+      ? { result: {}, status: MIGRATION_ITEM_STATUS.CREATED }
+      : { result: {}, status: MIGRATION_ITEM_STATUS.CONVERTED };
+  }
+
+  protected async _copy(params: DbAssignedParams): Promise<void> {
     throw new Error('Cannot use copy in DB');
   }
 
-  async move(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
+  protected async _move(params: DbAssignedParams): Promise<void> {
     throw new Error('Cannot use move in DB');
   }
 
-  async deactivate(params: IterationParams): Promise<DiffParams> {
+  protected async _deactivate(params: DbAssignedParams): Promise<DiffParams> {
     if (!this._config.shareConnection) {
       const transaction = this._transaction;
       if (transaction) {
@@ -113,7 +114,7 @@ class DbOutput<M extends Model = Model> extends OutputBase<Content, DbOutputConf
     return {};
   }
 
-  async error(params: IterationParams): Promise<DiffParams> {
+  protected async _error(params: DbAssignedParams): Promise<DiffParams> {
     if (!this._config.shareConnection) {
       const transaction = this._transaction;
       if (transaction) {

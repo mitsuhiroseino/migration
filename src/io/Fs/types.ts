@@ -66,6 +66,6 @@ export type FsOutputConfig = OutputConfigBase<typeof IO_TYPE.FS> &
       | string;
   };
 
-export type FsAssignedParams = AssignedParams<Partial<PathInputResultBase>> & IterationParams & {};
-
 export type FsOutputResult = PathOutputResultBase;
+
+export type FsAssignedParams = AssignedParams<Partial<FsInputResult> & Partial<FsOutputResult>> & IterationParams & {};

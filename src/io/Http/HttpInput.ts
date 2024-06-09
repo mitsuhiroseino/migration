@@ -9,7 +9,7 @@ import InputFactory from '../InputFactory';
 import { IO_TYPE } from '../constants';
 import { InputReturnValue } from '../types';
 import getItemNameFromUrl from './getItemNameFromUrl';
-import { HttpInputConfig, HttpInputResult } from './types';
+import { HttpAssignedParams, HttpInputConfig, HttpInputResult } from './types';
 
 /**
  * HTTPによる入力
@@ -18,30 +18,39 @@ class HttpInput extends InputBase<Content, HttpInputConfig, HttpInputResult> {
   /**
    * 設定に従ってリクエストを送信する関数
    */
-  private _request: (params: IterationParams) => Promise<InputReturnValue<Content, HttpInputResult>>;
+  private _request: (params: HttpAssignedParams) => Promise<InputReturnValue<Content, HttpInputResult>>;
 
   constructor(config: HttpInputConfig) {
     super(config);
     this._request = getRequestFn(config);
   }
 
-  read(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, HttpInputResult>> {
+  protected async _activate(params: HttpAssignedParams): Promise<DiffParams> {
+    const config = this._config;
+    const { url, removeIndexHtml, removeExtensions } = config;
+    const inputItemPath: string = finishDynamicValue(url, params, config);
+    return {
+      inputItemPath,
+      inputItem: getItemNameFromUrl(inputItemPath, removeIndexHtml, removeExtensions),
+      inputItemType: ITEM_TYPE.LEAF,
+      inputRootPath: inputItemPath,
+    };
+  }
+
+  protected _read(params: HttpAssignedParams): AsyncIterableIterator<InputReturnValue<Content, HttpInputResult>> {
     return toAsyncGenerator(this._request, [params])();
   }
 
-  copy(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, HttpInputResult>> {
+  protected _copy(params: HttpAssignedParams): AsyncIterableIterator<InputReturnValue<Content, HttpInputResult>> {
     throw new Error('Cannot use copy in HTTP');
   }
 
-  move(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, HttpInputResult>> {
+  protected _move(params: HttpAssignedParams): AsyncIterableIterator<InputReturnValue<Content, HttpInputResult>> {
     throw new Error('Cannot use move in HTTP');
   }
 
-  async delete(params: IterationParams): Promise<DiffParams> {
-    const { dryRun, url, deleteInit, deleteUrl = url } = this._config;
-    if (dryRun) {
-      return {};
-    }
+  protected async _delete(params: HttpAssignedParams): Promise<void> {
+    const { url, deleteInit, deleteUrl = url } = this._config;
     if (deleteInit) {
       // deleteInitが設定されているときのみ削除可能
       const input: string = finishDynamicValue(deleteUrl, params, this._config);
@@ -54,7 +63,6 @@ class HttpInput extends InputBase<Content, HttpInputConfig, HttpInputResult> {
     } else {
       throw new Error('To delete via HTTP, set "deleteInit".');
     }
-    return {};
   }
 }
 InputFactory.register(IO_TYPE.HTTP, HttpInput);
@@ -66,28 +74,21 @@ export default HttpInput;
  * @returns
  */
 function getRequestFn(config: HttpInputConfig) {
-  return async (params: IterationParams): Promise<InputReturnValue<Content, HttpInputResult>> => {
-    const { url, removeIndexHtml, removeExtensions, requestInit, getContent = getResponseBody } = config;
-    const input: string = finishDynamicValue(url, params, config);
+  return async (params: HttpAssignedParams): Promise<InputReturnValue<Content, HttpInputResult>> => {
+    const { _inputItemPath } = params;
+    const { requestInit, getContent = getResponseBody } = config;
     const init = isFunction(requestInit) ? requestInit(params) : requestInit;
 
     // リクエストの送信
-    const response = await fetchHttp(input, init);
+    const response = await fetchHttp(_inputItemPath, init);
 
     if (response.status !== 200) {
       throw new Error(`Error on HTTP input: ${response.statusText}`);
     }
 
-    // itemNameの取得
-    const inputItem = getItemNameFromUrl(input, removeIndexHtml, removeExtensions);
-
     return {
       content: getContent(response),
-      result: {
-        inputItem,
-        inputItemType: ITEM_TYPE.LEAF,
-        inputPath: input,
-      },
+      result: {},
     };
   };
 }

@@ -10,24 +10,30 @@ import { DataOutputConfig, DataOutputResult } from './types';
  * データ出力
  */
 class DataOutput extends OutputBase<Content, DataOutputConfig, DataOutputResult> {
-  async write(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
+  protected async _write(content: any, params: IterationParams): Promise<void> {}
+
+  protected _getWriteResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      result: {},
       status: MIGRATION_ITEM_STATUS.UNKNOWN,
+      result: {},
     };
   }
 
-  async copy(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
+  protected async _copy(params: IterationParams): Promise<void> {}
+
+  protected _getCopyResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      result: {},
       status: MIGRATION_ITEM_STATUS.UNKNOWN,
+      result: {},
     };
   }
 
-  async move(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
+  protected async _move(params: IterationParams): Promise<void> {}
+
+  protected _getMoveResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      result: {},
       status: MIGRATION_ITEM_STATUS.UNKNOWN,
+      result: {},
     };
   }
 }

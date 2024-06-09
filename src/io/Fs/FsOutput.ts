@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import isString from 'lodash/isString';
 import path from 'path';
-import { ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../constants';
-import { Content } from '../../types';
+import { ITEM_TYPE } from '../../constants';
+import { Content, DiffParams, IterationParams } from '../../types';
 import finishDynamicValue from '../../utils/finishDynamicValue';
 import replacePlaceholders from '../../utils/replacePlaceholders';
 import replaceWithConfigs from '../../utils/replaceWithConfigs';
@@ -38,41 +38,48 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
       : (outputItem) => outputItem;
   }
 
+  async activate(params: IterationParams): Promise<DiffParams> {
+    // 処理前に設定から作る情報を取得しておく
+    const config = this._config;
+    const { outputPath } = config;
+    return {
+      // 設定で指定されている出力先のファイル or ディレクトリのパス
+      outputRootPath: path.normalize(finishDynamicValue(outputPath, params, config)),
+    };
+  }
+
+  async start(params: IterationParams): Promise<DiffParams> {
+    // 繰り返し毎に出力先の情報を作る
+    return this._getOutputInfo(params);
+  }
+
   /**
    * ファイルへの出力処理
    * @param content
    * @param params
    * @returns
    */
-  async write(content: any, params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
+  protected async _write(content: any, params: FsAssignedParams): Promise<void> {
     const config = this._config;
-    const { dryRun, outputEncoding, ...rest } = config;
-    const { outputItemPath, outputRootPath, outputItem } = this._getOutputInfo(params);
-    const { _inputItemType = ITEM_TYPE.LEAF, _inputEncoding } = params;
+    const { outputEncoding, ...rest } = config;
+    const { _inputItemType = ITEM_TYPE.LEAF, _inputEncoding, _outputItemPath } = params;
 
-    if (!dryRun) {
-      if (_inputItemType === ITEM_TYPE.NODE) {
-        // ディレクトリの場合
-        await fs.ensureDir(outputItemPath);
-      } else {
-        // ファイルの場合
-        let encoding = outputEncoding;
-        if (!encoding) {
-          // エンコーディングの指定が無い場合は入力時のエンコーディングで出力
-          encoding = _inputEncoding;
-        }
-        await writeAnyFile(outputItemPath, content, {
-          encoding,
-          ...rest,
-          ensured: false,
-        });
+    if (_inputItemType === ITEM_TYPE.NODE) {
+      // ディレクトリの場合
+      await fs.ensureDir(_outputItemPath);
+    } else {
+      // ファイルの場合
+      let encoding = outputEncoding;
+      if (!encoding) {
+        // エンコーディングの指定が無い場合は入力時のエンコーディングで出力
+        encoding = _inputEncoding;
       }
+      await writeAnyFile(_outputItemPath, content, {
+        encoding,
+        ...rest,
+        ensured: false,
+      });
     }
-
-    return {
-      status: MIGRATION_ITEM_STATUS.CONVERTED,
-      result: { outputItem, outputPath: outputItemPath, outputRootPath },
-    };
   }
 
   /**
@@ -81,19 +88,11 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
    * @param params
    * @returns
    */
-  async copy(params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
-    const { outputItemPath, outputRootPath, outputParentPath, outputItem } = this._getOutputInfo(params);
-    const { _inputPath: _inputItemPath } = params;
+  protected async _copy(params: FsAssignedParams): Promise<void> {
+    const { _inputItemPath, _outputItemPath, _outputParentPath } = params;
 
-    if (!this._config.dryRun) {
-      await fs.ensureDir(outputParentPath);
-      await fs.copy(_inputItemPath, outputItemPath, {});
-    }
-
-    return {
-      status: MIGRATION_ITEM_STATUS.COPIED,
-      result: { outputItem, outputPath: outputItemPath, outputRootPath },
-    };
+    await fs.ensureDir(_outputParentPath);
+    await fs.copy(_inputItemPath, _outputItemPath, {});
   }
 
   /**
@@ -102,19 +101,11 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
    * @param params
    * @returns
    */
-  async move(params: FsAssignedParams): Promise<OutputReturnValue<FsOutputResult>> {
-    const { outputItemPath, outputRootPath, outputParentPath, outputItem } = this._getOutputInfo(params);
-    const { _inputPath: _inputItemPath } = params;
+  protected async _move(params: FsAssignedParams): Promise<void> {
+    const { _inputItemPath, _outputItemPath, _outputParentPath } = params;
 
-    if (!this._config.dryRun) {
-      await fs.ensureDir(outputParentPath);
-      await fs.move(_inputItemPath, outputItemPath, {});
-    }
-
-    return {
-      status: MIGRATION_ITEM_STATUS.MOVED,
-      result: { outputItem, outputPath: outputItemPath, outputRootPath },
-    };
+    await fs.ensureDir(_outputParentPath);
+    await fs.move(_inputItemPath, _outputItemPath, {});
   }
 
   /**
@@ -123,31 +114,27 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
    * @param removeExtensions
    * @returns
    */
-  private _getOutputInfo(params: FsAssignedParams) {
-    const config = this._config;
-    const { outputPath } = config;
-    const { _inputPath: _inputItemPath, _inputRootPath, _inputItem } = params;
+  private _getOutputInfo(params: FsAssignedParams): FsOutputResult {
+    const { _inputItemPath, _inputRootPath, _inputItem, _outputRootPath } = params;
 
-    // 出力先のルートパスは設定から取得
-    const outputRootPath: string = path.normalize(finishDynamicValue(outputPath, params, config));
     // 出力の親ディレクトリパス
     let outputParentPath: string;
     // 出力するアイテムの名称
     let outputItem: string;
     if (_inputRootPath == null && _inputItemPath == null) {
       // 入力はパスを持たない
-      outputParentPath = outputRootPath;
+      outputParentPath = _outputRootPath;
       outputItem = _inputItem;
     } else if (_inputRootPath == null || _inputRootPath === _inputItemPath) {
       // 入力はパスを持つ & (ルートが無い or ルートに対する処理)
       // 出力の親ディレクトリパス＝出力のルートの親ディレクトリのパス
-      outputParentPath = path.dirname(outputRootPath);
-      outputItem = path.basename(outputRootPath);
+      outputParentPath = path.dirname(_outputRootPath);
+      outputItem = path.basename(_outputRootPath);
     } else {
       // 入力はパスを持つ & 配下に対する処理
       // 出力の親ディレクトリパス＝出力のルートのパス
       const inputParentRelativePath = path.relative(_inputRootPath, path.dirname(_inputItemPath));
-      outputParentPath = path.join(outputRootPath, inputParentRelativePath);
+      outputParentPath = path.join(_outputRootPath, inputParentRelativePath);
       outputItem = _inputItem;
     }
     // itemNameの変換がある場合は既定のoutputItemを基に変換する
@@ -156,10 +143,12 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     const outputItemPath: string = outputItem != null ? path.join(outputParentPath, outputItem) : outputParentPath;
 
     return {
+      // 現在処理中の出力先のファイル or ディレクトリのパス
       outputItemPath,
-      outputRootPath,
-      outputParentPath,
+      // 現在処理中の出力先のファイル or ディレクトリの名称
       outputItem,
+      // 現在処理中の出力先のファイル or ディレクトリの親ディレクトリのパス
+      outputParentPath,
     };
   }
 }

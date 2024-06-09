@@ -12,21 +12,25 @@ import { NoopOutputConfig, NoopOutputResult } from './types';
  * @param params 1繰り返し毎のパラメーター
  */
 class NoopOutput extends OutputBase<Content, NoopOutputConfig, NoopOutputResult> {
-  async write(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    return {
-      result: {},
-      status: MIGRATION_ITEM_STATUS.NONE,
-    };
+  protected async _write(content: any, params: IterationParams): Promise<void> {}
+
+  protected _getWriteResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
+    return this._getResult(params);
   }
 
-  async copy(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    return {
-      result: {},
-      status: MIGRATION_ITEM_STATUS.NONE,
-    };
+  protected async _copy(params: IterationParams): Promise<void> {}
+
+  protected _getCopyResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
+    return this._getResult(params);
   }
 
-  async move(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
+  protected async _move(params: IterationParams): Promise<void> {}
+
+  protected _getMoveResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
+    return this._getResult(params);
+  }
+
+  protected _getResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
       result: {},
       status: MIGRATION_ITEM_STATUS.NONE,

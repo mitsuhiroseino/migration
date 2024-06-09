@@ -23,9 +23,17 @@ export { default as OutputConfig } from './OutputConfig';
 export type IoType = (typeof IO_TYPE)[keyof typeof IO_TYPE];
 
 /**
+ * 入出力の設定
+ */
+export type IoConfigBase<T = IoType> = CommonReplacementConfig &
+  CommonDevelopmentConfig &
+  CommonLogConfig &
+  FactoriableConfig<T>;
+
+/**
  * 入出力関連の共通メソッド
  */
-export interface IoBase {
+export interface Io {
   /**
    * 開始処理
    * @param params
@@ -61,10 +69,7 @@ export interface IoBase {
  * 入力の設定
  */
 export type InputConfigBase<T = IoType> = CommonInputConfig &
-  CommonReplacementConfig &
-  CommonDevelopmentConfig &
-  CommonLogConfig &
-  FactoriableConfig<T> & {
+  IoConfigBase<T> & {
     /**
      * 入力ID
      */
@@ -103,12 +108,12 @@ export type PathInputResultBase = InputResultBase & {
   /**
    * 入力のパス
    */
-  inputPath: string;
+  inputItemPath?: string;
 
   /**
    * 入力のルートパス
    */
-  inputRootPath: string;
+  inputRootPath?: string;
 };
 
 /**
@@ -136,7 +141,7 @@ export type InputGenerator<C extends Content, R extends InputResultBase = InputR
 /**
  * コンテンツの入力元
  */
-export interface Input<C extends Content, IR extends InputResultBase = InputResultBase> extends IoBase {
+export interface Input<C extends Content, IR extends InputResultBase = InputResultBase> extends Io {
   /**
    * コンテンツの入力
    */
@@ -159,17 +164,14 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
   /**
    * コンテンツの削除
    */
-  delete(params: IterationParams): Promise<DiffParams>;
+  delete(content: C, params: IterationParams): Promise<DiffParams>;
 }
 
 /**
  * 出力の設定
  */
 export type OutputConfigBase<T = IoType> = CommonOutputConfig &
-  CommonReplacementConfig &
-  CommonDevelopmentConfig &
-  CommonLogConfig &
-  FactoriableConfig<T> & {
+  IoConfigBase<T> & {
     /**
      * 出力ID
      */
@@ -208,12 +210,17 @@ export type PathOutputResultBase = OutputResultBase & {
   /**
    * 出力のパス
    */
-  outputPath: string;
+  outputItemPath?: string;
+
+  /**
+   * 出力先の親ディレクトリのパス
+   */
+  outputParentPath?: string;
 
   /**
    * 出力のルートパス
    */
-  outputRootPath: string;
+  outputRootPath?: string;
 };
 
 /**
@@ -225,13 +232,13 @@ export type OutputReturnValue<R extends DiffParams> = {
   /**
    * 処理に関する情報
    */
-  result?: R;
+  result: R;
 };
 
 /**
  * コンテンツの出力先
  */
-export interface Output<C extends Content, OR extends OutputResultBase = OutputResultBase> extends IoBase {
+export interface Output<C extends Content, OR extends OutputResultBase = OutputResultBase> extends Io {
   /**
    * コンテンツの出力
    * @param config

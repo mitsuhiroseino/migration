@@ -15,27 +15,25 @@ class DataInput extends InputBase<Content, DataInputConfig, DataInputResult> {
    */
   private _generator: () => AsyncGenerator<Content>;
 
-  async activate(params: IterationParams): Promise<DiffParams> {
+  protected async _activate(params: IterationParams): Promise<DiffParams> {
     const { content, result } = this._config;
     this._generator = toAsyncGenerator({ content, result }, [params]);
     return {};
   }
 
-  read(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, DataInputResult>> {
+  protected _read(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, DataInputResult>> {
     return this._generator();
   }
 
-  copy(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, DataInputResult>> {
+  protected _copy(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, DataInputResult>> {
     return this._generator();
   }
 
-  move(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, DataInputResult>> {
+  protected _move(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, DataInputResult>> {
     return this._generator();
   }
 
-  async delete(params: IterationParams): Promise<DiffParams> {
-    return {};
-  }
+  protected async _delete(content: Content, params: IterationParams): Promise<void> {}
 }
 InputFactory.register(IO_TYPE.DATA, DataInput);
 export default DataInput;

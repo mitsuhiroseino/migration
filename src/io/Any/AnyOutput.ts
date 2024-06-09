@@ -3,7 +3,6 @@ import { Content, IterationParams } from '../../types';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
 import { IO_TYPE } from '../constants';
-import { OutputResultBase, OutputReturnValue } from '../types';
 import { AnyOutputConfig, AnyOutputResult } from './types';
 
 const getEmptyResult = () => ({
@@ -16,38 +15,20 @@ const getEmptyResult = () => ({
  * @param config 入力設定
  * @param params 1繰り返し毎のパラメーター
  */
-class AnyOutput extends OutputBase<Content, AnyOutputConfig, AnyOutputResult> {
-  async write(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    if (!this._config.dryRun) {
-      const { write: writeFn = getEmptyResult } = this._config;
-      return await writeFn(content, params, this._config);
-    }
-    return {
-      status: MIGRATION_ITEM_STATUS.CONVERTED,
-      result: {},
-    };
+class AnyOutput<C = Content> extends OutputBase<Content, AnyOutputConfig<C>, AnyOutputResult> {
+  protected async _write(content: any, params: IterationParams): Promise<void> {
+    const { write: writeFn = getEmptyResult } = this._config;
+    await writeFn(content, params, this._config);
   }
 
-  async copy(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    if (!this._config.dryRun) {
-      const { copy: copyFn = getEmptyResult } = this._config;
-      return await copyFn(params, this._config);
-    }
-    return {
-      status: MIGRATION_ITEM_STATUS.COPIED,
-      result: {},
-    };
+  protected async _copy(params: IterationParams): Promise<void> {
+    const { copy: copyFn = getEmptyResult } = this._config;
+    await copyFn(params, this._config);
   }
 
-  async move(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    if (!this._config.dryRun) {
-      const { move: moveFn = getEmptyResult } = this._config;
-      return await moveFn(params, this._config);
-    }
-    return {
-      status: MIGRATION_ITEM_STATUS.MOVED,
-      result: {},
-    };
+  protected async _move(params: IterationParams): Promise<void> {
+    const { move: moveFn = getEmptyResult } = this._config;
+    await moveFn(params, this._config);
   }
 }
 

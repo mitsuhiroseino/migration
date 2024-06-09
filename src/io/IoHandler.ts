@@ -4,7 +4,7 @@ import assignParams from '../utils/assignParams';
 import inheritConfig from '../utils/inheritConfig';
 import InputFactory from './InputFactory';
 import OutputFactory from './OutputFactory';
-import { Input, InputConfig, InputReturnValue, IoBase, Output, OutputConfig, OutputReturnValue } from './types';
+import { Input, InputConfig, InputReturnValue, Io, Output, OutputConfig, OutputReturnValue } from './types';
 
 export type IoHandlerConfig = CommonIoConfig;
 
@@ -12,7 +12,7 @@ export type IoHandlerConfig = CommonIoConfig;
  * 入力と出力を操作するクラス
  */
 export default class IoHandler<IC extends InputConfig = InputConfig, OC extends OutputConfig = OutputConfig>
-  implements IoBase
+  implements Io
 {
   /**
    * 設定
@@ -28,11 +28,6 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * 出力処理
    */
   private _output: Output<any, any>;
-
-  /**
-   * 処理中
-   */
-  private _active: boolean = false;
 
   /**
    * コンストラクター
@@ -55,7 +50,6 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
     this._config = config;
     this._input = InputFactory.create(inputConfig);
     this._output = OutputFactory.create(outputConfig);
-    this._active = true;
   }
 
   /**
@@ -113,9 +107,9 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @param params
    * @returns
    */
-  delete(params: IterationParams): Promise<DiffParams> {
+  delete<C>(content: C, params: IterationParams): Promise<DiffParams> {
     if (this._config.handlingType === HANDLING_TYPE.DELETE) {
-      return this._input.delete(params);
+      return this._input.delete(content, params);
     }
   }
 
@@ -132,7 +126,6 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
   async deactivate(params: IterationParams): Promise<DiffParams> {
     const inputDiffParams = await this._input.deactivate(params);
     const outputDiffParams = await this._output.deactivate(assignParams(params, inputDiffParams));
-    this._active = false;
     return { ...inputDiffParams, ...outputDiffParams };
   }
 
@@ -141,12 +134,8 @@ export default class IoHandler<IC extends InputConfig = InputConfig, OC extends 
    * @param params
    */
   async error(params: IterationParams): Promise<DiffParams> {
-    if (this._active) {
-      const inputDiffParams = await this._input.error(params);
-      const outputDiffParams = await this._output.error(assignParams(params, inputDiffParams));
-      this._active = false;
-      return { ...inputDiffParams, ...outputDiffParams };
-    }
-    return {};
+    const inputDiffParams = await this._input.error(params);
+    const outputDiffParams = await this._output.error(assignParams(params, inputDiffParams));
+    return { ...inputDiffParams, ...outputDiffParams };
   }
 }

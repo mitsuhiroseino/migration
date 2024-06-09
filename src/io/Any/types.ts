@@ -44,11 +44,12 @@ export type AnyInputConfig<C = Content> = InputConfigBase<typeof IO_TYPE.ANY> & 
 
   /**
    * 削除時の処理
+   * @param content
    * @param params
    * @param config
    * @returns
    */
-  delete?: (params: IterationParams, config: AnyInputConfig) => Promise<DiffParams>;
+  delete?: (content: C, params: IterationParams, config: AnyInputConfig) => Promise<void>;
 
   /**
    * 任意の設定

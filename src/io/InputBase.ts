@@ -1,47 +1,74 @@
 import { Content, DiffParams, IterationParams } from '../types';
+import IoBase from './IoBase';
 import { Input, InputConfigBase, InputResultBase, InputReturnValue } from './types';
 
 /**
  * 入力の基底クラス
  */
 abstract class InputBase<
-  C extends Content,
-  IC extends InputConfigBase = InputConfigBase,
-  IR extends InputResultBase = InputResultBase,
-> implements Input<C, IR>
+    C extends Content,
+    IC extends InputConfigBase = InputConfigBase,
+    IR extends InputResultBase = InputResultBase,
+  >
+  extends IoBase<IC>
+  implements Input<C, IR>
 {
-  protected _config: IC;
+  /**
+   * 削除結果
+   */
+  protected _deleteResult: DiffParams;
 
-  constructor(config: IC) {
-    this._config = config;
+  read(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>> {
+    return this._read(params);
   }
 
-  activate(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
+  /**
+   * 種別固有のコンテンツの入力
+   * @param params
+   */
+  protected abstract _read(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
+
+  copy(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>> {
+    return this._copy(params);
   }
 
-  start(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
+  /**
+   * 種別固有のコンテンツのコピー
+   * @param params
+   */
+  protected abstract _copy(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
+
+  move(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>> {
+    return this._move(params);
   }
 
-  abstract read(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
+  /**
+   * 種別固有のコンテンツの移動
+   * @param params
+   */
+  protected abstract _move(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
 
-  abstract copy(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
-
-  abstract move(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
-
-  abstract delete(params: IterationParams): Promise<DiffParams>;
-
-  end(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
+  async delete(content: C, params: IterationParams): Promise<DiffParams> {
+    if (!this._config.dryRun) {
+      await this._delete(content, params);
+    }
+    return this._getDeleteResult(content, params);
   }
 
-  deactivate(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
+  /**
+   * 削除結果の取得
+   * dryRun=trueの場合はこのメソッドのみ実行し結果を返す
+   * @param params
+   * @returns
+   */
+  protected _getDeleteResult(content: C, params: IterationParams): DiffParams {
+    return {};
   }
 
-  error(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
-  }
+  /**
+   * 種別固有のコンテンツの削除
+   * @param params
+   */
+  protected abstract _delete(content: C, params: IterationParams): Promise<void>;
 }
 export default InputBase;

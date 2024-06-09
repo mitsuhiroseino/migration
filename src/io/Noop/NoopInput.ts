@@ -1,38 +1,28 @@
-import { MIGRATION_ITEM_STATUS } from '../../constants';
-import { Content, IterationParams } from '../../types';
-import OutputBase from '../OutputBase';
-import OutputFactory from '../OutputFactory';
+import { Content, DiffParams, IterationParams } from '../../types';
+import toAsyncGenerator from '../../utils/toAsyncGenerator';
+import InputBase from '../InputBase';
+import InputFactory from '../InputFactory';
 import { IO_TYPE } from '../constants';
-import { OutputResultBase, OutputReturnValue } from '../types';
-import { NoopOutputConfig, NoopOutputResult } from './types';
+import { InputReturnValue } from '../types';
+import { NoopInputConfig, NoopInputResult } from './types';
 
 /**
- * 何もしない
- * @param config 入力設定
- * @param params 1繰り返し毎のパラメーター
+ * なにもしない
  */
-class NoopInput extends OutputBase<Content, NoopOutputConfig, NoopOutputResult> {
-  async write(content: any, params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    return {
-      result: {},
-      status: MIGRATION_ITEM_STATUS.NONE,
-    };
+class NoopInput extends InputBase<Content, NoopInputConfig, NoopInputResult> {
+  protected _read(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, NoopInputResult>> {
+    return toAsyncGenerator({})();
   }
 
-  async copy(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    return {
-      result: {},
-      status: MIGRATION_ITEM_STATUS.NONE,
-    };
+  protected _copy(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, NoopInputResult>> {
+    return toAsyncGenerator({})();
   }
 
-  async move(params: IterationParams): Promise<OutputReturnValue<OutputResultBase>> {
-    return {
-      result: {},
-      status: MIGRATION_ITEM_STATUS.NONE,
-    };
+  protected _move(params: IterationParams): AsyncIterableIterator<InputReturnValue<Content, NoopInputResult>> {
+    return toAsyncGenerator({})();
   }
+
+  protected async _delete(params: IterationParams): Promise<void> {}
 }
-
-OutputFactory.register(IO_TYPE.NOOP, NoopInput);
+InputFactory.register(IO_TYPE.NOOP, NoopInput);
 export default NoopInput;
