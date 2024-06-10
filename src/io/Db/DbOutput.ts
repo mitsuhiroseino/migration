@@ -1,11 +1,11 @@
 import { Model, ModelStatic, Sequelize, Transaction } from 'sequelize';
 import { CONTENT_TYPE, ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../constants';
-import { Content, DiffParams, IterationParams } from '../../types';
+import { DiffParams, IterationParams } from '../../types';
 import asArray from '../../utils/asArray';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
 import { IO_TYPE } from '../constants';
-import { OutputResultBase, OutputReturnValue } from '../types';
+import { OutputReturnValue } from '../types';
 import { DbAssignedParams, DbOutputConfig, DbOutputResult } from './types';
 
 /**
@@ -39,12 +39,13 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
       shareModel,
       dryRun,
     } = this._config;
+    const { _inputSequelize, _inputTransaction, _inputModel } = params;
 
     let sequelize: Sequelize;
     let transaction: Transaction;
     if (shareConnection) {
-      sequelize = params._inputSequelize as Sequelize;
-      transaction = params._inputTransaction as Transaction;
+      sequelize = _inputSequelize as Sequelize;
+      transaction = _inputTransaction as Transaction;
     } else {
       // Sequelizeのインスタンス
       sequelize = new Sequelize(database, username, password, options);
@@ -55,7 +56,7 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
 
     let model: ModelStatic<M>;
     if (shareModel) {
-      model = params._inputModel as ModelStatic<M>;
+      model = _inputModel as ModelStatic<M>;
     } else {
       // ModelStatic
       const { modelName, attributes, options: modelOptions } = modelConfig;
@@ -116,6 +117,7 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
       }
       await this._sequelize.close();
     }
+    this._cleanup();
     return {};
   }
 
@@ -127,7 +129,14 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
       }
       await this._sequelize.close();
     }
+    this._cleanup();
     return {};
+  }
+
+  private _cleanup() {
+    this._sequelize = null;
+    this._transaction = null;
+    this._model = null;
   }
 }
 

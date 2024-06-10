@@ -23,4 +23,9 @@ export type WriteConfig = OperationConfigBase<typeof OPERATION_TYPE.WRITE> &
      * paramNameの要素のプレイスホルダーを置換するなどの前処理を行わない
      */
     preserveParamName?: boolean;
+
+    /**
+     * リソースが配列の場合は配列の要素毎に出力する
+     */
+    writeEach?: boolean;
   };

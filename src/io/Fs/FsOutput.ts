@@ -10,7 +10,6 @@ import writeAnyFile from '../../utils/writeAnyFile';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
 import { IO_TYPE } from '../constants';
-import { OutputReturnValue } from '../types';
 import { FsAssignedParams, FsOutputConfig, FsOutputResult } from './types';
 
 /**
@@ -48,7 +47,7 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     };
   }
 
-  protected async _start(params: IterationParams): Promise<DiffParams> {
+  async prepare(params: IterationParams): Promise<DiffParams> {
     // 繰り返し毎に出力先の情報を作る
     return this._getOutputInfo(params);
   }

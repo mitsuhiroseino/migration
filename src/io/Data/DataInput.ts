@@ -16,8 +16,8 @@ class DataInput extends InputBase<Content, DataInputConfig, DataInputResult> {
   private _generator: () => AsyncGenerator<Content>;
 
   protected async _activate(params: IterationParams): Promise<DiffParams> {
-    const { content, result } = this._config;
-    this._generator = toAsyncGenerator({ content, result }, [params]);
+    const { returnValues } = this._config;
+    this._generator = toAsyncGenerator(returnValues, [params]);
     return {};
   }
 

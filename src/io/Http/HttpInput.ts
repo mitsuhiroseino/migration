@@ -1,6 +1,6 @@
 import isFunction from 'lodash/isFunction';
 import { ITEM_TYPE } from '../../constants';
-import { Content, DiffParams, IterationParams } from '../../types';
+import { Content, DiffParams } from '../../types';
 import fetchHttp from '../../utils/fetchHttp';
 import finishDynamicValue from '../../utils/finishDynamicValue';
 import toAsyncGenerator from '../../utils/toAsyncGenerator';

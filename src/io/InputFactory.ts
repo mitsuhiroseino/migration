@@ -3,7 +3,7 @@ import throwError from '../utils/throwError';
 import { Input, InputConfigBase } from './types';
 
 class InputFactory extends Factory<any> {
-  create(config: InputConfigBase): Input<any> {
+  create<C extends InputConfigBase>(config: C): Input<any> {
     const Class = this.get(config.type);
     if (Class) {
       return new Class(config);

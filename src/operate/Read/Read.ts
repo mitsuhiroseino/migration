@@ -1,12 +1,9 @@
-import { Input, InputConfig } from '../../io';
-import InputFactory from '../../io/InputFactory';
-import { Content, DiffParams, OperationResult, VariableString } from '../../types';
+import { OPERATION_STATUS } from '../../constants';
+import { IoHandler, IoHandlerConfig } from '../../io';
+import { Content, DiffParams, IterationParams, OperationResult, VariableString } from '../../types';
 import asArray from '../../utils/asArray';
-import assignParams from '../../utils/assignParams';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
-import getIoConfig from '../../utils/getIoConfig';
 import inheritConfig from '../../utils/inheritConfig';
-import propagateError from '../../utils/propagateError';
 import OperationBundlerBase from '../OperationBundlerBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
@@ -18,9 +15,9 @@ import { ReadConfig } from './types';
  */
 class Read extends OperationBundlerBase<Content, ReadConfig> {
   /**
-   * 入力処理
+   * 入出力ハンドラー
    */
-  private _input: Input<any, any>;
+  private _ioHandler: IoHandler;
 
   private _paramName: VariableString<OperationParams>;
 
@@ -32,68 +29,32 @@ class Read extends OperationBundlerBase<Content, ReadConfig> {
     const { type, input, paramName = '_resource', preserveParamName, ...rest } = config;
 
     // 入力設定取得
-    const inputCfg = getIoConfig(input);
-    const inputConfig: InputConfig = inheritConfig(inputCfg, rest);
-    this._input = InputFactory.create(inputConfig);
-
+    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ input }, rest);
+    this._ioHandler = new IoHandler(ioHandlerConfig);
     this._paramName = paramName;
     this._paramNameOptions = { ...rest, preserveString: preserveParamName };
   }
 
   async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     const resources: DiffParams = {};
-    const paramNames: any = {};
-    const input = this._input;
 
-    // 初期化処理
-    const activateResult = await input.activate(params);
-    const activatedParams = assignParams(params, activateResult);
-
-    // リソースの取得
-    const inputIterator = await input.read(activatedParams);
-
-    // 入力を回す
-    while (true) {
-      let newParams = activatedParams;
-      try {
-        // 前処理
-        const startResult = await input.start(newParams);
-        newParams = assignParams(newParams, startResult);
-
-        const next = await inputIterator.next();
-
-        if (next.done) {
-          // イテレーターが終わった時はbreak
-          break;
-        }
-        const inputItem = next.value;
-
-        // 入力時の結果をパラメーターにマージ
-        newParams = assignParams(newParams, inputItem.result);
-
-        // パラメーター名
-        const prmsName: string = finishDynamicValue(this._paramName, newParams, this._paramNameOptions);
-        if (paramNames[prmsName]) {
-          // 以前と同じパラメーター名が帰ってきた時は配列にする
-          const resource = asArray(resources[prmsName]);
-          resource.push(inputItem.content);
-          resources[prmsName] = resource;
-        } else {
-          resources[prmsName] = inputItem.content;
-        }
-        paramNames[prmsName] = true;
-
-        // 後処理
-        await input.end(newParams);
-      } catch (error) {
-        // エラー処理
-        const errorResult = await input.error(newParams);
-        newParams = assignParams(newParams, errorResult);
-        throw propagateError(error, `${newParams._inputItem}`);
+    // IoHandlerで読み込まれたコンテンツに対する操作
+    const operationFn = <C>(readedContent: C, params: IterationParams) => {
+      // パラメーター名
+      const prmsName: string = finishDynamicValue(this._paramName, params, this._paramNameOptions);
+      if (resources[prmsName]) {
+        // 既に設定されているパラメーター名が帰ってきた時は値を配列にする
+        const resource = asArray(resources[prmsName]);
+        resource.push(readedContent);
+        resources[prmsName] = resource;
+      } else {
+        resources[prmsName] = readedContent;
       }
-    }
-    // 完了処理
-    await input.deactivate(activatedParams);
+
+      return Promise.resolve({ content: readedContent, operationStatus: OPERATION_STATUS.UNPROCESSED });
+    };
+
+    await this._ioHandler.handle(params, { operationFn });
 
     // 子要素で処理
     return super.operate(content, { ...params, ...resources });

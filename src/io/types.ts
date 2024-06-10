@@ -1,4 +1,5 @@
 import {
+  CommonConfig,
   CommonDevelopmentConfig,
   CommonInputConfig,
   CommonLogConfig,
@@ -9,7 +10,9 @@ import {
   DiffParams,
   ItemType,
   IterationParams,
+  MigrationItemSpecificConfig,
   MigrationItemStatus,
+  OperationResult,
 } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { IO_TYPE } from './constants';
@@ -240,6 +243,11 @@ export type OutputReturnValue<R extends DiffParams> = {
  */
 export interface Output<C extends Content, OR extends OutputResultBase = OutputResultBase> extends Io {
   /**
+   * 実行の前処理
+   */
+  prepare(params: IterationParams): Promise<DiffParams>;
+
+  /**
    * コンテンツの出力
    * @param config
    * @param params
@@ -263,3 +271,50 @@ export interface Output<C extends Content, OR extends OutputResultBase = OutputR
    */
   move(params: IterationParams): Promise<OutputReturnValue<OR>>;
 }
+
+/**
+ * コンテンツを操作する関数
+ */
+export type ContentOperator = <C>(content: C, params: IterationParams) => Promise<OperationResult<C>>;
+
+/**
+ * 入出力の設定
+ */
+export type IoHandlerConfig = CommonConfig &
+  MigrationItemSpecificConfig & {
+    /**
+     * 読み込んだコンテンツへの処理を行う関数
+     * @param content
+     * @param params
+     * @returns
+     */
+    operationFn?: ContentOperator;
+  };
+
+/**
+ * 入出力処理時のオプション
+ */
+export type HandleOptions = HandleIoOptions & {
+  /**
+   * 読み込んだコンテンツへの処理を行う関数
+   * @param content
+   * @param params
+   * @returns
+   */
+  operationFn?: ContentOperator;
+};
+
+/**
+ * 入出力処理のオプション
+ */
+export type HandleIoOptions = {
+  /**
+   * 入力処理
+   */
+  input?: Input<any, any>;
+
+  /**
+   * 出力処理
+   */
+  output?: Output<any, any>;
+};

@@ -1,5 +1,5 @@
 import { MIGRATION_ITEM_STATUS } from '../constants';
-import { Content, IterationParams } from '../types';
+import { Content, DiffParams, IterationParams } from '../types';
 import IoBase from './IoBase';
 import { Output, OutputConfigBase, OutputResultBase, OutputReturnValue } from './types';
 
@@ -14,6 +14,10 @@ abstract class OutputBase<
   extends IoBase<OC>
   implements Output<C, OR>
 {
+  async prepare(params: IterationParams): Promise<DiffParams> {
+    return {};
+  }
+
   async write(content: C, params: IterationParams): Promise<OutputReturnValue<OR>> {
     if (!this._config.dryRun) {
       await this._write(content, params);

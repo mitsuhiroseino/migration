@@ -393,6 +393,7 @@ export type OperationResult<C extends Content = Content> = {
  * MigrationConfig以下で継承するコンフィグ
  */
 export type CommonConfig = CommonReplacementConfig &
+  CommonIoConfig &
   CommonInputConfig &
   CommonOutputConfig &
   CommonDevelopmentConfig &

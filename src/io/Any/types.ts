@@ -1,4 +1,4 @@
-import { Content, DiffParams, IterationParams } from '../../types';
+import { Content, IterationParams } from '../../types';
 import { IO_TYPE } from '../constants';
 import {
   InputConfigBase,

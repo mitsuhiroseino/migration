@@ -150,6 +150,7 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
       await transaction.commit();
     }
     await this._sequelize.close();
+    this._cleanup();
     return {};
   }
 
@@ -159,7 +160,14 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
       await transaction.rollback();
     }
     await this._sequelize.close();
+    this._cleanup();
     return {};
+  }
+
+  private _cleanup() {
+    this._sequelize = null;
+    this._transaction = null;
+    this._model = null;
   }
 }
 InputFactory.register(IO_TYPE.DATA, DbInput);

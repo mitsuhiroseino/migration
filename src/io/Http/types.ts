@@ -80,7 +80,7 @@ export type HttpOutputConfig = OutputConfigBase<typeof IO_TYPE.HTTP> & {
    * 入力のファイル名から削除する拡張子
    * `.html`を削除したい場合などに利用可能
    */
-  removeExtensions?: string[];
+  removeExtensions?: string[] | boolean;
 
   /**
    *

@@ -1,13 +1,8 @@
 import { OPERATION_STATUS } from '../../constants';
-import { Output, OutputConfig } from '../../io';
-import OutputFactory from '../../io/OutputFactory';
-import { Content, OperationResult, VariableString } from '../../types';
-import asArray from '../../utils/asArray';
-import assignParams from '../../utils/assignParams';
+import { IO_TYPE, InputFactory, IoHandler, IoHandlerConfig } from '../../io';
+import { Content, OperationResult } from '../../types';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
-import getIoConfig from '../../utils/getIoConfig';
 import inheritConfig from '../../utils/inheritConfig';
-import propagateError from '../../utils/propagateError';
 import OperationBase from '../OperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
@@ -19,11 +14,9 @@ import { WriteConfig } from './types';
  */
 class Write extends OperationBase<Content, WriteConfig> {
   /**
-   * 入力処理
+   * 入出力ハンドラー
    */
-  private _output: Output<any, any>;
-
-  private _paramName: VariableString<OperationParams>;
+  private _ioHandler: IoHandler;
 
   private _paramNameOptions: FinishDynamicValueOptions;
 
@@ -33,58 +26,41 @@ class Write extends OperationBase<Content, WriteConfig> {
     const { type, output, paramName = '_resource', preserveParamName, ...rest } = config;
 
     // 出力設定取得
-    const outputCfg = getIoConfig(output, true);
-    const outputConfig: OutputConfig = inheritConfig(outputCfg, rest);
-    this._output = OutputFactory.create(outputConfig);
-
-    this._paramName = paramName;
+    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ output }, rest);
+    this._ioHandler = new IoHandler(ioHandlerConfig);
     this._paramNameOptions = { ...rest, preserveString: preserveParamName };
   }
 
   async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
-    if (this._config.dryRun) {
-      return content;
-    }
+    const { writeEach, paramName } = this._config;
 
-    const output = this._output;
-    // 初期化処理
-    const activateResult = await output.activate(params);
-    const activatedParams = assignParams(params, activateResult);
-
-    let resources;
+    let target;
     if (this._config.resourceType === 'content') {
       // コンテンツをリソースとして取得
-      resources = asArray(content);
+      target = content;
     } else {
       // パラメーター名
-      const prmsName: string = finishDynamicValue(this._paramName, activatedParams, this._paramNameOptions);
+      const name: string = finishDynamicValue(paramName, params, this._paramNameOptions);
       // パラメーターからリソースを取得
-      resources = asArray(params[prmsName]);
+      target = params[name];
     }
 
-    // ファイルの出力
-    for (const resource of resources) {
-      let newParams = activatedParams;
-      try {
-        // 前処理
-        const startResult = await output.start(newParams);
-        newParams = assignParams(newParams, startResult);
-
-        const writeResult = await output.write(resource, newParams);
-        newParams = assignParams(newParams, writeResult.result);
-
-        // 後処理
-        await output.end(newParams);
-      } catch (error) {
-        // エラー処理
-        const errorResult = await output.error(newParams);
-        newParams = assignParams(newParams, errorResult);
-        throw propagateError(error, `${newParams._outputItem}`);
-      }
+    let returnValues;
+    if (writeEach && Array.isArray(target)) {
+      // 配列の場合に個々の要素を出力する
+      returnValues = target.map((item) => ({ content: item, result: {} }));
+    } else {
+      // 纏めて出力する
+      returnValues = { content: target, result: {} };
     }
 
-    // 完了処理
-    await output.deactivate(activatedParams);
+    // returnValuesを入力とするinput
+    const input = InputFactory.create({
+      type: IO_TYPE.DATA,
+      returnValues,
+    });
+
+    await this._ioHandler.handle(params, { input });
 
     return { operationStatus: OPERATION_STATUS.UNPROCESSED, content };
   }

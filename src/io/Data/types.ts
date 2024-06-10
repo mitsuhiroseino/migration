@@ -1,19 +1,14 @@
 import { IO_TYPE } from '../constants';
-import { InputConfigBase, InputResultBase, OutputConfigBase, OutputResultBase } from '../types';
+import { InputConfigBase, InputResultBase, InputReturnValue, OutputConfigBase, OutputResultBase } from '../types';
 
 /**
  * データ入力
  */
 export type DataInputConfig = InputConfigBase<typeof IO_TYPE.DATA> & {
   /**
-   * 任意のデータ
+   * 任意の入力結果
    */
-  content: any;
-
-  /**
-   * データ入力時の処理結果
-   */
-  result?: DataInputResult;
+  returnValues: InputReturnValue<any, DataInputResult> | InputReturnValue<any, DataInputResult>[];
 };
 
 /**

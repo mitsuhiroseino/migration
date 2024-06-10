@@ -1,4 +1,4 @@
-import { Content, DiffParams, IterationParams } from '../../types';
+import { Content, IterationParams } from '../../types';
 import toAsyncGenerator from '../../utils/toAsyncGenerator';
 import InputBase from '../InputBase';
 import InputFactory from '../InputFactory';
