@@ -7,12 +7,14 @@ import { AssignedParams } from '../types';
  */
 export default function assignParams<P extends object, S extends object>(
   params: P,
-  variedParams: S,
+  variedParams: S | void,
   prefix = '_',
 ): P & AssignedParams<S> {
   const assignedParams: any = { ...params };
-  for (const key in variedParams) {
-    assignedParams[prefix + key] = variedParams[key];
+  if (variedParams) {
+    for (const key in variedParams) {
+      assignedParams[prefix + key] = variedParams[key];
+    }
   }
   return assignedParams;
 }

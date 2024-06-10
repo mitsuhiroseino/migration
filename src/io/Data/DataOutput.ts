@@ -31,7 +31,6 @@ class DataOutput extends OutputBase<Content, DataOutputConfig, DataOutputResult>
   private _getResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
       status: MIGRATION_ITEM_STATUS.UNKNOWN,
-      result: {},
     };
   }
 }

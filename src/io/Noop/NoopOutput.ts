@@ -32,7 +32,6 @@ class NoopOutput extends OutputBase<Content, NoopOutputConfig, NoopOutputResult>
 
   protected _getResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      result: {},
       status: MIGRATION_ITEM_STATUS.NONE,
     };
   }

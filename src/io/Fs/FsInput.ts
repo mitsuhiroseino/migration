@@ -82,7 +82,7 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
     }
   }
 
-  protected async _deactivate(params: FsAssignedParams): Promise<DiffParams> {
+  protected async _deactivate(params: FsAssignedParams): Promise<void> {
     // ディレクトリを削除する
     for (const dirPath of this._dirsToDelete) {
       // 確実に処理を行うために同期処理
@@ -90,7 +90,6 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
         fs.removeSync(dirPath);
       }
     }
-    return {};
   }
 
   /**

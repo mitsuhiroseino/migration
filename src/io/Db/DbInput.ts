@@ -105,7 +105,6 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
       // 複数件まとめて返す場合
       yield {
         content: records,
-        result: {},
       };
     }
   }
@@ -118,7 +117,6 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
     for (const record of records) {
       yield {
         content: record,
-        result: {},
       };
     }
   }
@@ -144,24 +142,22 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
     return { records: asArray(content) };
   }
 
-  protected async _deactivate(params: DbAssignedParams): Promise<DiffParams> {
+  protected async _deactivate(params: DbAssignedParams): Promise<DiffParams | void> {
     const transaction = this._transaction;
     if (transaction) {
       await transaction.commit();
     }
     await this._sequelize.close();
     this._cleanup();
-    return {};
   }
 
-  protected async _error(params: DbAssignedParams): Promise<DiffParams> {
+  protected async _error(params: DbAssignedParams): Promise<DiffParams | void> {
     const transaction = this._transaction;
     if (transaction) {
       await transaction.rollback();
     }
     await this._sequelize.close();
     this._cleanup();
-    return {};
   }
 
   private _cleanup() {

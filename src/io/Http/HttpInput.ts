@@ -88,7 +88,6 @@ function getRequestFn(config: HttpInputConfig) {
 
     return {
       content: getContent(response),
-      result: {},
     };
   };
 }

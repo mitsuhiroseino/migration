@@ -41,31 +41,31 @@ export interface Io {
    * 開始処理
    * @param params
    */
-  activate(params: IterationParams): Promise<DiffParams>;
+  activate(params: IterationParams): Promise<DiffParams | void>;
 
   /**
    * 繰り返し毎の開始処理
    * @param params
    */
-  start(params: IterationParams): Promise<DiffParams>;
+  start(params: IterationParams): Promise<DiffParams | void>;
 
   /**
    * 繰り返し毎の終了処理
    * @param params
    */
-  end(params: IterationParams): Promise<DiffParams>;
+  end(params: IterationParams): Promise<DiffParams | void>;
 
   /**
    * 完了処理
    * @param params
    */
-  deactivate(params: IterationParams): Promise<DiffParams>;
+  deactivate(params: IterationParams): Promise<DiffParams | void>;
 
   /**
    * 例外処理
    * @param params
    */
-  error(params: IterationParams): Promise<DiffParams>;
+  error(params: IterationParams): Promise<DiffParams | void>;
 }
 
 /**
@@ -167,7 +167,7 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
   /**
    * コンテンツの削除
    */
-  delete(content: C, params: IterationParams): Promise<DiffParams>;
+  delete(content: C, params: IterationParams): Promise<DiffParams | void>;
 }
 
 /**
@@ -235,7 +235,7 @@ export type OutputReturnValue<R extends DiffParams> = {
   /**
    * 処理に関する情報
    */
-  result: R;
+  result?: R;
 };
 
 /**
@@ -245,7 +245,7 @@ export interface Output<C extends Content, OR extends OutputResultBase = OutputR
   /**
    * 実行の前処理
    */
-  prepare(params: IterationParams): Promise<DiffParams>;
+  prepare(params: IterationParams): Promise<DiffParams | void>;
 
   /**
    * コンテンツの出力

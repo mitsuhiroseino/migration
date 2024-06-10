@@ -137,13 +137,13 @@ export default class IoHandler {
 
           // 要素の処理結果
           const itemResult: MigrationItemResult = {
-            ...inputItem.result,
-            ...outputItem.result,
-            ...deleteResult,
+            input: inputItem.result.inputItem,
+            output: outputItem.result.outputItem,
             status: outputItem.status,
             operationStatus: operationResult.operationStatus,
           };
           result.results.push(itemResult);
+
           if (itemResult.status === MIGRATION_ITEM_STATUS.ERROR) {
             result.status = MIGRATION_STATUS.ERROR;
           }
@@ -227,7 +227,7 @@ export default class IoHandler {
    * @param options
    * @returns
    */
-  private async _prepareForWrite(params: IterationParams, options: HandleIoOptions): Promise<DiffParams> {
+  private async _prepareForWrite(params: IterationParams, options: HandleIoOptions): Promise<DiffParams | void> {
     const { output = this._output } = options;
     const outputDiffParams = await output.prepare(params);
     return outputDiffParams;
@@ -264,7 +264,7 @@ export default class IoHandler {
    * @param options
    * @returns
    */
-  private _delete<C>(content: C, params: IterationParams, options: HandleIoOptions): Promise<DiffParams> {
+  private _delete<C>(content: C, params: IterationParams, options: HandleIoOptions): Promise<DiffParams | void> {
     if (this._config.handlingType === HANDLING_TYPE.DELETE) {
       const { input = this._input } = options;
       return input.delete(content, params);

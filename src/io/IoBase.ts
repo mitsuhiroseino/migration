@@ -13,7 +13,7 @@ abstract class IoBase<C extends IoConfigBase> implements Io {
     this._config = config;
   }
 
-  activate(params: IterationParams): Promise<DiffParams> {
+  activate(params: IterationParams): Promise<DiffParams | void> {
     this._active = true;
     return this._activate(params);
   }
@@ -23,11 +23,9 @@ abstract class IoBase<C extends IoConfigBase> implements Io {
    * @param params
    * @returns
    */
-  protected _activate(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
-  }
+  protected async _activate(params: IterationParams): Promise<DiffParams | void> {}
 
-  start(params: IterationParams): Promise<DiffParams> {
+  start(params: IterationParams): Promise<DiffParams | void> {
     return this._start(params);
   }
 
@@ -36,12 +34,10 @@ abstract class IoBase<C extends IoConfigBase> implements Io {
    * @param params
    * @returns
    */
-  protected _start(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
-  }
+  protected async _start(params: IterationParams): Promise<DiffParams | void> {}
 
-  end(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
+  end(params: IterationParams): Promise<DiffParams | void> {
+    return this._end(params);
   }
 
   /**
@@ -49,11 +45,9 @@ abstract class IoBase<C extends IoConfigBase> implements Io {
    * @param params
    * @returns
    */
-  protected _end(params: IterationParams): Promise<DiffParams> {
-    return this._end(params);
-  }
+  protected async _end(params: IterationParams): Promise<DiffParams | void> {}
 
-  async deactivate(params: IterationParams): Promise<DiffParams> {
+  async deactivate(params: IterationParams): Promise<DiffParams | void> {
     const result = await this._deactivate(params);
     this._active = false;
     return result;
@@ -64,15 +58,12 @@ abstract class IoBase<C extends IoConfigBase> implements Io {
    * @param params
    * @returns
    */
-  protected _deactivate(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
-  }
+  protected async _deactivate(params: IterationParams): Promise<DiffParams | void> {}
 
-  error(params: IterationParams): Promise<DiffParams> {
+  async error(params: IterationParams): Promise<DiffParams | void> {
     if (this._active) {
       return this._error(params);
     }
-    return Promise.resolve({});
   }
 
   /**
@@ -80,8 +71,6 @@ abstract class IoBase<C extends IoConfigBase> implements Io {
    * @param params
    * @returns
    */
-  protected _error(params: IterationParams): Promise<DiffParams> {
-    return Promise.resolve({});
-  }
+  protected async _error(params: IterationParams): Promise<DiffParams | void> {}
 }
 export default IoBase;

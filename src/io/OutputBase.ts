@@ -14,9 +14,7 @@ abstract class OutputBase<
   extends IoBase<OC>
   implements Output<C, OR>
 {
-  async prepare(params: IterationParams): Promise<DiffParams> {
-    return {};
-  }
+  async prepare(params: IterationParams): Promise<DiffParams | void> {}
 
   async write(content: C, params: IterationParams): Promise<OutputReturnValue<OR>> {
     if (!this._config.dryRun) {
@@ -41,7 +39,6 @@ abstract class OutputBase<
   protected _getWriteResult(content: C, params: IterationParams): OutputReturnValue<OR> {
     return {
       status: MIGRATION_ITEM_STATUS.CONVERTED,
-      result: {} as OR,
     };
   }
 
@@ -67,7 +64,6 @@ abstract class OutputBase<
   protected _getCopyResult(params: IterationParams): OutputReturnValue<OR> {
     return {
       status: MIGRATION_ITEM_STATUS.COPIED,
-      result: {} as OR,
     };
   }
 
@@ -93,7 +89,6 @@ abstract class OutputBase<
   protected _getMoveResult(params: IterationParams): OutputReturnValue<OR> {
     return {
       status: MIGRATION_ITEM_STATUS.MOVED,
-      result: {} as OR,
     };
   }
 }

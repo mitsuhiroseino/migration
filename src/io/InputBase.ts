@@ -48,7 +48,7 @@ abstract class InputBase<
    */
   protected abstract _move(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>>;
 
-  async delete(content: C, params: IterationParams): Promise<DiffParams> {
+  async delete(content: C, params: IterationParams): Promise<DiffParams | void> {
     if (!this._config.dryRun) {
       await this._delete(content, params);
     }
@@ -67,8 +67,6 @@ abstract class InputBase<
    * @param params
    * @returns
    */
-  protected _getDeleteResult(content: C, params: IterationParams): DiffParams {
-    return {};
-  }
+  protected _getDeleteResult(content: C, params: IterationParams): DiffParams | void {}
 }
 export default InputBase;

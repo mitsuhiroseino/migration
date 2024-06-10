@@ -97,8 +97,8 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
 
   protected _getWriteResult(content: M | M[], params: IterationParams): OutputReturnValue<DbOutputResult> {
     return this._config.create
-      ? { result: {}, status: MIGRATION_ITEM_STATUS.CREATED }
-      : { result: {}, status: MIGRATION_ITEM_STATUS.CONVERTED };
+      ? { status: MIGRATION_ITEM_STATUS.CREATED }
+      : { status: MIGRATION_ITEM_STATUS.CONVERTED };
   }
 
   protected async _copy(params: DbAssignedParams): Promise<void> {
@@ -109,7 +109,7 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
     throw new Error('Cannot use move in DB');
   }
 
-  protected async _deactivate(params: DbAssignedParams): Promise<DiffParams> {
+  protected async _deactivate(params: DbAssignedParams): Promise<void> {
     if (!this._config.shareConnection) {
       const transaction = this._transaction;
       if (transaction) {
@@ -118,10 +118,9 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
       await this._sequelize.close();
     }
     this._cleanup();
-    return {};
   }
 
-  protected async _error(params: DbAssignedParams): Promise<DiffParams> {
+  protected async _error(params: DbAssignedParams): Promise<void> {
     if (!this._config.shareConnection) {
       const transaction = this._transaction;
       if (transaction) {
@@ -130,7 +129,6 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
       await this._sequelize.close();
     }
     this._cleanup();
-    return {};
   }
 
   private _cleanup() {
