@@ -99,11 +99,11 @@ export default class IoHandler {
       const inputIterator = this._read(activatedParams, rest);
       // 入力を回す
       while (true) {
-        let newParams = activatedParams;
+        let currentParams = activatedParams;
         try {
           // 前処理
-          const startResult = await this._start(newParams, rest);
-          newParams = assignParams(newParams, startResult);
+          const startResult = await this._start(currentParams, rest);
+          currentParams = assignParams(currentParams, startResult);
 
           const next = await inputIterator.next();
 
@@ -114,31 +114,31 @@ export default class IoHandler {
           const inputItem = next.value;
 
           // 入力時の結果をパラメーターにマージ
-          newParams = assignParams(newParams, inputItem.result);
-          applyIf(onItemStart, [config, newParams]);
+          currentParams = assignParams(currentParams, inputItem.result);
+          applyIf(onItemStart, [config, currentParams]);
 
           // コンテンツを処理
-          const operationResult = await operationFn(inputItem.content, newParams);
+          const operationResult = await operationFn(inputItem.content, currentParams);
 
           // 出力前処理
-          const prepareResult = await this._prepareForWrite(newParams, rest);
-          newParams = assignParams(newParams, prepareResult);
+          const prepareResult = await this._prepareForWrite(currentParams, rest);
+          currentParams = assignParams(currentParams, prepareResult);
 
           // 出力処理
-          const outputItem = await this._write(operationResult.content, newParams, rest);
-          newParams = assignParams(newParams, outputItem.result);
+          const outputItem = await this._write(operationResult.content, currentParams, rest);
+          currentParams = assignParams(currentParams, outputItem.result);
 
           // 入力を削除
           let deleteResult;
           if (handlingType === HANDLING_TYPE.DELETE) {
-            deleteResult = await this._delete(inputItem.content, newParams, rest);
-            newParams = assignParams(newParams, deleteResult);
+            deleteResult = await this._delete(inputItem.content, currentParams, rest);
+            currentParams = assignParams(currentParams, deleteResult);
           }
 
           // 要素の処理結果
           const itemResult: MigrationItemResult = {
-            input: inputItem.result.inputItem,
-            output: outputItem.result.outputItem,
+            ...inputItem.result,
+            ...outputItem.result,
             status: outputItem.status,
             operationStatus: operationResult.operationStatus,
           };
@@ -149,16 +149,16 @@ export default class IoHandler {
           }
 
           // 後処理
-          const endResult = await this._end(newParams, rest);
-          newParams = assignParams(newParams, endResult);
+          const endResult = await this._end(currentParams, rest);
+          currentParams = assignParams(currentParams, endResult);
 
-          applyIf(onItemEnd, [itemResult, config, newParams]);
+          applyIf(onItemEnd, [itemResult, config, currentParams]);
         } catch (error) {
           // エラー処理
-          const errorResult = await this._error(newParams, rest);
-          newParams = assignParams(newParams, errorResult);
-          applyIf(onError, [error, config, newParams]);
-          throw propagateError(error, `${newParams._inputItem}`);
+          const errorResult = await this._error(currentParams, rest);
+          currentParams = assignParams(currentParams, errorResult);
+          applyIf(onError, [error, config, currentParams]);
+          throw propagateError(error, `${currentParams._inputItem}`);
         }
       }
       // ディアクティベーション
