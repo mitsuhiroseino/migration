@@ -173,6 +173,11 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
    * コンテンツの削除
    */
   delete(content: C, params: IterationParams): Promise<DiffParams | void>;
+
+  /**
+   * 実行の後処理
+   */
+  complete(params: IterationParams): Promise<DiffParams | void>;
 }
 
 /**

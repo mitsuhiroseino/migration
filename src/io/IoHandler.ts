@@ -114,6 +114,14 @@ export default class IoHandler {
             break;
           }
           const inputItem = next.value;
+          // 入力時の結果をパラメーターにマージ
+          currentParams = assignParams(currentParams, inputItem.result);
+
+          applyIf(onItemStart, [config, currentParams]);
+
+          // 入力後処理
+          const prepareResult = await this._afterRead(currentParams, rest);
+          currentParams = assignParams(currentParams, prepareResult);
 
           if (inputItem.status === MIGRATION_ITEM_STATUS.BREAK) {
             // 読み込み処理でブレイクした場合
@@ -138,16 +146,8 @@ export default class IoHandler {
             continue;
           }
 
-          // 入力時の結果をパラメーターにマージ
-          currentParams = assignParams(currentParams, inputItem.result);
-          applyIf(onItemStart, [config, currentParams]);
-
           // コンテンツを処理
           const operationResult = await operationFn(inputItem.content, currentParams);
-
-          // 出力前処理
-          const prepareResult = await this._prepareForWrite(currentParams, rest);
-          currentParams = assignParams(currentParams, prepareResult);
 
           // 出力処理
           const outputItem = await this._write(operationResult.content, currentParams, rest);
@@ -246,15 +246,16 @@ export default class IoHandler {
   }
 
   /**
-   * 出力準備処理
+   * 入力後処理
    * @param params
    * @param options
    * @returns
    */
-  private async _prepareForWrite(params: IterationParams, options: HandleIoOptions): Promise<DiffParams | void> {
-    const { output = this._output } = options;
-    const outputDiffParams = await output.prepare(params);
-    return outputDiffParams;
+  private async _afterRead(params: IterationParams, options: HandleIoOptions): Promise<DiffParams | void> {
+    const { input = this._input, output = this._output } = options;
+    const inputDiffParams = await input.complete(params);
+    const outputDiffParams = await output.prepare(assignParams(params, inputDiffParams));
+    return { ...inputDiffParams, ...outputDiffParams };
   }
 
   /**
@@ -350,10 +351,12 @@ function getResult(params: AssignedParams<InputResultBase & OutputResultBase>): 
     _inputItemType,
     _inputContentType,
     _inputEncoding,
+    _inputItemPath,
     _outputItem,
     _outputItemType,
     _outputContentType,
     _outputEncoding,
+    _outputItemPath,
   } = params;
 
   return {
@@ -361,9 +364,11 @@ function getResult(params: AssignedParams<InputResultBase & OutputResultBase>): 
     inputItemType: _inputItemType,
     inputContentType: _inputContentType,
     inputEncoding: _inputEncoding,
+    inputItemPath: _inputItemPath,
     outputItem: _outputItem,
     outputItemType: _outputItemType,
     outputContentType: _outputContentType,
     outputEncoding: _outputEncoding,
+    outputItemPath: _outputItemPath,
   };
 }

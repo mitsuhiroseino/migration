@@ -71,6 +71,8 @@ abstract class InputBase<
    */
   protected _getDeleteResult(content: C, params: IterationParams): DiffParams | void {}
 
+  async complete(params: IterationParams): Promise<DiffParams | void> {}
+
   /**
    * 対象が存在しなかった場合の処理
    * @param errorMessage
