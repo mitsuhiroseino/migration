@@ -15,8 +15,8 @@ export default abstract class ImmutableOperationBase<
    * @param content
    * @param params
    */
-  async operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>> {
-    const result = await this._operate(content, params);
+  protected async _operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>> {
+    const result = await this._operateContent(content, params);
     if (content !== result) {
       return { operationStatus: OPERATION_STATUS.PROCESSED, content: result };
     } else {
@@ -24,5 +24,5 @@ export default abstract class ImmutableOperationBase<
     }
   }
 
-  protected abstract _operate(content: C, params: OperationParams): Promise<C | Content>;
+  protected abstract _operateContent(content: C, params: OperationParams): Promise<C | Content>;
 }

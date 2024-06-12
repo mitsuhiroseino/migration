@@ -12,7 +12,7 @@ import { ReplaceConfig } from './types';
 class Replace extends ImmutableOperationBase<string, ReplaceConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
-  protected async _operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operateContent(content: string, params: OperationParams): Promise<string> {
     return replaceWithConfigs(content, this._config, params);
   }
 }

@@ -12,7 +12,7 @@ import { UnbomConfig } from './types';
 class Unbom extends ImmutableOperationBase<string, UnbomConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
-  protected async _operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operateContent(content: string, params: OperationParams): Promise<string> {
     // BOMの置換
     return replace(content, /^\ufeff/, '');
   }

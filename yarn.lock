@@ -2936,6 +2936,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/js-yaml@npm:^4":
+  version: 4.0.9
+  resolution: "@types/js-yaml@npm:4.0.9"
+  checksum: 10c0/24de857aa8d61526bbfbbaa383aa538283ad17363fcd5bb5148e2c7f604547db36646440e739d78241ed008702a8920665d1add5618687b6743858fae00da211
+  languageName: node
+  linkType: hard
+
+"@types/jsesc@npm:^3":
+  version: 3.0.3
+  resolution: "@types/jsesc@npm:3.0.3"
+  checksum: 10c0/0d67ed688073d5106b2050ed24cb3d7a7c36fd4f30c88287501a60d8080925b13e1b5839a799f10ddc624e0e2cf56d2f84b0b1d0299ccfdb57e951510561c8b5
+  languageName: node
+  linkType: hard
+
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.12":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
@@ -3016,6 +3030,13 @@ __metadata:
   version: 7.5.8
   resolution: "@types/semver@npm:7.5.8"
   checksum: 10c0/8663ff927234d1c5fcc04b33062cb2b9fcfbe0f5f351ed26c4d1e1581657deebd506b41ff7fdf89e787e3d33ce05854bc01686379b89e9c49b564c4cfa988efa
+  languageName: node
+  linkType: hard
+
+"@types/serialize-javascript@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "@types/serialize-javascript@npm:5.0.4"
+  checksum: 10c0/606e2e65a5958df2379ad6d12edc883faa358eb9edbc86a6852545d5bb62ec212aec4c4741ee67d1842d00a9f537ee786070b74ee6d7a1b92c27c4f3afc5508d
   languageName: node
   linkType: hard
 
@@ -3319,15 +3340,19 @@ __metadata:
     "@types/gm": "npm:^1"
     "@types/handlebars-helpers": "npm:^0"
     "@types/jest": "npm:^29.5.12"
+    "@types/js-yaml": "npm:^4"
+    "@types/jsesc": "npm:^3"
     "@types/lodash": "npm:^4.14.195"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^20.11.26"
+    "@types/serialize-javascript": "npm:^5.0.4"
     "@types/uuid": "npm:^9"
     "@types/yargs": "npm:^17.0.24"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
     ast-types: "npm:^0.14.2"
     babel-jest: "npm:^29.5.0"
     chardet: "npm:^2.0.0"
+    csv: "npm:^6.3.9"
     esbuild: "npm:^0.18.11"
     eslint: "npm:^9.2.0"
     eslint-config-prettier: "npm:^9.1.0"
@@ -3344,6 +3369,9 @@ __metadata:
     iconv-lite: "npm:^0.6.3"
     jest: "npm:^29.7.0"
     jimp: "npm:^0.22.12"
+    js-yaml: "npm:^4.1.0"
+    jsesc: "npm:^3.0.2"
+    json5: "npm:^2.2.3"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.2.4"
     prettier-plugin-organize-imports: "npm:^3.2.4"
@@ -3352,6 +3380,7 @@ __metadata:
     rollup-plugin-generate-package-json: "npm:^3.2.0"
     rollup-plugin-postcss: "npm:^4.0.2"
     sequelize: "npm:^6.37.3"
+    serialize-javascript: "npm:^6.0.2"
     sharp: "npm:^0.33.2"
     ts-jest: "npm:^29.1.2"
     ts-node: "npm:^10.9.2"
@@ -4761,6 +4790,39 @@ __metadata:
   dependencies:
     css-tree: "npm:^1.1.2"
   checksum: 10c0/f8c6b1300efaa0f8855a7905ae3794a29c6496e7f16a71dec31eb6ca7cfb1f058a4b03fd39b66c4deac6cb06bf6b4ba86da7b67d7320389cb9994d52b924b903
+  languageName: node
+  linkType: hard
+
+"csv-generate@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "csv-generate@npm:4.4.1"
+  checksum: 10c0/8cd3b218746b6745d6ae7f84e4efde3c03be1967a12b185f300634a05180249db45e6422148f01e44c9cd7b190b71ae546015b59e8ac10cbdc04b40e92d3fe1f
+  languageName: node
+  linkType: hard
+
+"csv-parse@npm:^5.5.6":
+  version: 5.5.6
+  resolution: "csv-parse@npm:5.5.6"
+  checksum: 10c0/b4f6e9b885e4488829356455157bd009f3fed4119c5fbaadab1a879e85f0a9a1b62cd01e6de68ff77a50f820a6261722bce1b799da1ace2e2126e0b7c8d86760
+  languageName: node
+  linkType: hard
+
+"csv-stringify@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "csv-stringify@npm:6.5.0"
+  checksum: 10c0/838f793d28458fcaf2bc84ac7d33e918792a7ea004ffbffbb9553e7d0e9de46ef7e2b306096f8299634561e2b78b808299c4aa629943ff96d65375c6e03194b8
+  languageName: node
+  linkType: hard
+
+"csv@npm:^6.3.9":
+  version: 6.3.9
+  resolution: "csv@npm:6.3.9"
+  dependencies:
+    csv-generate: "npm:^4.4.1"
+    csv-parse: "npm:^5.5.6"
+    csv-stringify: "npm:^6.5.0"
+    stream-transform: "npm:^3.3.2"
+  checksum: 10c0/d104dbf081b5afb45dc0a4dc96153032d765f05b12e596d5ef63f2d9b638e19e5392345a8b154c4643de0e7a2c468b102969c4d0442e700b3ec81533299c2307
   languageName: node
   linkType: hard
 
@@ -7738,6 +7800,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsesc@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "jsesc@npm:3.0.2"
+  bin:
+    jsesc: bin/jsesc
+  checksum: 10c0/ef22148f9e793180b14d8a145ee6f9f60f301abf443288117b4b6c53d0ecd58354898dc506ccbb553a5f7827965cd38bc5fb726575aae93c5e8915e2de8290e1
+  languageName: node
+  linkType: hard
+
 "jsesc@npm:~0.5.0":
   version: 0.5.0
   resolution: "jsesc@npm:0.5.0"
@@ -9501,6 +9572,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"randombytes@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "randombytes@npm:2.1.0"
+  dependencies:
+    safe-buffer: "npm:^5.1.0"
+  checksum: 10c0/50395efda7a8c94f5dffab564f9ff89736064d32addf0cc7e8bf5e4166f09f8ded7a0849ca6c2d2a59478f7d90f78f20d8048bca3cdf8be09d8e8a10790388f3
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^18.0.0":
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
@@ -9871,17 +9951,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"safe-buffer@npm:^5.1.0, safe-buffer@npm:~5.2.0":
+  version: 5.2.1
+  resolution: "safe-buffer@npm:5.2.1"
+  checksum: 10c0/6501914237c0a86e9675d4e51d89ca3c21ffd6a31642efeba25ad65720bce6921c9e7e974e5be91a786b25aa058b5303285d3c15dbabf983a919f5f630d349f3
+  languageName: node
+  linkType: hard
+
 "safe-buffer@npm:~5.1.0, safe-buffer@npm:~5.1.1":
   version: 5.1.2
   resolution: "safe-buffer@npm:5.1.2"
   checksum: 10c0/780ba6b5d99cc9a40f7b951d47152297d0e260f0df01472a1b99d4889679a4b94a13d644f7dbc4f022572f09ae9005fa2fbb93bbbd83643316f365a3e9a45b21
-  languageName: node
-  linkType: hard
-
-"safe-buffer@npm:~5.2.0":
-  version: 5.2.1
-  resolution: "safe-buffer@npm:5.2.1"
-  checksum: 10c0/6501914237c0a86e9675d4e51d89ca3c21ffd6a31642efeba25ad65720bce6921c9e7e974e5be91a786b25aa058b5303285d3c15dbabf983a919f5f630d349f3
   languageName: node
   linkType: hard
 
@@ -10018,6 +10098,15 @@ __metadata:
     tedious:
       optional: true
   checksum: 10c0/f6006bbe85d0e9660df410e7d33ff754a60912c5f4b5b0511be9fc3abd83fe83d6a1954814a741916ab8385211aba0a7a6561f3568061154105bb863f1900fa8
+  languageName: node
+  linkType: hard
+
+"serialize-javascript@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "serialize-javascript@npm:6.0.2"
+  dependencies:
+    randombytes: "npm:^2.1.0"
+  checksum: 10c0/2dd09ef4b65a1289ba24a788b1423a035581bef60817bea1f01eda8e3bda623f86357665fe7ac1b50f6d4f583f97db9615b3f07b2a2e8cbcb75033965f771dd2
   languageName: node
   linkType: hard
 
@@ -10408,6 +10497,13 @@ __metadata:
     define-property: "npm:^0.2.5"
     object-copy: "npm:^0.1.0"
   checksum: 10c0/284f5865a9e19d079f1badbcd70d5f9f82e7a08393f818a220839cd5f71729e89105e1c95322bd28e833161d484cee671380ca443869ae89578eef2bf55c0653
+  languageName: node
+  linkType: hard
+
+"stream-transform@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "stream-transform@npm:3.3.2"
+  checksum: 10c0/d1d9a6bdf02da7436a06f43b95106909288ea94b76f614a66c94c0ada2be0e932079ad2f7b64c5486f6461c12c94ae2588c3ffc56431a0f436aaf549bf7845fb
   languageName: node
   linkType: hard
 

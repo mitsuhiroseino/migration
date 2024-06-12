@@ -14,7 +14,7 @@ export type OperationType = (typeof OPERATION_TYPE)[keyof typeof OPERATION_TYPE]
 /**
  * 操作の設定
  */
-export type OperationConfigBase<T = OperationType | string> = CommonConfig &
+export type OperationConfigBase<T = OperationType | string, C extends Content = Content> = CommonConfig &
   FactoriableConfig<T> & {
     /**
      * ID
@@ -29,6 +29,15 @@ export type OperationConfigBase<T = OperationType | string> = CommonConfig &
      * - 関数の場合は戻り値がtrueだったもの
      */
     filter?: Condition;
+
+    /**
+     * エラー時の処理を行う関数
+     * @param content
+     * @param params
+     * @param error
+     * @returns
+     */
+    onCatch?: (content: C, params: OperationParams, error: unknown) => Promise<OperationResult<C>>;
   };
 
 /**

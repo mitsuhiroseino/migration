@@ -35,7 +35,7 @@ class Read extends OperationBundlerBase<Content, ReadConfig> {
     this._paramNameOptions = { ...rest, preserveString: preserveParamName };
   }
 
-  async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
+  protected async _operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     const resources: DiffParams = {};
 
     // IoHandlerで読み込まれたコンテンツに対する操作
@@ -57,7 +57,7 @@ class Read extends OperationBundlerBase<Content, ReadConfig> {
     await this._ioHandler.handle(params, { operationFn });
 
     // 子要素で処理
-    return super.operate(content, { ...params, ...resources });
+    return super._operate(content, { ...params, ...resources });
   }
 }
 export default Read;

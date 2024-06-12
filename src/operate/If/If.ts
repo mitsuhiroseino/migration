@@ -21,7 +21,7 @@ class If extends OperationBase<Content, IfConfig> {
     this._else = toOperations(config.else, config);
   }
 
-  async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
+  protected async _operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     const { condition } = this._config;
     let operations;
     if (isMatch(content, condition, params)) {

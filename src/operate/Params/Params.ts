@@ -9,11 +9,11 @@ import { ParamsConfig } from './types';
  * パラメーターを更新して子の操作を実行する
  */
 class Params extends OperationBundlerBase<Content, ParamsConfig<Content>> {
-  async operate(content: Content, params: OperationParams): Promise<Content> {
+  protected async _operate(content: Content, params: OperationParams): Promise<Content> {
     // パラメーターの更新
     const diff = await this._config.createDiff(content, { ...params });
     // 新しいパラメーターで子操作を実行
-    return super.operate(content, { ...params, ...diff });
+    return super._operate(content, { ...params, ...diff });
   }
 }
 export default Params;

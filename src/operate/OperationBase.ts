@@ -51,7 +51,25 @@ export default abstract class OperationBase<
    * @param content
    * @param params
    */
-  abstract operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>>;
+  async operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>> {
+    try {
+      return await this._operate(content, params);
+    } catch (error) {
+      const { onCatch } = this._config;
+      if (onCatch) {
+        return await onCatch(content, params, error);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * コンテンツの操作
+   * @param content
+   * @param params
+   */
+  protected abstract _operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>>;
 
   finalize(params: OperationParams): Promise<void> {
     return;

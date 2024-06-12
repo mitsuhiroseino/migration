@@ -12,7 +12,7 @@ import { FillConfig } from './types';
 class Fill extends ImmutableOperationBase<string, FillConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
-  protected async _operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operateContent(content: string, params: OperationParams): Promise<string> {
     return replacePlaceholders(content, params, this._config);
   }
 }

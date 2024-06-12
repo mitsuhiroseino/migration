@@ -14,7 +14,7 @@ import { AddConfig } from './types';
 class Add extends ImmutableOperationBase<string, AddConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
-  protected async _operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operateContent(content: string, params: OperationParams): Promise<string> {
     let {
       pattern,
       preservePattern,

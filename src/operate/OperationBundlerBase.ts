@@ -24,7 +24,7 @@ export default abstract class OperationBundlerBase<
    * @param content
    * @param params
    */
-  async operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>> {
+  protected async _operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>> {
     const result = await operate(content, this._operations, params);
     return result;
   }

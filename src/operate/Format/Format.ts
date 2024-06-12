@@ -12,7 +12,7 @@ import { FormatConfig } from './types';
 class Format extends ImmutableOperationBase<string, FormatConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
-  protected async _operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operateContent(content: string, params: OperationParams): Promise<string> {
     const { formatter = format, formatterOptions } = this._config;
     return await formatter(content, formatterOptions);
   }

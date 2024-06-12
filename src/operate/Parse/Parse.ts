@@ -12,7 +12,7 @@ import { ParseConfig } from './types';
 class Parse extends ImmutableOperationBase<string, ParseConfig> {
   readonly contentTypes = CONTENT_TYPE.TEXT;
 
-  protected async _operate(content: string, params: OperationParams): Promise<any> {
+  protected async _operateContent(content: string, params: OperationParams): Promise<any> {
     const { parser = 'json', args } = this._config;
     return PARSER[parser](content, args);
   }

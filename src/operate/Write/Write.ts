@@ -31,7 +31,7 @@ class Write extends OperationBase<Content, WriteConfig> {
     this._paramNameOptions = { ...rest, preserveString: preserveParamName };
   }
 
-  async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
+  protected async _operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     const { writeEach, paramName } = this._config;
 
     let target;

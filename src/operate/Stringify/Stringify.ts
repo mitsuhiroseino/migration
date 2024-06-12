@@ -13,7 +13,7 @@ import { StringifyConfig } from './types';
 class Stringify extends ImmutableOperationBase<Exclude<Content, Buffer>, StringifyConfig> {
   readonly contentTypes = [CONTENT_TYPE.DATA, CONTENT_TYPE.TEXT];
 
-  protected async _operate(content: Exclude<Content, Buffer>, params: OperationParams): Promise<string> {
+  protected async _operateContent(content: Exclude<Content, Buffer>, params: OperationParams): Promise<string> {
     const { stringifier = 'json', args } = this._config;
     return STRINGIFIER[stringifier](content, args);
   }

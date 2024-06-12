@@ -88,7 +88,7 @@ abstract class ManipulativeOperationBase<
     return content as unknown as I;
   }
 
-  async operate(content: C, params: OperationParams): Promise<OperationResult<C>> {
+  protected async _operate(content: C, params: OperationParams): Promise<OperationResult<C>> {
     const setupResult = await this._setup(content, params);
     let currentInstance = setupResult.content;
 

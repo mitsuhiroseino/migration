@@ -24,7 +24,7 @@ class HttpInput extends InputBase<Content, HttpInputConfig, HttpInputResult> {
   constructor(config: HttpInputConfig) {
     super(config);
 
-    const { requestInit, getContent = getResponseBody, notFoundActionHttpStatus } = this._config;
+    const { requestInit, getContent = getResponseBody, notFoundHttpStatus } = this._config;
     // リクエスト関数
     this._request = async (params: HttpAssignedParams): Promise<InputReturnValue<Content, HttpInputResult>> => {
       const { _inputItemPath } = params;
@@ -33,8 +33,8 @@ class HttpInput extends InputBase<Content, HttpInputConfig, HttpInputResult> {
       // リクエストの送信
       const response = await fetchHttp(_inputItemPath, init);
 
-      const isNotFound = Array.isArray(notFoundActionHttpStatus)
-        ? notFoundActionHttpStatus.includes(response.status)
+      const isNotFound = Array.isArray(notFoundHttpStatus)
+        ? notFoundHttpStatus.includes(response.status)
         : !response.ok;
 
       if (isNotFound) {

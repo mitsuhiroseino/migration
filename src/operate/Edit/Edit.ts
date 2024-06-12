@@ -8,7 +8,7 @@ import { EditConfig } from './types';
  * 任意の編集をする操作
  */
 class Edit extends ImmutableOperationBase<string, EditConfig> {
-  protected async _operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operateContent(content: string, params: OperationParams): Promise<string> {
     // 実行
     return await this._config.editContent(content, params);
   }

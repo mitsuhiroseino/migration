@@ -17,7 +17,7 @@ class Generate extends ImmutableOperationBase<string, GenerateConfig> {
 
   private _templates: Record<string, ReturnType<typeof Handlebars.compile>> = {};
 
-  protected async _operate(content: string, params: OperationParams): Promise<string> {
+  protected async _operateContent(content: string, params: OperationParams): Promise<string> {
     const { operationId, type, filter, ...compileOptions } = this._config;
     let template = this._templates[content];
     if (!template) {

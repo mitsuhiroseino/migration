@@ -12,7 +12,7 @@ import { WhileConfig } from './types';
  * 条件に合致している間は配下のオペレーションを繰り返す
  */
 class While extends OperationBundlerBase<Content, WhileConfig> {
-  async operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
+  protected async _operate(content: Content, params: OperationParams): Promise<OperationResult<Content>> {
     const { condition } = this._config;
     let status: OperationStatus = OPERATION_STATUS.UNPROCESSED;
     let currentParams = params;
@@ -21,7 +21,7 @@ class While extends OperationBundlerBase<Content, WhileConfig> {
     // 条件に合致している間は繰り返す
     while (isMatch(currentContent, condition, currentParams)) {
       const oldContent = currentContent;
-      const result = await super.operate(oldContent, currentParams);
+      const result = await super._operate(oldContent, currentParams);
       currentContent = result.content;
       currentParams._content = oldContent;
       status = updateStatus(status, result.operationStatus, OPERATION_STATUS_PRIORITY);
