@@ -97,8 +97,6 @@ export const INHERITED_CONFIGS: Required<{
   onItemEnd: true,
   iteration: true,
   operateEach: true,
-  preFormatting: true,
-  postFormatting: true,
   formatterOptions: true,
   replacementBracket: true,
   removePlaceholders: true,

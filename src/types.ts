@@ -40,7 +40,7 @@ export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase
   MigrationJobSpecificConfig<OC> &
   MigrationIterationSpecificConfig &
   MigrationItemSpecificConfig &
-  Omit<OperateContentConfig, 'preFormatting' | 'formatterOptions'> & {
+  OperateContentConfig & {
     /**
      * ID
      */
@@ -255,22 +255,11 @@ export type MigrationItemSpecificConfig = {
 /**
  * 一連のオペレーション実行時専用の設定
  */
-export type OperateContentSpecificConfig = {
-  /**
-   * 移行処理開始前のフォーマット有無
-   */
-  preFormatting?: boolean | FormatOptions | ((params: IterationParams) => FormatOptions);
-
-  /**
-   * 移行処理終了後のフォーマット有無
-   */
-  postFormatting?: boolean | FormatOptions | ((params: IterationParams) => FormatOptions);
-
+export type OperateContentSpecificConfig<O = FormatOptions> = {
   /**
    * フォーマット時の設定
-   * preFormatting,postFormattingがtrueの場合は、この設定を使用してフォーマットを行う
    */
-  formatterOptions?: FormatOptions;
+  formatterOptions?: O;
 };
 
 /**

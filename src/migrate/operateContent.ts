@@ -1,11 +1,8 @@
-import isString from 'lodash/isString';
 import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
 import operate from '../operate';
 import { Content, IterationParams, OperateContentConfig, OperationResult, OperationStatus } from '../types';
 import applyIf from '../utils/applyIf';
 import catchError from '../utils/catchError';
-import finishFormattingOptions from '../utils/finishFormattingOptions';
-import format from '../utils/format';
 import updateStatus from '../utils/updateStatus';
 
 /**
@@ -20,9 +17,7 @@ export default async function operateContent(
   config: OperateContentConfig,
   params: IterationParams,
 ): Promise<OperationResult<Content>> {
-  const { onOperationsStart, preFormatting, postFormatting, formatterOptions, onOperationsEnd, operations, onError } =
-    config;
-  const { _inputItem } = params;
+  const { onOperationsStart, onOperationsEnd, operations, onError } = config;
   let operationStatus: OperationStatus = OPERATION_STATUS.UNPROCESSED;
 
   // 任意の前処理
@@ -40,22 +35,6 @@ export default async function operateContent(
     }
   }
 
-  if (preFormatting && isString(content)) {
-    // 処理開始前のフォーマットあり
-    const preFormattingOptions = finishFormattingOptions(preFormatting, formatterOptions, params);
-    const before = content;
-    try {
-      content = await format(content, { filepath: _inputItem as string, ...preFormattingOptions });
-    } catch (e) {
-      applyIf(onError, [e, config, params]);
-      catchError(e, 'Error in pre-formatting', config);
-      return { operationStatus: OPERATION_STATUS.ERROR, content };
-    }
-    if (before !== content) {
-      operationStatus = updateStatus(operationStatus, OPERATION_STATUS.PROCESSED, OPERATION_STATUS_PRIORITY);
-    }
-  }
-
   if (operations) {
     // 操作
     try {
@@ -66,25 +45,6 @@ export default async function operateContent(
       applyIf(onError, [e, config, params]);
       catchError(e, 'Error in operation', config);
       return { operationStatus: OPERATION_STATUS.ERROR, content };
-    }
-  }
-
-  if (postFormatting && isString(content)) {
-    // 処理終了後のフォーマットあり
-    const postFormattingOptions = finishFormattingOptions(postFormatting, formatterOptions, params);
-    const before = content;
-    try {
-      content = await format(content, {
-        filepath: _inputItem as string,
-        ...postFormattingOptions,
-      });
-    } catch (e) {
-      applyIf(onError, [e, config, params]);
-      catchError(e, 'Error in post-formatting', config);
-      return { operationStatus: OPERATION_STATUS.ERROR, content };
-    }
-    if (before !== content) {
-      operationStatus = updateStatus(operationStatus, OPERATION_STATUS.PROCESSED, OPERATION_STATUS_PRIORITY);
     }
   }
 
