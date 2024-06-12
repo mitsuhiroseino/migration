@@ -1,11 +1,12 @@
 import { FindOptions, Model, ModelStatic, Sequelize, Transaction } from 'sequelize';
-import { CONTENT_TYPE, ITEM_TYPE } from '../../constants';
+import { CONTENT_TYPE, ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../constants';
 import { DiffParams } from '../../types';
 import asArray from '../../utils/asArray';
 import InputBase from '../InputBase';
 import InputFactory from '../InputFactory';
 import { IO_TYPE } from '../constants';
 import { InputGenerator, InputReturnValue } from '../types';
+import createSequelize from './createSequelize';
 import { DbAssignedParams, DbInputConfig, DbInputResult } from './types';
 
 /**
@@ -28,10 +29,9 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
   private _transaction: Transaction;
 
   protected async _activate(params: DbAssignedParams): Promise<DiffParams> {
-    const { database, username, password, options, modelConfig, beginTransaction, transactionOptions, dryRun } =
-      this._config;
+    const { modelConfig, beginTransaction, transactionOptions, dryRun } = this._config;
     // Sequelizeのインスタンス
-    const sequelize = new Sequelize(database, username, password, options);
+    const sequelize = createSequelize(this._config);
     this._sequelize = sequelize;
     if (!dryRun && beginTransaction) {
       this._transaction = await sequelize.transaction(transactionOptions);
@@ -74,7 +74,13 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
   ): InputGenerator<M | M[], DbInputResult<M>> {
     const { _inputLimit: limit, _inputOffset: offset } = params;
     const paginationOptions = { ...findOptions, limit, offset };
-    const records = await this._model.findAll(paginationOptions);
+    let records: M[];
+    try {
+      records = await this._model.findAll(paginationOptions);
+    } catch (error) {
+      // エラーの場合は対象のテーブルが無かったという扱いでnotFoundAction
+      this._handleNotFound(error);
+    }
 
     if (this._config.single) {
       // 1件ずつ返す場合
@@ -82,6 +88,7 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
     } else {
       // 複数件まとめて返す場合
       yield {
+        status: MIGRATION_ITEM_STATUS.PROCESSED,
         content: records,
         result: {
           inputLimit: limit,
@@ -96,7 +103,13 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
    * @param findOptions
    */
   private async *_generateSelectAll(findOptions: FindOptions): InputGenerator<M | M[], DbInputResult<M>> {
-    const records = await this._model.findAll(findOptions);
+    let records: M[];
+    try {
+      records = await this._model.findAll(findOptions);
+    } catch (error) {
+      // エラーの場合は対象のテーブルが無かったという扱いでnotFoundAction
+      this._handleNotFound(error);
+    }
 
     if (this._config.single) {
       // 1件ずつ返す場合
@@ -104,6 +117,7 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
     } else {
       // 複数件まとめて返す場合
       yield {
+        status: MIGRATION_ITEM_STATUS.PROCESSED,
         content: records,
       };
     }
@@ -116,6 +130,7 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
   private async *_asSingle(records: M[]): InputGenerator<M, DbInputResult<M>> {
     for (const record of records) {
       yield {
+        status: MIGRATION_ITEM_STATUS.PROCESSED,
         content: record,
       };
     }

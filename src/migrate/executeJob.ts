@@ -37,6 +37,10 @@ export default async function executeJob(config: MigrationJobConfig): Promise<Mi
     const iterationResult = await executeIteration(iterationCfg, params);
     result.results.push(iterationResult);
     result.status = updateStatus(result.status, iterationResult.status, MIGRATION_STATUS_PRIORITY);
+    if (iterationResult.isBroken) {
+      // executeIterationがbreakした場合は繰り替えし処理を抜ける
+      break;
+    }
     i++;
   }
 

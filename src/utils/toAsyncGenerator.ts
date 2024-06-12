@@ -8,7 +8,7 @@ type Fn<T> = (...args: any[]) => Promise<T> | T;
  * @returns
  */
 export default function toAsyncGenerator<T>(
-  target: Iterable<T> | Fn<T | T[]> | T,
+  target: Iterable<T> | Fn<T | T[]> | T | undefined,
   args: any[] = [],
 ): () => AsyncGenerator<Awaited<T>, void> {
   if (isFunction(target)) {
@@ -34,10 +34,12 @@ export default function toAsyncGenerator<T>(
         yield item;
       }
     };
-  } else {
+  } else if (target !== undefined) {
     return async function* () {
       yield target;
     };
+  } else {
+    return async function* () {};
   }
 }
 

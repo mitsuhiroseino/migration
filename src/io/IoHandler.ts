@@ -1,6 +1,6 @@
 import isString from 'lodash/isString';
 import { HANDLING_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS, OPERATION_STATUS } from '../constants';
-import { DiffParams, IterationParams, MigrationItemResult, MigrationIterationResult } from '../types';
+import { AssignedParams, DiffParams, IterationParams, MigrationItemResult, MigrationIterationResult } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
 import inheritConfig from '../utils/inheritConfig';
@@ -14,10 +14,12 @@ import {
   HandleOptions,
   Input,
   InputConfig,
+  InputResultBase,
   InputReturnValue,
   IoHandlerConfig,
   Output,
   OutputConfig,
+  OutputResultBase,
   OutputReturnValue,
 } from './types';
 
@@ -113,6 +115,29 @@ export default class IoHandler {
           }
           const inputItem = next.value;
 
+          if (inputItem.status === MIGRATION_ITEM_STATUS.BREAK) {
+            // 読み込み処理でブレイクした場合
+            const itemResult: MigrationItemResult = {
+              ...getResult(currentParams),
+              status: MIGRATION_ITEM_STATUS.BREAK,
+              operationStatus: OPERATION_STATUS.UNPROCESSED,
+            };
+            result.results.push(itemResult);
+            result.isBroken = true;
+            applyIf(onItemEnd, [itemResult, config, currentParams]);
+            break;
+          } else if (inputItem.status === MIGRATION_ITEM_STATUS.SKIPPED) {
+            // 読み込み処理でスキップした場合
+            const itemResult: MigrationItemResult = {
+              ...getResult(currentParams),
+              status: MIGRATION_ITEM_STATUS.SKIPPED,
+              operationStatus: OPERATION_STATUS.UNPROCESSED,
+            };
+            result.results.push(itemResult);
+            applyIf(onItemEnd, [itemResult, config, currentParams]);
+            continue;
+          }
+
           // 入力時の結果をパラメーターにマージ
           currentParams = assignParams(currentParams, inputItem.result);
           applyIf(onItemStart, [config, currentParams]);
@@ -137,8 +162,7 @@ export default class IoHandler {
 
           // 要素の処理結果
           const itemResult: MigrationItemResult = {
-            ...inputItem.result,
-            ...outputItem.result,
+            ...getResult(currentParams),
             status: outputItem.status,
             operationStatus: operationResult.operationStatus,
           };
@@ -318,4 +342,28 @@ export default class IoHandler {
 function getIoConfig(config: string | InputConfig | OutputConfig, isOutput?: boolean) {
   const pathParam = isOutput ? 'outputPath' : 'inputPath';
   return isString(config) ? { type: IO_TYPE.FS, [pathParam]: config } : config || { type: IO_TYPE.NOOP };
+}
+
+function getResult(params: AssignedParams<InputResultBase & OutputResultBase>): InputResultBase & OutputResultBase {
+  const {
+    _inputItem,
+    _inputItemType,
+    _inputContentType,
+    _inputEncoding,
+    _outputItem,
+    _outputItemType,
+    _outputContentType,
+    _outputEncoding,
+  } = params;
+
+  return {
+    inputItem: _inputItem,
+    inputItemType: _inputItemType,
+    inputContentType: _inputContentType,
+    inputEncoding: _inputEncoding,
+    outputItem: _outputItem,
+    outputItemType: _outputItemType,
+    outputContentType: _outputContentType,
+    outputEncoding: _outputEncoding,
+  };
 }

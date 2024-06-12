@@ -356,6 +356,11 @@ export type MigrationIterationResult = {
    * 要素毎の処理結果
    */
   results: MigrationItemResult[];
+
+  /**
+   * 繰り返し処理をブレークした
+   */
+  isBroken?: boolean;
 };
 
 /**
@@ -445,9 +450,13 @@ export type CommonInputConfig = {
   inputEncoding?: string;
 
   /**
-   * 入力が無い場合は処理をスキップする
+   * 対象が存在しない場合の処理
+   *
+   * - error: エラーをスローする
+   * - skip: 対象をスキップする
+   * - break: 繰り返し処理をブレイクする
    */
-  skipIfNoInput?: boolean;
+  notFoundAction?: 'error' | 'skip' | 'break';
 };
 
 /**

@@ -51,6 +51,12 @@ export type HttpInputConfig = InputConfigBase<typeof IO_TYPE.HTTP> & {
    * @returns
    */
   getContent?: (response: Response) => Content;
+
+  /**
+   * notFoundActionで扱うHTTPステータス
+   * 未指定の場合はresponse.okがfalseのものをnotFoundActionで扱う
+   */
+  notFoundActionHttpStatus?: number[];
 };
 
 /**

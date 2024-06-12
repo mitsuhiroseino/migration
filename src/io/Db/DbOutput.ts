@@ -6,6 +6,7 @@ import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
 import { IO_TYPE } from '../constants';
 import { OutputReturnValue } from '../types';
+import createSequelize from './createSequelize';
 import { DbAssignedParams, DbOutputConfig, DbOutputResult } from './types';
 
 /**
@@ -28,27 +29,17 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
   private _transaction: Transaction;
 
   protected async _activate(params: DbAssignedParams): Promise<DiffParams> {
-    const {
-      database,
-      username,
-      password,
-      options,
-      modelConfig,
-      transactionOptions,
-      shareConnection,
-      shareModel,
-      dryRun,
-    } = this._config;
+    const { modelConfig, transactionOptions, shareConnection, shareModel, dryRun } = this._config;
     const { _inputSequelize, _inputTransaction, _inputModel } = params;
 
     let sequelize: Sequelize;
     let transaction: Transaction;
     if (shareConnection) {
-      sequelize = _inputSequelize as Sequelize;
-      transaction = _inputTransaction as Transaction;
+      sequelize = _inputSequelize;
+      transaction = _inputTransaction;
     } else {
       // Sequelizeのインスタンス
-      sequelize = new Sequelize(database, username, password, options);
+      sequelize = createSequelize(this._config);
       if (!dryRun) {
         transaction = await sequelize.transaction(transactionOptions);
       }

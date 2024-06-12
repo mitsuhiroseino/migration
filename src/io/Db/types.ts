@@ -131,19 +131,20 @@ export type DbOutputResult<M extends Model = any> = OutputResultBase & {
  */
 export type DbConfigBase<M extends Model = any> = {
   /**
-   * データベースの種別
+   * URI
+   * このパラメーターが指定されている場合、database、username、passwordは無効
    */
-  dbType: string;
+  uri?: string;
 
   /**
    * データベース接続文字列
    */
-  database: string;
+  database?: string;
 
   /**
    * ユーザー名
    */
-  username: string;
+  username?: string;
 
   /**
    * パスワード

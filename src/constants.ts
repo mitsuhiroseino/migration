@@ -46,6 +46,11 @@ export const MIGRATION_STATUS = {
   DISABLED: 'disabled',
 
   /**
+   * 繰り返しの終了
+   */
+  BREAK: 'break',
+
+  /**
    * 処理完了
    */
   SUCCESS: 'success',
@@ -63,9 +68,10 @@ export const MIGRATION_STATUS = {
 
 export const MIGRATION_STATUS_PRIORITY = {
   [MIGRATION_STATUS.DISABLED]: 0,
-  [MIGRATION_STATUS.SUCCESS]: 1,
-  [MIGRATION_STATUS.ERROR]: 2,
-  [MIGRATION_STATUS.FATAL]: 3,
+  [MIGRATION_STATUS.BREAK]: 1,
+  [MIGRATION_STATUS.SUCCESS]: 2,
+  [MIGRATION_STATUS.ERROR]: 100,
+  [MIGRATION_STATUS.FATAL]: 101,
 };
 
 /**
@@ -104,7 +110,7 @@ export const INHERITED_CONFIGS: Required<{
   handlingType: true,
   input: true,
   inputEncoding: true,
-  skipIfNoInput: true,
+  notFoundAction: true,
   output: true,
   outputEncoding: true,
   forceOutput: true,
@@ -165,6 +171,11 @@ export const MIGRATION_ITEM_STATUS = {
   NONE: 'none',
 
   /**
+   * 繰り返しの終了
+   */
+  BREAK: 'break',
+
+  /**
    * スキップ
    */
   SKIPPED: 'skipped',
@@ -175,27 +186,32 @@ export const MIGRATION_ITEM_STATUS = {
   UNKNOWN: 'unknown',
 
   /**
-   * 変換
+   * 処理済
+   */
+  PROCESSED: 'processed',
+
+  /**
+   * 変換済
    */
   CONVERTED: 'converted',
 
   /**
-   * 新規作成
+   * 新規作成済
    */
   CREATED: 'created',
 
   /**
-   * コピー
+   * コピー済
    */
   COPIED: 'copied',
 
   /**
-   * 移動
+   * 移動済
    */
   MOVED: 'moved',
 
   /**
-   * 削除
+   * 削除済
    */
   DELETED: 'deleted',
 
@@ -207,14 +223,16 @@ export const MIGRATION_ITEM_STATUS = {
 
 export const MIGRATION_ITEM_STATUS_PRIORITY = {
   [MIGRATION_ITEM_STATUS.NONE]: 0,
-  [MIGRATION_ITEM_STATUS.SKIPPED]: 1,
-  [MIGRATION_ITEM_STATUS.UNKNOWN]: 2,
-  [MIGRATION_ITEM_STATUS.CONVERTED]: 3,
-  [MIGRATION_ITEM_STATUS.CREATED]: 4,
-  [MIGRATION_ITEM_STATUS.COPIED]: 5,
-  [MIGRATION_ITEM_STATUS.MOVED]: 6,
-  [MIGRATION_ITEM_STATUS.DELETED]: 7,
-  [MIGRATION_ITEM_STATUS.ERROR]: 99,
+  [MIGRATION_ITEM_STATUS.BREAK]: 1,
+  [MIGRATION_ITEM_STATUS.SKIPPED]: 2,
+  [MIGRATION_ITEM_STATUS.UNKNOWN]: 3,
+  [MIGRATION_ITEM_STATUS.PROCESSED]: 4,
+  [MIGRATION_ITEM_STATUS.CONVERTED]: 5,
+  [MIGRATION_ITEM_STATUS.CREATED]: 6,
+  [MIGRATION_ITEM_STATUS.COPIED]: 7,
+  [MIGRATION_ITEM_STATUS.MOVED]: 8,
+  [MIGRATION_ITEM_STATUS.DELETED]: 9,
+  [MIGRATION_ITEM_STATUS.ERROR]: 100,
 };
 
 /**

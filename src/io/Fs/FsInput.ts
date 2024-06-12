@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { CONTENT_TYPE, ITEM_TYPE } from '../../constants';
+import { CONTENT_TYPE, ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../constants';
 import { Content, ContentType, DiffParams, IterationParams } from '../../types';
 import finishDynamicValue from '../../utils/finishDynamicValue';
 import fsStat from '../../utils/fsStat';
@@ -105,10 +105,8 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
       // ファイルの読み込み
       yield* callback.call(this, inputRootPath, path.basename(inputRootPath), params);
     } else {
-      const config = this._config;
-      if (!config.skipIfNoInput) {
-        throwError(`"${inputRootPath}" does not exist.`, config);
-      }
+      // 対象が無い場合
+      yield this._handleNotFound(`"${inputRootPath}" does not exist.`);
     }
   }
 
@@ -138,6 +136,7 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
       if (isTarget && (itemType === ITEM_TYPE.ANY || itemType === ITEM_TYPE.NODE)) {
         // ディレクトリ自身を返す
         yield {
+          status: MIGRATION_ITEM_STATUS.PROCESSED,
           result: {
             inputItemPath,
             inputItem,
@@ -172,6 +171,7 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
           inputContentType = CONTENT_TYPE.TEXT;
         }
         yield {
+          status: MIGRATION_ITEM_STATUS.PROCESSED,
           content,
           result: {
             inputItemPath,
@@ -219,6 +219,7 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
     const stats = await fsStat(inputRootPath);
     if (stats) {
       yield {
+        status: MIGRATION_ITEM_STATUS.PROCESSED,
         result: {
           // コピー・移動はルートパス＝処理対象の要素のパス
           inputItemPath: inputRootPath,
@@ -228,10 +229,8 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
         },
       };
     } else {
-      const config = this._config;
-      if (!config.skipIfNoInput) {
-        throwError(`"${inputRootPath}" does not exist.`, config);
-      }
+      // 対象が無い場合
+      yield this._handleNotFound(`"${inputRootPath}" does not exist.`);
     }
   }
 }

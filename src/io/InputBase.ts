@@ -1,4 +1,6 @@
+import { MIGRATION_ITEM_STATUS } from '../constants';
 import { Content, DiffParams, IterationParams } from '../types';
+import throwError from '../utils/throwError';
 import IoBase from './IoBase';
 import { Input, InputConfigBase, InputResultBase, InputReturnValue } from './types';
 
@@ -68,5 +70,28 @@ abstract class InputBase<
    * @returns
    */
   protected _getDeleteResult(content: C, params: IterationParams): DiffParams | void {}
+
+  /**
+   * 対象が存在しなかった場合の処理
+   * @param errorMessage
+   * @returns
+   */
+  protected _handleNotFound<E>(error: E) {
+    const { notFoundAction } = this._config;
+    if (notFoundAction === 'break') {
+      // breakする場合
+      return {
+        status: MIGRATION_ITEM_STATUS.BREAK,
+      };
+    } else if (notFoundAction === 'skip') {
+      // skipする場合
+      return {
+        status: MIGRATION_ITEM_STATUS.SKIPPED,
+      };
+    } else {
+      // 上記以外はエラー
+      throwError(String(error), this._config);
+    }
+  }
 }
 export default InputBase;

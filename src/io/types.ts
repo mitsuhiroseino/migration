@@ -124,6 +124,11 @@ export type PathInputResultBase = InputResultBase & {
  */
 export type InputReturnValue<C extends Content, R extends InputResultBase> = {
   /**
+   * 1入力分の処理ステータス
+   */
+  status: MigrationItemStatus;
+
+  /**
    * 読み込んだコンテンツ
    */
   content?: C;
@@ -230,6 +235,9 @@ export type PathOutputResultBase = OutputResultBase & {
  * 出力処理結果
  */
 export type OutputReturnValue<R extends DiffParams> = {
+  /**
+   * 1出力分の処理ステータス
+   */
   status: MigrationItemStatus;
 
   /**

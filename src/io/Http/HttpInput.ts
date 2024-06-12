@@ -1,8 +1,9 @@
 import isFunction from 'lodash/isFunction';
-import { ITEM_TYPE } from '../../constants';
+import { ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../constants';
 import { Content, DiffParams } from '../../types';
 import fetchHttp from '../../utils/fetchHttp';
 import finishDynamicValue from '../../utils/finishDynamicValue';
+import throwError from '../../utils/throwError';
 import toAsyncGenerator from '../../utils/toAsyncGenerator';
 import InputBase from '../InputBase';
 import InputFactory from '../InputFactory';
@@ -22,7 +23,33 @@ class HttpInput extends InputBase<Content, HttpInputConfig, HttpInputResult> {
 
   constructor(config: HttpInputConfig) {
     super(config);
-    this._request = getRequestFn(config);
+
+    const { requestInit, getContent = getResponseBody, notFoundActionHttpStatus } = this._config;
+    // リクエスト関数
+    this._request = async (params: HttpAssignedParams): Promise<InputReturnValue<Content, HttpInputResult>> => {
+      const { _inputItemPath } = params;
+      const init = isFunction(requestInit) ? requestInit(params) : requestInit;
+
+      // リクエストの送信
+      const response = await fetchHttp(_inputItemPath, init);
+
+      const isNotFound = Array.isArray(notFoundActionHttpStatus)
+        ? notFoundActionHttpStatus.includes(response.status)
+        : !response.ok;
+
+      if (isNotFound) {
+        // 対象を取得できなかった場合
+        return this._handleNotFound(`Error on HTTP input: ${response.statusText}`);
+      } else if (response.ok) {
+        // 対象を取得できた場合
+        return {
+          status: MIGRATION_ITEM_STATUS.PROCESSED,
+          content: getContent(response),
+        };
+      }
+      // 上記以外はエラー
+      throwError(`Error on HTTP input: ${response.statusText}`, this._config);
+    };
   }
 
   protected async _activate(params: HttpAssignedParams): Promise<DiffParams> {
@@ -57,7 +84,7 @@ class HttpInput extends InputBase<Content, HttpInputConfig, HttpInputResult> {
       const init = isFunction(deleteInit) ? deleteInit(params) : deleteInit;
       // リクエストの送信
       const response = await fetchHttp(input, init);
-      if (response.status !== 200) {
+      if (!response.ok) {
         throw new Error(response.statusText);
       }
     } else {
@@ -67,30 +94,6 @@ class HttpInput extends InputBase<Content, HttpInputConfig, HttpInputResult> {
 }
 InputFactory.register(IO_TYPE.HTTP, HttpInput);
 export default HttpInput;
-
-/**
- * リクエストを送信する関数を取得する
- * @param config
- * @returns
- */
-function getRequestFn(config: HttpInputConfig) {
-  return async (params: HttpAssignedParams): Promise<InputReturnValue<Content, HttpInputResult>> => {
-    const { _inputItemPath } = params;
-    const { requestInit, getContent = getResponseBody } = config;
-    const init = isFunction(requestInit) ? requestInit(params) : requestInit;
-
-    // リクエストの送信
-    const response = await fetchHttp(_inputItemPath, init);
-
-    if (response.status !== 200) {
-      throw new Error(`Error on HTTP input: ${response.statusText}`);
-    }
-
-    return {
-      content: getContent(response),
-    };
-  };
-}
 
 function getResponseBody(response: Response) {
   return response.body;
