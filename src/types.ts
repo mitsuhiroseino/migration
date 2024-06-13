@@ -147,6 +147,21 @@ export type OperateContentConfig<OP = Operation> = CommonConfig &
       config: OperateContentConfig,
       params: IterationParams,
     ) => Promise<C | any>;
+
+    /**
+     * 操作のエラー時
+     * @param error
+     * @param content
+     * @param config
+     * @param params
+     * @returns
+     */
+    onOperationError?: <E, C = Content>(
+      error: E,
+      content: C,
+      config: OperateContentConfig,
+      params: IterationParams,
+    ) => void;
   };
 
 /**
@@ -172,6 +187,14 @@ export type MigrationTaskSpecificConfig<OC extends OperationConfigBase = Operati
    * @returns
    */
   onTaskEnd?: (result: MigrationTaskResult, config: MigrationTaskConfig<OC>) => void;
+
+  /**
+   * タスクのエラー時
+   * @param error
+   * @param config タスク設定
+   * @returns
+   */
+  onTaskError?: <E>(error: E, config: MigrationTaskConfig<OC>) => void;
 };
 
 /**
@@ -197,6 +220,14 @@ export type MigrationJobSpecificConfig<OC extends OperationConfigBase<any> = Ope
    * @returns
    */
   onJobEnd?: (result: MigrationJobResult, config: MigrationJobConfig<OC>) => void;
+
+  /**
+   * ジョブのエラー時
+   * @param error
+   * @param config ジョブ設定
+   * @returns
+   */
+  onJobError?: <E>(error: E, config: MigrationJobConfig<OC>) => void;
 };
 
 /**
@@ -225,6 +256,15 @@ export type MigrationIterationSpecificConfig = {
   ) => void;
 
   /**
+   * イテレーションのエラー時
+   * @param error
+   * @param config イテレーション設定
+   * @param params イテレーションパラメーター
+   * @returns
+   */
+  onIterationError?: <E>(error: E, config: MigrationIterationConfig, params: IterationParams) => void;
+
+  /**
    * コンテンツが配列だった場合には配列の要素に対して操作を行う
    */
   operateEach?: boolean;
@@ -250,17 +290,21 @@ export type MigrationItemSpecificConfig = {
    * @returns
    */
   onItemEnd?: (result: MigrationItemResult, config: MigrationIterationConfig, params: IterationParams) => void;
+
+  /**
+   * 要素処理のエラー時
+   * @param error
+   * @param config イテレーション設定
+   * @param params イテレーションパラメーター
+   * @returns
+   */
+  onItemError?: <E>(error: E, config: MigrationIterationConfig, params: IterationParams) => void;
 };
 
 /**
  * 一連のオペレーション実行時専用の設定
  */
-export type OperateContentSpecificConfig<O = FormatOptions> = {
-  /**
-   * フォーマット時の設定
-   */
-  formatterOptions?: O;
-};
+export type OperateContentSpecificConfig = {};
 
 /**
  * 内容の処理結果
@@ -391,7 +435,8 @@ export type CommonConfig = CommonReplacementConfig &
   CommonInputConfig &
   CommonOutputConfig &
   CommonDevelopmentConfig &
-  CommonLogConfig & {
+  CommonLogConfig &
+  CommonFormatConfig & {
     /**
      * エラー時のハンドラー
      * @param error エラー情報
@@ -495,6 +540,16 @@ export type CommonLogConfig = {
    * ログを出力しない
    */
   silent?: boolean;
+};
+
+/**
+ * フォーマットに関する設定
+ */
+export type CommonFormatConfig<O = FormatOptions> = {
+  /**
+   * フォーマット時の設定
+   */
+  formatterOptions?: O;
 };
 
 /**

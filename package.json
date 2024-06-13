@@ -1,6 +1,6 @@
 {
   "name": "@visue/migration",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "license": "MIT",
   "main": "build/index.cjs",
   "module": "build/index.mjs",
@@ -23,6 +23,7 @@
   "dependencies": {
     "@prisma/client": "^5.14.0",
     "chardet": "^2.0.0",
+    "cli-progress": "^3.12.0",
     "csv": "^6.3.9",
     "fs-extra": "^11.1.1",
     "gm": "^1.25.0",
@@ -55,6 +56,7 @@
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-typescript": "^8.3.2",
+    "@types/cli-progress": "^3",
     "@types/eslint": "^8.56.5",
     "@types/fs-extra": "^11.0.1",
     "@types/gm": "^1",

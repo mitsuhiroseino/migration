@@ -45,34 +45,45 @@ export default async function executeIteration(
   config: MigrationIterationConfig,
   params: IterationParams,
 ): Promise<MigrationIterationResult | null> {
-  const { iterationId, operateEach, onIterationStart, onIterationEnd, disabled, operations = [], ...rest } = config;
-  let result: MigrationIterationResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
-  if (disabled) {
-    result.status = MIGRATION_STATUS.DISABLED;
-    return result;
-  }
-
-  applyIf(onIterationStart, [config, params]);
-
-  // オペレーション実行関数の取得
-  const operationFn = getOperate(operateEach, { ...rest, operations });
-  // 入出力ハンドラー
-  const ioHandlerConfig: IoHandlerConfig = inheritConfig({ operationFn }, rest);
-  const ioHandler = new IoHandler(ioHandlerConfig);
+  const {
+    iterationId,
+    operateEach,
+    onIterationStart,
+    onIterationEnd,
+    onIterationError,
+    disabled,
+    operations = [],
+    ...rest
+  } = config;
 
   try {
+    let result: MigrationIterationResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
+    if (disabled) {
+      result.status = MIGRATION_STATUS.DISABLED;
+      return result;
+    }
+
+    applyIf(onIterationStart, [config, params]);
+
+    // オペレーション実行関数の取得
+    const operationFn = getOperate(operateEach, { ...rest, operations });
+    // 入出力ハンドラー
+    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ operationFn }, rest);
+    const ioHandler = new IoHandler(ioHandlerConfig);
+
     // オペレーションの前処理
     await Promise.all(operations.map((operation) => operation.initialize(params)));
     // 入出力処理
     result = await ioHandler.handle(params);
     // オペレーションの後処理
     await Promise.all(operations.map((operation) => operation.finalize(params)));
+    applyIf(onIterationEnd, [result, config, params]);
+
+    return result;
   } catch (error) {
     // オペレーションのエラー処理
     await Promise.all(operations.map((operation) => operation.error(params)));
+    applyIf(onIterationError, [error, config, params]);
     throw error;
   }
-  applyIf(onIterationEnd, [result, config, params]);
-
-  return result;
 }

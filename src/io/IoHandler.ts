@@ -88,12 +88,12 @@ export default class IoHandler {
    */
   async handle(params: IterationParams, options: HandleOptions = {}): Promise<MigrationIterationResult> {
     const config = this._config;
-    const { handlingType, onItemStart, onItemEnd, onError } = this._config;
+    const { handlingType, onItemStart, onItemEnd, onItemError } = this._config;
     const { operationFn = this._operationFn, ...rest } = options;
 
-    const result: MigrationIterationResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
-
     try {
+      const result: MigrationIterationResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
+
       // アクティベーション
       const activateResult = await this._activate(params, rest);
       const activatedParams = assignParams(params, activateResult);
@@ -181,21 +181,21 @@ export default class IoHandler {
           // エラー処理
           const errorResult = await this._error(currentParams, rest);
           currentParams = assignParams(currentParams, errorResult);
-          applyIf(onError, [error, config, currentParams]);
+          applyIf(onItemError, [error, config, currentParams]);
           throw propagateError(error, `${currentParams._inputItem}`);
         }
       }
       // ディアクティベーション
       await this._deactivate(activatedParams, rest);
+
+      return result;
     } catch (error) {
       // エラー処理
       const errorResult = await this._error(params, rest);
       const errorParams = assignParams(params, errorResult);
-      applyIf(onError, [error, config, errorParams]);
+      applyIf(onItemError, [error, config, errorParams]);
       throw error;
     }
-
-    return result;
   }
 
   /**

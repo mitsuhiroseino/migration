@@ -3,6 +3,7 @@ import { ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../constants';
 import { Content, DiffParams } from '../../types';
 import fetchHttp from '../../utils/fetchHttp';
 import finishDynamicValue from '../../utils/finishDynamicValue';
+import propagateError from '../../utils/propagateError';
 import throwError from '../../utils/throwError';
 import toAsyncGenerator from '../../utils/toAsyncGenerator';
 import InputBase from '../InputBase';
@@ -30,25 +31,29 @@ class HttpInput extends InputBase<Content, HttpInputConfig, HttpInputResult> {
       const { _inputItemPath } = params;
       const init = isFunction(requestInit) ? requestInit(params) : requestInit;
 
-      // リクエストの送信
-      const response = await fetchHttp(_inputItemPath, init);
+      try {
+        // リクエストの送信
+        const response = await fetchHttp(_inputItemPath, init);
 
-      const isNotFound = Array.isArray(notFoundHttpStatus)
-        ? notFoundHttpStatus.includes(response.status)
-        : !response.ok;
+        const isNotFound = Array.isArray(notFoundHttpStatus)
+          ? notFoundHttpStatus.includes(response.status)
+          : !response.ok;
 
-      if (isNotFound) {
-        // 対象を取得できなかった場合
-        return this._handleNotFound(`Error on HTTP input: ${response.statusText}`);
-      } else if (response.ok) {
-        // 対象を取得できた場合
-        return {
-          status: MIGRATION_ITEM_STATUS.PROCESSED,
-          content: getContent(response),
-        };
+        if (isNotFound) {
+          // 対象を取得できなかった場合
+          return this._handleNotFound(`Error on HTTP input: ${response.statusText}`);
+        } else if (response.ok) {
+          // 対象を取得できた場合
+          return {
+            status: MIGRATION_ITEM_STATUS.PROCESSED,
+            content: getContent(response),
+          };
+        }
+        // 上記以外はエラー
+        throwError(`Error on HTTP input: ${response.statusText}`, this._config);
+      } catch (error) {
+        throw propagateError(error, `Error on HTTP input: ${_inputItemPath}`);
       }
-      // 上記以外はエラー
-      throwError(`Error on HTTP input: ${response.statusText}`, this._config);
     };
   }
 

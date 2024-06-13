@@ -88,13 +88,17 @@ export const INHERITED_CONFIGS: Required<{
   onError: true,
   onTaskStart: true,
   onTaskEnd: true,
+  onTaskError: true,
   parallelJobs: true,
   onJobStart: true,
   onJobEnd: true,
+  onJobError: true,
   onIterationStart: true,
   onIterationEnd: true,
+  onIterationError: true,
   onItemStart: true,
   onItemEnd: true,
+  onItemError: true,
   iteration: true,
   operateEach: true,
   formatterOptions: true,
@@ -164,6 +168,11 @@ export const ITEM_TYPE = {
  */
 export const MIGRATION_ITEM_STATUS = {
   /**
+   * 処理中
+   */
+  PROCESSING: 'processing',
+
+  /**
    * 処理対象なし
    */
   NONE: 'none',
@@ -220,16 +229,17 @@ export const MIGRATION_ITEM_STATUS = {
 } as const;
 
 export const MIGRATION_ITEM_STATUS_PRIORITY = {
-  [MIGRATION_ITEM_STATUS.NONE]: 0,
-  [MIGRATION_ITEM_STATUS.BREAK]: 1,
-  [MIGRATION_ITEM_STATUS.SKIPPED]: 2,
-  [MIGRATION_ITEM_STATUS.UNKNOWN]: 3,
-  [MIGRATION_ITEM_STATUS.PROCESSED]: 4,
-  [MIGRATION_ITEM_STATUS.CONVERTED]: 5,
-  [MIGRATION_ITEM_STATUS.CREATED]: 6,
-  [MIGRATION_ITEM_STATUS.COPIED]: 7,
-  [MIGRATION_ITEM_STATUS.MOVED]: 8,
-  [MIGRATION_ITEM_STATUS.DELETED]: 9,
+  [MIGRATION_ITEM_STATUS.PROCESSING]: 0,
+  [MIGRATION_ITEM_STATUS.NONE]: 1,
+  [MIGRATION_ITEM_STATUS.BREAK]: 2,
+  [MIGRATION_ITEM_STATUS.SKIPPED]: 3,
+  [MIGRATION_ITEM_STATUS.UNKNOWN]: 4,
+  [MIGRATION_ITEM_STATUS.PROCESSED]: 5,
+  [MIGRATION_ITEM_STATUS.CONVERTED]: 6,
+  [MIGRATION_ITEM_STATUS.CREATED]: 7,
+  [MIGRATION_ITEM_STATUS.COPIED]: 8,
+  [MIGRATION_ITEM_STATUS.MOVED]: 9,
+  [MIGRATION_ITEM_STATUS.DELETED]: 10,
   [MIGRATION_ITEM_STATUS.ERROR]: 100,
 };
 
