@@ -117,11 +117,11 @@ export default class IoHandler {
           // 入力時の結果をパラメーターにマージ
           currentParams = assignParams(currentParams, inputItem.result);
 
-          applyIf(onItemStart, [config, currentParams]);
-
           // 入力後処理
           const prepareResult = await this._afterRead(currentParams, rest);
           currentParams = assignParams(currentParams, prepareResult);
+
+          applyIf(onItemStart, [config, currentParams]);
 
           if (inputItem.status === MIGRATION_ITEM_STATUS.BREAK) {
             // 読み込み処理でブレイクした場合

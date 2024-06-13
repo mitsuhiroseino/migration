@@ -3359,6 +3359,7 @@ __metadata:
     "@types/uuid": "npm:^9"
     "@types/yargs": "npm:^17.0.24"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
+    ansi-colors: "npm:^4.1.3"
     ast-types: "npm:^0.14.2"
     babel-jest: "npm:^29.5.0"
     chardet: "npm:^2.0.0"
@@ -3598,6 +3599,13 @@ __metadata:
     ansi-yellow: "npm:^0.1.1"
     lazy-cache: "npm:^2.0.1"
   checksum: 10c0/a2a739dfceda9a54bfb32e68412a32a3349ee46e145014b12bd2a696be160322467d1bb86675680d261a5f1b75d7673cde6bdfe453deac4afbfae0ce1e7647bf
+  languageName: node
+  linkType: hard
+
+"ansi-colors@npm:^4.1.3":
+  version: 4.1.3
+  resolution: "ansi-colors@npm:4.1.3"
+  checksum: 10c0/ec87a2f59902f74e61eada7f6e6fe20094a628dab765cfdbd03c3477599368768cffccdb5d3bb19a1b6c99126783a143b1fee31aab729b31ffe5836c7e5e28b9
   languageName: node
   linkType: hard
 
