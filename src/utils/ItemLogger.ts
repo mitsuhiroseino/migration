@@ -7,7 +7,7 @@ import replacePlaceholders from './replacePlaceholders';
 const FORMAT = '[{{status}}] {{item}}';
 
 const COLOR = {
-  [MIGRATION_ITEM_STATUS.PROCESSING]: (message: string) => colors.whiteBright(message),
+  [MIGRATION_ITEM_STATUS.PROCESSING]: (message: string) => colors.yellow(message),
   [MIGRATION_ITEM_STATUS.NONE]: (message: string) => colors.gray(message),
   [MIGRATION_ITEM_STATUS.BREAK]: (message: string) => colors.gray(message),
   [MIGRATION_ITEM_STATUS.SKIPPED]: (message: string) => colors.gray(message),
@@ -30,6 +30,7 @@ export default class ItemLogger {
         format: '{message}',
         hideCursor: true,
         barsize: 0,
+        linewrap: false,
       },
       cliProgress.Presets.shades_classic,
     );

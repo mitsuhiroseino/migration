@@ -1,4 +1,5 @@
 export { default as Factory } from './Factory';
+export { default as ItemLogger } from './ItemLogger';
 export { default as applyIf } from './applyIf';
 export { default as asArray } from './asArray';
 export { default as assignParams } from './assignParams';
