@@ -65,5 +65,6 @@ export default async function executeJob(config: MigrationJobConfig): Promise<Mi
     return result;
   } catch (error) {
     applyIf(onJobError, [error, config]);
+    throw error;
   }
 }

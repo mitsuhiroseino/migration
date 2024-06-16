@@ -43,5 +43,6 @@ export default async function executeTask(config: MigrationTaskConfig): Promise<
     return result;
   } catch (error) {
     applyIf(onTaskError, [error, config]);
+    throw error;
   }
 }

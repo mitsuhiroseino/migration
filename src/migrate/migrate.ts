@@ -47,5 +47,6 @@ export default async function migrate<C extends MigrationConfig = MigrationConfi
     return result;
   } catch (error) {
     applyIf(onError, [error, config]);
+    throw error;
   }
 }
