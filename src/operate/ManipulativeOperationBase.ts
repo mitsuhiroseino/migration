@@ -1,5 +1,6 @@
 import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
 import { Content, OperationResult, OperationStatus, Optional } from '../types';
+import applyIf from '../utils/applyIf';
 import asArray from '../utils/asArray';
 import inheritConfig from '../utils/inheritConfig';
 import throwError from '../utils/throwError';
@@ -89,19 +90,30 @@ abstract class ManipulativeOperationBase<
   }
 
   protected async _operate(content: C, params: OperationParams): Promise<OperationResult<C>> {
-    const setupResult = await this._setup(content, params);
-    let currentInstance = setupResult.content;
+    const config = this._config;
+    const { onManipulationsStart, onManipulationsEnd, onManipulationsError } = config;
+    try {
+      applyIf(onManipulationsStart, [content, config, params]);
+      const setupResult = await this._setup(content, params);
+      const manipulatedContent = await this._manipulateContent(setupResult.content, params);
+      const operationResult = await this._teardown(manipulatedContent, params);
+      applyIf(onManipulationsEnd, [this._operationStatus, content, config, params]);
+      return operationResult;
+    } catch (error) {
+      applyIf(onManipulationsError, [error, content, config, params]);
+      throw error;
+    }
+  }
 
+  protected async _manipulateContent(content: I, params: OperationParams) {
     for (const manipulation of this._manipulations) {
-      if (manipulation.isManipulatable(currentInstance, params)) {
-        const result = await manipulation.manipulate(currentInstance, params);
-        currentInstance = result.content;
+      if (manipulation.isManipulatable(content, params)) {
+        const result = await manipulation.manipulate(content, params);
+        content = result.content;
         this._operationStatus = updateStatus(this._operationStatus, result.operationStatus, OPERATION_STATUS_PRIORITY);
       }
     }
-
-    const operationResult = await this._teardown(currentInstance, params);
-    return operationResult;
+    return content;
   }
 
   /**

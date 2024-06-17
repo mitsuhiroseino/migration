@@ -1,4 +1,12 @@
-import { CommonConfig, Content, ContentType, OperationResult, OperationStatus, Optional } from '../types';
+import {
+  CommonConfig,
+  Content,
+  ContentType,
+  ManipulationContentSpecificConfig,
+  OperationResult,
+  OperationStatus,
+  Optional,
+} from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { Condition } from '../utils/isMatch';
 import OperationBase from './OperationBase';
@@ -32,6 +40,7 @@ export type OperationConfigBase<T = OperationType | string, C extends Content = 
 
     /**
      * エラー時の処理を行う関数
+     * エラーの場合にデフォルトの値を返したい場合などに利用可能
      * @param content
      * @param params
      * @param error
@@ -126,12 +135,13 @@ export type ManipulationConfigBase<T = string> = CommonConfig &
 /**
  * 詳細な操作を持つ操作の設定
  */
-export type ManipulativeOperationConfig<MC extends ManipulationConfigBase = ManipulationConfigBase> = {
-  /**
-   * 詳細な操作
-   */
-  manipulations: MC[];
-};
+export type ManipulativeOperationConfig<MC extends ManipulationConfigBase = ManipulationConfigBase> =
+  ManipulationContentSpecificConfig & {
+    /**
+     * 詳細な操作
+     */
+    manipulations: MC[];
+  };
 
 /**
  * 内容に対する詳細な操作

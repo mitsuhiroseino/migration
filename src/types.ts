@@ -88,7 +88,7 @@ export type MigrationTaskConfig<OC extends OperationConfigBase = OperationConfig
 export type MigrationJobConfig<OC extends OperationConfigBase = OperationConfigBase> = MigrationJobSpecificConfig<OC> &
   MigrationIterationSpecificConfig &
   MigrationItemSpecificConfig &
-  OperateContentConfig<OC> &
+  OperateContentConfig &
   CommonIoConfig & {
     /**
      *  ジョブID
@@ -113,56 +113,7 @@ export type MigrationIterationConfig = MigrationIterationSpecificConfig &
 /**
  * 一連のオペレーション実行時の設定
  */
-export type OperateContentConfig<OP = Operation> = CommonConfig &
-  OperateContentSpecificConfig & {
-    /**
-     * フォーマットもや編集処理前に実行される任意の処理
-     * @param content コンテンツ
-     * @param config 当コンフィグ
-     * @param params 繰り返し処理毎のパラメーター
-     * @returns コンテンツ
-     */
-    onOperationsStart?: <C = Content>(
-      content: C,
-      config: OperateContentConfig,
-      params: IterationParams,
-    ) => Promise<C | any>;
-
-    /**
-     * 操作の設定
-     */
-    operations?: OP[];
-
-    /**
-     * フォーマットや編集処理後に実行される任意の処理
-     * @param status オペレーションの処理結果
-     * @param content 編集処理後のコンテンツ
-     * @param config 当コンフィグ
-     * @param params 繰り返し処理毎のパラメーター
-     * @returns コンテンツ
-     */
-    onOperationsEnd?: <C = Content>(
-      status: OperationStatus,
-      content: C,
-      config: OperateContentConfig,
-      params: IterationParams,
-    ) => Promise<C | any>;
-
-    /**
-     * 操作のエラー時
-     * @param error
-     * @param content
-     * @param config
-     * @param params
-     * @returns
-     */
-    onOperationError?: <E, C = Content>(
-      error: E,
-      content: C,
-      config: OperateContentConfig,
-      params: IterationParams,
-    ) => void;
-  };
+export type OperateContentConfig = CommonConfig & OperateContentSpecificConfig & ManipulationContentSpecificConfig;
 
 /**
  * タスク専用の設定
@@ -304,7 +255,103 @@ export type MigrationItemSpecificConfig = {
 /**
  * 一連のオペレーション実行時専用の設定
  */
-export type OperateContentSpecificConfig = {};
+export type OperateContentSpecificConfig = {
+  /**
+   * 操作の設定
+   */
+  operations?: Operation[];
+
+  /**
+   * 操作前に実行される任意の処理
+   * @param content コンテンツ
+   * @param config 当コンフィグ
+   * @param params 繰り返し処理毎のパラメーター
+   * @returns コンテンツ
+   */
+  onOperationsStart?: <C = Content>(
+    content: C,
+    config: OperateContentConfig,
+    params: IterationParams,
+  ) => Promise<C | any>;
+
+  /**
+   * 操作後に実行される任意の処理
+   * @param status オペレーションの処理結果
+   * @param content 編集処理後のコンテンツ
+   * @param config 当コンフィグ
+   * @param params 繰り返し処理毎のパラメーター
+   * @returns コンテンツ
+   */
+  onOperationsEnd?: <C = Content>(
+    status: OperationStatus,
+    content: C,
+    config: OperateContentConfig,
+    params: IterationParams,
+  ) => Promise<C | any>;
+
+  /**
+   * 操作のエラー時
+   * @param error
+   * @param content
+   * @param config
+   * @param params
+   * @returns
+   */
+  onOperationsError?: <E, C = Content>(
+    error: E,
+    content: C,
+    config: OperateContentConfig,
+    params: IterationParams,
+  ) => void;
+};
+
+/**
+ * 一連のマニピュレーション実行時専用の設定
+ */
+export type ManipulationContentSpecificConfig = {
+  /**
+   * フォーマットもや編集処理前に実行される任意の処理
+   * @param content コンテンツ
+   * @param config 当コンフィグ
+   * @param params 繰り返し処理毎のパラメーター
+   * @returns コンテンツ
+   */
+  onManipulationsStart?: <C = Content>(
+    content: C,
+    config: OperateContentConfig,
+    params: IterationParams,
+  ) => Promise<C | any>;
+
+  /**
+   * フォーマットや編集処理後に実行される任意の処理
+   * @param status オペレーションの処理結果
+   * @param content 編集処理後のコンテンツ
+   * @param config 当コンフィグ
+   * @param params 繰り返し処理毎のパラメーター
+   * @returns コンテンツ
+   */
+  onManipulationsEnd?: <C = Content>(
+    status: OperationStatus,
+    content: C,
+    config: OperateContentConfig,
+    params: IterationParams,
+  ) => Promise<C | any>;
+
+  /**
+   * 操作のエラー時
+   * @param error
+   * @param content
+   * @param config
+   * @param params
+   * @returns
+   */
+  onManipulationsError?: <E, C = Content>(
+    error: E,
+    content: C,
+    config: OperateContentConfig,
+    params: IterationParams,
+  ) => void;
+};
 
 /**
  * 内容の処理結果

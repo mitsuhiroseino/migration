@@ -1,5 +1,6 @@
 import {
   CommonConfig,
+  ManipulationContentSpecificConfig,
   MigrationItemSpecificConfig,
   MigrationIterationSpecificConfig,
   MigrationJobSpecificConfig,
@@ -83,6 +84,7 @@ export const INHERITED_CONFIGS: Required<{
     MigrationIterationSpecificConfig &
     MigrationItemSpecificConfig &
     OperateContentSpecificConfig &
+    ManipulationContentSpecificConfig &
     CommonConfig)]: boolean | ((config: any, baseConfig: any) => any);
 }> = {
   onError: true,
@@ -99,8 +101,15 @@ export const INHERITED_CONFIGS: Required<{
   onItemStart: true,
   onItemEnd: true,
   onItemError: true,
+  onOperationsStart: true,
+  onOperationsEnd: true,
+  onOperationsError: true,
+  onManipulationsStart: true,
+  onManipulationsEnd: true,
+  onManipulationsError: true,
   iteration: true,
   operateEach: true,
+  operations: true,
   formatterOptions: true,
   replacementBracket: true,
   removePlaceholders: true,

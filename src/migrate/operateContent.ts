@@ -17,7 +17,7 @@ export default async function operateContent(
   config: OperateContentConfig,
   params: IterationParams,
 ): Promise<OperationResult<Content>> {
-  const { onOperationsStart, onOperationsEnd, onOperationError, operations } = config;
+  const { onOperationsStart, onOperationsEnd, onOperationsError, operations } = config;
 
   try {
     let operationStatus: OperationStatus = OPERATION_STATUS.UNPROCESSED;
@@ -64,6 +64,7 @@ export default async function operateContent(
 
     return { operationStatus, content };
   } catch (error) {
-    applyIf(onOperationError, [error, content, config, params]);
+    applyIf(onOperationsError, [error, content, config, params]);
+    throw error;
   }
 }

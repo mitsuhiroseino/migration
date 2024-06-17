@@ -46,4 +46,8 @@ export default class ItemLogger {
       progress.stop();
     }
   }
+
+  stop() {
+    this._progress.stop();
+  }
 }
