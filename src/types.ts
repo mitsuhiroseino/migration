@@ -7,7 +7,7 @@ import {
   OPERATION_STATUS,
 } from './constants';
 import { Input, InputConfig, InputResultBase, Output, OutputConfig, OutputResultBase } from './io/types';
-import { Operation, OperationConfig, OperationConfigBase } from './operate/types';
+import { Operation, OperationConfig } from './operate/types';
 import { FormatOptions } from './utils/format';
 import { Condition } from './utils/isMatch';
 import { DynamicPattern, ReplaceOptions } from './utils/replace';
@@ -36,11 +36,15 @@ export type Content = string | Buffer | any;
 /**
  * 移行の設定
  */
-export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase> = TaskSpecificConfig<OC> &
-  JobSpecificConfig<OC> &
+export type MigrationConfig = CommonConfig &
+  TaskSpecificConfig &
+  JobSpecificConfig &
   IterationSpecificConfig &
   IoSpecificConfig &
-  OperateContentConfig & {
+  InputSpecificConfig &
+  OutputSpecificConfig &
+  OperateContentSpecificConfig &
+  ManipulativeOperationSpecificConfig & {
     /**
      * ID
      */
@@ -54,7 +58,7 @@ export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase
     /**
      * タスクの設定
      */
-    tasks: TaskConfig<OC>[];
+    tasks: TaskConfig[];
 
     /**
      * タスクを並列で実行する
@@ -74,11 +78,15 @@ export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase
 /**
  * タスクの設定
  */
-export type TaskConfig<OC extends OperationConfigBase = OperationConfigBase> = TaskSpecificConfig<OC> &
-  JobSpecificConfig<OC> &
+export type TaskConfig = CommonConfig &
+  TaskSpecificConfig &
+  JobSpecificConfig &
   IterationSpecificConfig &
   IoSpecificConfig &
-  OperateContentConfig & {
+  InputSpecificConfig &
+  OutputSpecificConfig &
+  OperateContentSpecificConfig &
+  ManipulativeOperationSpecificConfig & {
     /**
      * タスクID
      */
@@ -87,17 +95,20 @@ export type TaskConfig<OC extends OperationConfigBase = OperationConfigBase> = T
     /**
      * ジョブの設定
      */
-    jobs: JobConfig<OC>[];
+    jobs: JobConfig[];
   };
 
 /**
  * ジョブの設定
  */
-export type JobConfig<OC extends OperationConfigBase = OperationConfigBase> = JobSpecificConfig<OC> &
+export type JobConfig = CommonConfig &
+  JobSpecificConfig &
   IterationSpecificConfig &
   IoSpecificConfig &
-  OperateContentConfig &
-  IoSpecificConfig & {
+  InputSpecificConfig &
+  OutputSpecificConfig &
+  OperateContentSpecificConfig &
+  ManipulativeOperationSpecificConfig & {
     /**
      *  ジョブID
      */
@@ -107,12 +118,13 @@ export type JobConfig<OC extends OperationConfigBase = OperationConfigBase> = Jo
 /**
  * イテレーションの設定
  */
-export type IterationConfig = IterationSpecificConfig &
-  IoSpecificConfig &
-  OperateContentConfig &
+export type IterationConfig = CommonConfig &
+  IterationSpecificConfig &
   IoSpecificConfig &
   InputSpecificConfig &
-  OutputSpecificConfig & {
+  OutputSpecificConfig &
+  OperateContentSpecificConfig &
+  ManipulativeOperationSpecificConfig & {
     /**
      * イテレーションのID
      * ジョブID+連番
@@ -128,7 +140,7 @@ export type OperateContentConfig = CommonConfig & OperateContentSpecificConfig &
 /**
  * タスク専用の設定
  */
-export type TaskSpecificConfig<OC extends OperationConfigBase = OperationConfigBase> = {
+export type TaskSpecificConfig = {
   /**
    * ジョブを並列で実行する
    */
@@ -139,7 +151,7 @@ export type TaskSpecificConfig<OC extends OperationConfigBase = OperationConfigB
    * @param config タスク設定
    * @returns
    */
-  onTaskStart?: (config: TaskConfig<OC>) => void;
+  onTaskStart?: (config: TaskConfig) => void;
 
   /**
    * タスク終了時のハンドラー
@@ -147,7 +159,7 @@ export type TaskSpecificConfig<OC extends OperationConfigBase = OperationConfigB
    * @param config タスク設定
    * @returns
    */
-  onTaskEnd?: (result: MigrationTaskResult, config: TaskConfig<OC>) => void;
+  onTaskEnd?: (result: MigrationTaskResult, config: TaskConfig) => void;
 
   /**
    * タスクのエラー時
@@ -155,17 +167,17 @@ export type TaskSpecificConfig<OC extends OperationConfigBase = OperationConfigB
    * @param config タスク設定
    * @returns
    */
-  onTaskError?: <E>(error: E, config: TaskConfig<OC>) => void;
+  onTaskError?: <E>(error: E, config: TaskConfig) => void;
 };
 
 /**
  * ジョブ専用の設定
  */
-export type JobSpecificConfig<OC extends OperationConfigBase<any> = OperationConfigBase<any>> = {
+export type JobSpecificConfig = {
   /**
    * 操作の設定
    */
-  operations?: OperationConfig[];
+  operations?: (OperationConfig | Operation)[];
 
   /**
    * 繰り返し処理毎にパラメーターを作成するイテレーターの取得元
@@ -177,7 +189,7 @@ export type JobSpecificConfig<OC extends OperationConfigBase<any> = OperationCon
    * @param config ジョブ設定
    * @returns
    */
-  onJobStart?: (config: JobConfig<OC>) => void;
+  onJobStart?: (config: JobConfig) => void;
 
   /**
    * ジョブ終了時のハンドラー
@@ -185,7 +197,7 @@ export type JobSpecificConfig<OC extends OperationConfigBase<any> = OperationCon
    * @param config ジョブ設定
    * @returns
    */
-  onJobEnd?: (result: MigrationJobResult, config: JobConfig<OC>) => void;
+  onJobEnd?: (result: MigrationJobResult, config: JobConfig) => void;
 
   /**
    * ジョブのエラー時
@@ -193,7 +205,7 @@ export type JobSpecificConfig<OC extends OperationConfigBase<any> = OperationCon
    * @param config ジョブ設定
    * @returns
    */
-  onJobError?: <E>(error: E, config: JobConfig<OC>) => void;
+  onJobError?: <E>(error: E, config: JobConfig) => void;
 };
 
 /**
