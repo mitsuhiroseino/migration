@@ -1,5 +1,12 @@
 import isString from 'lodash/isString';
-import { HANDLING_TYPE, MIGRATION_ITEM_STATUS, MIGRATION_STATUS, OPERATION_STATUS } from '../constants';
+import {
+  HANDLING_TYPE,
+  INHERITED_INPUT_CONFIGS,
+  INHERITED_OUTPUT_CONFIGS,
+  MIGRATION_ITEM_STATUS,
+  MIGRATION_STATUS,
+  OPERATION_STATUS,
+} from '../constants';
 import { AssignedParams, DiffParams, IterationParams, MigrationItemResult, MigrationIterationResult } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
@@ -61,9 +68,9 @@ export default class IoHandler {
         Promise.resolve({ content, operationStatus: OPERATION_STATUS.UNPROCESSED }),
     } = config;
     // 入力設定取得
-    const inputConfig: InputConfig = inheritConfig(getIoConfig(input), config);
+    const inputConfig: InputConfig = inheritConfig(getIoConfig(input), config, INHERITED_INPUT_CONFIGS);
     // 出力設定取得
-    const outputConfig: OutputConfig = inheritConfig(getIoConfig(output, true), config);
+    const outputConfig: OutputConfig = inheritConfig(getIoConfig(output, true), config, INHERITED_OUTPUT_CONFIGS);
     // 入出力操作のチェック
     const { handlingType } = config;
     if (inputConfig.type !== outputConfig.type) {

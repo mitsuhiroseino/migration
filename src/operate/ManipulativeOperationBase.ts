@@ -1,4 +1,4 @@
-import { OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
+import { INHERITED_MANIPULATION_CONFIGS, OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
 import { Content, OperationResult, OperationStatus, Optional } from '../types';
 import applyIf from '../utils/applyIf';
 import asArray from '../utils/asArray';
@@ -48,7 +48,10 @@ abstract class ManipulativeOperationBase<
    * @param config
    */
   protected _create(config: ManipulationConfigBase, params: OperationParams): M {
-    const manipulation = this._createManipuration(inheritConfig(config, this._config), params);
+    const manipulation = this._createManipuration(
+      inheritConfig(config, this._config, INHERITED_MANIPULATION_CONFIGS),
+      params,
+    );
     if (manipulation) {
       return manipulation;
     } else {

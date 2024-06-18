@@ -1,4 +1,4 @@
-import { CommonInputConfig, VariableString } from '../../types';
+import { InputSpecificConfig, VariableString } from '../../types';
 import { OPERATION_TYPE } from '../constants';
 import { OperationBundlerConfig, OperationConfigBase, OperationParams } from '../types';
 
@@ -7,7 +7,7 @@ import { OperationBundlerConfig, OperationConfigBase, OperationParams } from '..
  */
 export type ReadConfig = OperationConfigBase<typeof OPERATION_TYPE.READ> &
   OperationBundlerConfig &
-  CommonInputConfig & {
+  InputSpecificConfig & {
     /**
      * paramsに設定する際のプロパティ名
      * デフォルトは_resource

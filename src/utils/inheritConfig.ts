@@ -1,5 +1,4 @@
 import isFunction from 'lodash/isFunction';
-import { INHERITED_CONFIGS } from '../constants';
 
 /**
  * 設定を引き継ぐ
@@ -10,7 +9,7 @@ import { INHERITED_CONFIGS } from '../constants';
 export default function inheritConfig<C extends any>(
   config: any,
   baseConfig: any,
-  mapping: { [baseConfigName: string]: boolean | ((config: any, baseConfig: any) => any) } = INHERITED_CONFIGS,
+  mapping: { [baseConfigName: string]: boolean | ((config: any, baseConfig: any) => any) },
 ): C {
   let cfg = { ...config };
   const base = { ...baseConfig };

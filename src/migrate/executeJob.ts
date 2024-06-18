@@ -1,6 +1,7 @@
-import { MIGRATION_STATUS, MIGRATION_STATUS_PRIORITY } from '../constants';
+import { INHERITED_ITERATION_CONFIGS, MIGRATION_STATUS, MIGRATION_STATUS_PRIORITY } from '../constants';
 import { MigrationIterationConfig, MigrationIterationResult, MigrationJobConfig, MigrationJobResult } from '../types';
 import applyIf from '../utils/applyIf';
+import inheritConfig from '../utils/inheritConfig';
 import toOperations from '../utils/toOperations';
 import updateStatus from '../utils/updateStatus';
 import executeIteration from './executeIteration';
@@ -43,7 +44,7 @@ export default async function executeJob(config: MigrationJobConfig): Promise<Mi
     let i = 0;
     for (const iterationParams of iterator) {
       // iteratorの返す値で繰り返し処理
-      const iterationCfg = { iterationId: `${jobId}[${i}]`, ...cfg };
+      const iterationCfg = inheritConfig({ iterationId: `${jobId}[${i}]` }, cfg, INHERITED_ITERATION_CONFIGS);
       const params = { ...jobParams, ...iterationParams };
       let iterationResult: MigrationIterationResult;
       try {

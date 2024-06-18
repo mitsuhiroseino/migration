@@ -1,11 +1,13 @@
 import {
   CommonConfig,
-  ManipulationContentSpecificConfig,
-  MigrationItemSpecificConfig,
-  MigrationIterationSpecificConfig,
-  MigrationJobSpecificConfig,
-  MigrationTaskSpecificConfig,
-  OperateContentSpecificConfig,
+  InputSpecificConfig,
+  IoSpecificConfig,
+  IterationSpecificConfig,
+  JobSpecificConfig,
+  ManipulationSpecificConfig,
+  OperateSpecificConfig,
+  OutputSpecificConfig,
+  TaskSpecificConfig,
 } from './types';
 
 /**
@@ -73,43 +75,14 @@ export const MIGRATION_STATUS_PRIORITY = {
   [MIGRATION_STATUS.SUCCESS]: 2,
   [MIGRATION_STATUS.ERROR]: 100,
   [MIGRATION_STATUS.FATAL]: 101,
-};
+} as const;
 
 /**
  * 親から引き継ぐ設定
  */
-export const INHERITED_CONFIGS: Required<{
-  [K in keyof (MigrationTaskSpecificConfig &
-    MigrationJobSpecificConfig &
-    MigrationIterationSpecificConfig &
-    MigrationItemSpecificConfig &
-    OperateContentSpecificConfig &
-    ManipulationContentSpecificConfig &
-    CommonConfig)]: boolean | ((config: any, baseConfig: any) => any);
+export const INHERITED_COMMON_CONFIGS: Required<{
+  [K in keyof CommonConfig]: boolean | ((config: any, baseConfig: any) => any);
 }> = {
-  onError: true,
-  onTaskStart: true,
-  onTaskEnd: true,
-  onTaskError: true,
-  parallelJobs: true,
-  onJobStart: true,
-  onJobEnd: true,
-  onJobError: true,
-  onIterationStart: true,
-  onIterationEnd: true,
-  onIterationError: true,
-  onItemStart: true,
-  onItemEnd: true,
-  onItemError: true,
-  onOperationsStart: true,
-  onOperationsEnd: true,
-  onOperationsError: true,
-  onManipulationsStart: true,
-  onManipulationsEnd: true,
-  onManipulationsError: true,
-  iteration: true,
-  operateEach: true,
-  operations: true,
   formatterOptions: true,
   replacementBracket: true,
   removePlaceholders: true,
@@ -118,17 +91,128 @@ export const INHERITED_CONFIGS: Required<{
     config.params = { ...baseConfig.params, ...config.params };
     return config;
   },
-  handlingType: true,
-  input: true,
-  inputEncoding: true,
-  notFoundAction: true,
-  output: true,
-  outputEncoding: true,
   forceOutput: true,
   disabled: true,
   dryRun: true,
   silent: true,
-};
+} as const;
+
+/**
+ * オペレーションからマニピュレーションに引き継ぐ設定
+ */
+export const INHERITED_MANIPULATION_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_COMMON_CONFIGS & ManipulationSpecificConfig)]:
+    | boolean
+    | ((config: any, baseConfig: any) => any);
+}> = {
+  ...INHERITED_COMMON_CONFIGS,
+  onManipulationsStart: true,
+  onManipulationsEnd: true,
+  onManipulationsError: true,
+} as const;
+
+/**
+ * 入出力から入力に引き継ぐ設定
+ */
+export const INHERITED_INPUT_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_COMMON_CONFIGS & InputSpecificConfig)]:
+    | boolean
+    | ((config: any, baseConfig: any) => any);
+}> = {
+  ...INHERITED_COMMON_CONFIGS,
+  input: true,
+  inputEncoding: true,
+  notFoundAction: true,
+} as const;
+
+/**
+ * 入出力から出力に引き継ぐ設定
+ */
+export const INHERITED_OUTPUT_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_COMMON_CONFIGS & OutputSpecificConfig)]:
+    | boolean
+    | ((config: any, baseConfig: any) => any);
+}> = {
+  ...INHERITED_COMMON_CONFIGS,
+  output: true,
+  outputEncoding: true,
+} as const;
+
+/**
+ * イテレーションから入出力に引き継ぐ設定
+ */
+export const INHERITED_IO_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_INPUT_CONFIGS & typeof INHERITED_OUTPUT_CONFIGS & IoSpecificConfig)]:
+    | boolean
+    | ((config: any, baseConfig: any) => any);
+}> = {
+  ...INHERITED_INPUT_CONFIGS,
+  ...INHERITED_OUTPUT_CONFIGS,
+  onItemStart: true,
+  onItemEnd: true,
+  onItemError: true,
+  handlingType: true,
+} as const;
+
+/**
+ * ジョブからイテレーションに引き継ぐ設定
+ */
+export const INHERITED_ITERATION_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_IO_CONFIGS & IterationSpecificConfig)]:
+    | boolean
+    | ((config: any, baseConfig: any) => any);
+}> = {
+  ...INHERITED_IO_CONFIGS,
+  onIterationStart: true,
+  onIterationEnd: true,
+  onIterationError: true,
+  operateEach: true,
+  operations: true,
+} as const;
+
+/**
+ * ジョブからオペレーションに引き継ぐ設定
+ */
+export const INHERITED_OPERATION_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_MANIPULATION_CONFIGS & OperateSpecificConfig)]:
+    | boolean
+    | ((config: any, baseConfig: any) => any);
+}> = {
+  ...INHERITED_MANIPULATION_CONFIGS,
+  onOperationsStart: true,
+  onOperationsEnd: true,
+  onOperationsError: true,
+  operations: true,
+} as const;
+
+/**
+ * タスクからジョブに引き継ぐ設定
+ */
+export const INHERITED_JOB_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_ITERATION_CONFIGS & typeof INHERITED_OPERATION_CONFIGS & JobSpecificConfig)]:
+    | boolean
+    | ((config: any, baseConfig: any) => any);
+}> = {
+  ...INHERITED_ITERATION_CONFIGS,
+  ...INHERITED_OPERATION_CONFIGS,
+  onJobStart: true,
+  onJobEnd: true,
+  onJobError: true,
+  iteration: true,
+} as const;
+
+/**
+ * マイグレーションからタスクに引き継ぐ設定
+ */
+export const INHERITED_TASK_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_JOB_CONFIGS & TaskSpecificConfig)]: boolean | ((config: any, baseConfig: any) => any);
+}> = {
+  ...INHERITED_JOB_CONFIGS,
+  onTaskStart: true,
+  onTaskEnd: true,
+  onTaskError: true,
+  parallelJobs: true,
+} as const;
 
 /**
  * デフォルトフォーマットオプション

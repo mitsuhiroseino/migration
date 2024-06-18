@@ -1,4 +1,4 @@
-import { OPERATION_STATUS } from '../../constants';
+import { INHERITED_COMMON_CONFIGS, OPERATION_STATUS } from '../../constants';
 import { IoHandler, IoHandlerConfig } from '../../io';
 import { Content, DiffParams, IterationParams, OperationResult, VariableString } from '../../types';
 import asArray from '../../utils/asArray';
@@ -29,7 +29,7 @@ class Read extends OperationBundlerBase<Content, ReadConfig> {
     const { type, input, paramName = '_resource', preserveParamName, ...rest } = config;
 
     // 入力設定取得
-    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ input }, rest);
+    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ input }, rest, INHERITED_COMMON_CONFIGS);
     this._ioHandler = new IoHandler(ioHandlerConfig);
     this._paramName = paramName;
     this._paramNameOptions = { ...rest, preserveString: preserveParamName };

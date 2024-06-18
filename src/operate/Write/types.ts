@@ -1,4 +1,4 @@
-import { CommonOutputConfig, VariableString } from '../../types';
+import { OutputSpecificConfig, VariableString } from '../../types';
 import { OPERATION_TYPE } from '../constants';
 import { OperationConfigBase, OperationParams } from '../types';
 
@@ -6,7 +6,7 @@ import { OperationConfigBase, OperationParams } from '../types';
  * ファイルを出力する操作
  */
 export type WriteConfig = OperationConfigBase<typeof OPERATION_TYPE.WRITE> &
-  CommonOutputConfig & {
+  OutputSpecificConfig & {
     /**
      * リソースの取得元
      * 未指定の場合はparams

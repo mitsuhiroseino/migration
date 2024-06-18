@@ -1,18 +1,18 @@
 import {
   CommonConfig,
   CommonDevelopmentConfig,
-  CommonInputConfig,
   CommonLogConfig,
-  CommonOutputConfig,
   CommonReplacementConfig,
   Content,
   ContentType,
   DiffParams,
+  InputSpecificConfig,
+  IoSpecificConfig,
   ItemType,
   IterationParams,
-  MigrationItemSpecificConfig,
   MigrationItemStatus,
   OperationResult,
+  OutputSpecificConfig,
 } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { IO_TYPE } from './constants';
@@ -71,7 +71,7 @@ export interface Io {
 /**
  * 入力の設定
  */
-export type InputConfigBase<T = IoType> = CommonInputConfig &
+export type InputConfigBase<T = IoType> = InputSpecificConfig &
   IoConfigBase<T> & {
     /**
      * 入力ID
@@ -183,7 +183,7 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
 /**
  * 出力の設定
  */
-export type OutputConfigBase<T = IoType> = CommonOutputConfig &
+export type OutputConfigBase<T = IoType> = OutputSpecificConfig &
   IoConfigBase<T> & {
     /**
      * 出力ID
@@ -294,7 +294,9 @@ export type ContentOperator = <C>(content: C, params: IterationParams) => Promis
  * 入出力の設定
  */
 export type IoHandlerConfig = CommonConfig &
-  MigrationItemSpecificConfig & {
+  IoSpecificConfig &
+  InputSpecificConfig &
+  OutputSpecificConfig & {
     /**
      * 読み込んだコンテンツへの処理を行う関数
      * @param content

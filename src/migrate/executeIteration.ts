@@ -1,4 +1,4 @@
-import { MIGRATION_STATUS } from '../constants';
+import { INHERITED_IO_CONFIGS, MIGRATION_STATUS } from '../constants';
 import { ContentOperator, IoHandler, IoHandlerConfig } from '../io';
 import {
   Content,
@@ -68,7 +68,7 @@ export default async function executeIteration(
     // オペレーション実行関数の取得
     const operationFn = getOperate(operateEach, { ...rest, operations });
     // 入出力ハンドラー
-    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ operationFn }, rest);
+    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ operationFn }, rest, INHERITED_IO_CONFIGS);
     const ioHandler = new IoHandler(ioHandlerConfig);
 
     // オペレーションの前処理

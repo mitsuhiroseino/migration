@@ -1,4 +1,4 @@
-import { OPERATION_STATUS } from '../../constants';
+import { INHERITED_COMMON_CONFIGS, OPERATION_STATUS } from '../../constants';
 import { IO_TYPE, InputFactory, IoHandler, IoHandlerConfig } from '../../io';
 import { Content, OperationResult } from '../../types';
 import finishDynamicValue, { FinishDynamicValueOptions } from '../../utils/finishDynamicValue';
@@ -26,7 +26,7 @@ class Write extends OperationBase<Content, WriteConfig> {
     const { type, output, paramName = '_resource', preserveParamName, ...rest } = config;
 
     // 出力設定取得
-    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ output }, rest);
+    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ output }, rest, INHERITED_COMMON_CONFIGS);
     this._ioHandler = new IoHandler(ioHandlerConfig);
     this._paramNameOptions = { ...rest, preserveString: preserveParamName };
   }

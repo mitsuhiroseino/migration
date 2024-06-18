@@ -36,10 +36,10 @@ export type Content = string | Buffer | any;
 /**
  * 移行の設定
  */
-export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase> = MigrationTaskSpecificConfig<OC> &
-  MigrationJobSpecificConfig<OC> &
-  MigrationIterationSpecificConfig &
-  MigrationItemSpecificConfig &
+export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase> = TaskSpecificConfig<OC> &
+  JobSpecificConfig<OC> &
+  IterationSpecificConfig &
+  IoSpecificConfig &
   OperateContentConfig & {
     /**
      * ID
@@ -60,36 +60,44 @@ export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase
      * タスクを並列で実行する
      */
     parallelTasks?: boolean;
+
+    /**
+     * エラー時のハンドラー
+     * @param error エラー情報
+     * @param config 設定
+     * @param params イテレーションパラメーター
+     * @returns
+     */
+    onError?: <E>(error: E, config: any, params?: IterationParams) => void;
   };
 
 /**
  * タスクの設定
  */
-export type MigrationTaskConfig<OC extends OperationConfigBase = OperationConfigBase> =
-  MigrationTaskSpecificConfig<OC> &
-    MigrationJobSpecificConfig<OC> &
-    MigrationIterationSpecificConfig &
-    MigrationItemSpecificConfig &
-    OperateContentConfig & {
-      /**
-       * タスクID
-       */
-      taskId?: string;
+export type MigrationTaskConfig<OC extends OperationConfigBase = OperationConfigBase> = TaskSpecificConfig<OC> &
+  JobSpecificConfig<OC> &
+  IterationSpecificConfig &
+  IoSpecificConfig &
+  OperateContentConfig & {
+    /**
+     * タスクID
+     */
+    taskId?: string;
 
-      /**
-       * ジョブの設定
-       */
-      jobs: MigrationJobConfig<OC>[];
-    };
+    /**
+     * ジョブの設定
+     */
+    jobs: MigrationJobConfig<OC>[];
+  };
 
 /**
  * ジョブの設定
  */
-export type MigrationJobConfig<OC extends OperationConfigBase = OperationConfigBase> = MigrationJobSpecificConfig<OC> &
-  MigrationIterationSpecificConfig &
-  MigrationItemSpecificConfig &
+export type MigrationJobConfig<OC extends OperationConfigBase = OperationConfigBase> = JobSpecificConfig<OC> &
+  IterationSpecificConfig &
+  IoSpecificConfig &
   OperateContentConfig &
-  CommonIoConfig & {
+  IoSpecificConfig & {
     /**
      *  ジョブID
      */
@@ -99,10 +107,12 @@ export type MigrationJobConfig<OC extends OperationConfigBase = OperationConfigB
 /**
  * イテレーションの設定
  */
-export type MigrationIterationConfig = MigrationIterationSpecificConfig &
-  MigrationItemSpecificConfig &
+export type MigrationIterationConfig = IterationSpecificConfig &
+  IoSpecificConfig &
   OperateContentConfig &
-  CommonIoConfig & {
+  IoSpecificConfig &
+  InputSpecificConfig &
+  OutputSpecificConfig & {
     /**
      * イテレーションのID
      * ジョブID+連番
@@ -113,12 +123,12 @@ export type MigrationIterationConfig = MigrationIterationSpecificConfig &
 /**
  * 一連のオペレーション実行時の設定
  */
-export type OperateContentConfig = CommonConfig & OperateContentSpecificConfig & ManipulationContentSpecificConfig;
+export type OperateContentConfig = CommonConfig & OperateSpecificConfig & ManipulationSpecificConfig;
 
 /**
  * タスク専用の設定
  */
-export type MigrationTaskSpecificConfig<OC extends OperationConfigBase = OperationConfigBase> = {
+export type TaskSpecificConfig<OC extends OperationConfigBase = OperationConfigBase> = {
   /**
    * ジョブを並列で実行する
    */
@@ -151,7 +161,7 @@ export type MigrationTaskSpecificConfig<OC extends OperationConfigBase = Operati
 /**
  * ジョブ専用の設定
  */
-export type MigrationJobSpecificConfig<OC extends OperationConfigBase<any> = OperationConfigBase<any>> = {
+export type JobSpecificConfig<OC extends OperationConfigBase<any> = OperationConfigBase<any>> = {
   /**
    * 繰り返し処理毎にパラメーターを作成するイテレーターの取得元
    */
@@ -184,7 +194,7 @@ export type MigrationJobSpecificConfig<OC extends OperationConfigBase<any> = Ope
 /**
  * イテレーション専用の設定
  */
-export type MigrationIterationSpecificConfig = {
+export type IterationSpecificConfig = HasOperationConfig & {
   /**
    * イテレーション開始時のハンドラー
    * @param config イテレーション設定
@@ -222,9 +232,14 @@ export type MigrationIterationSpecificConfig = {
 };
 
 /**
- * 要素処理専用の設定
+ * 入出力処理専用の設定
  */
-export type MigrationItemSpecificConfig = {
+export type IoSpecificConfig = {
+  /**
+   * 入出力の対象そのものに対する操作
+   */
+  handlingType?: HandlingType;
+
   /**
    * 要素処理開始時のハンドラー
    * @param config イテレーション設定
@@ -253,14 +268,52 @@ export type MigrationItemSpecificConfig = {
 };
 
 /**
+ * 入力処理専用の設定
+ */
+export type InputSpecificConfig = {
+  /**
+   * 入力の設定
+   * 文字列を設定した場合はFileとして扱う
+   */
+  input?: InputConfig | string;
+
+  /**
+   * データ読み込み時のエンコーディング
+   * 未指定の場合は読み込み元の内容から判断する
+   */
+  inputEncoding?: string;
+
+  /**
+   * 対象が存在しない場合の処理
+   *
+   * - error: エラーをスローする
+   * - skip: 対象をスキップする
+   * - break: 繰り返し処理をブレイクする
+   */
+  notFoundAction?: 'error' | 'skip' | 'break';
+};
+
+/**
+ * 出力処理専用の設定
+ */
+export type OutputSpecificConfig = {
+  /**
+   * 出力の設定
+   * 文字列を設定した場合はFileとして扱う
+   */
+  output?: OutputConfig | string;
+
+  /**
+   * データ書き込み時のエンコーディング
+   * 未指定の場合は読み込み時のエンコーディング
+   */
+  outputEncoding?: string;
+};
+
+/**
  * 一連のオペレーション実行時専用の設定
  */
-export type OperateContentSpecificConfig = {
-  /**
-   * 操作の設定
-   */
-  operations?: Operation[];
-
+export type OperateSpecificConfig = HasOperationConfig & {
   /**
    * 操作前に実行される任意の処理
    * @param content コンテンツ
@@ -306,9 +359,19 @@ export type OperateContentSpecificConfig = {
 };
 
 /**
+ * オペレーションを持つ処理専用の設定
+ */
+export type HasOperationConfig = {
+  /**
+   * 操作の設定
+   */
+  operations?: Operation[];
+};
+
+/**
  * 一連のマニピュレーション実行時専用の設定
  */
-export type ManipulationContentSpecificConfig = {
+export type ManipulationSpecificConfig = {
   /**
    * フォーマットもや編集処理前に実行される任意の処理
    * @param content コンテンツ
@@ -478,21 +541,9 @@ export type OperationResult<C extends Content = Content> = {
  * MigrationConfig以下で継承するコンフィグ
  */
 export type CommonConfig = CommonReplacementConfig &
-  CommonIoConfig &
-  CommonInputConfig &
-  CommonOutputConfig &
   CommonDevelopmentConfig &
   CommonLogConfig &
-  CommonFormatConfig & {
-    /**
-     * エラー時のハンドラー
-     * @param error エラー情報
-     * @param config 設定
-     * @param params イテレーションパラメーター
-     * @returns
-     */
-    onError?: <E>(error: E, config: any, params?: IterationParams) => void;
-  };
+  CommonFormatConfig & {};
 
 /**
  * テキストの置換に関する設定
@@ -502,59 +553,6 @@ export type CommonReplacementConfig<P extends ReplacementValues = ReplacementVal
    * プレイスホルダーと置き換えられる値
    */
   params?: P;
-};
-
-/**
- * 入出力に関する設定
- */
-export type CommonIoConfig = {
-  /**
-   * 入出力の対象そのものに対する操作
-   */
-  handlingType?: HandlingType;
-};
-
-/**
- * 入力に関する設定
- */
-export type CommonInputConfig = {
-  /**
-   * 入力の設定
-   * 文字列を設定した場合はFileとして扱う
-   */
-  input?: InputConfig | string;
-
-  /**
-   * データ読み込み時のエンコーディング
-   * 未指定の場合は読み込み元の内容から判断する
-   */
-  inputEncoding?: string;
-
-  /**
-   * 対象が存在しない場合の処理
-   *
-   * - error: エラーをスローする
-   * - skip: 対象をスキップする
-   * - break: 繰り返し処理をブレイクする
-   */
-  notFoundAction?: 'error' | 'skip' | 'break';
-};
-
-/**
- * 出力に関する設定
- */
-export type CommonOutputConfig = {
-  /**
-   * 出力の設定
-   * 文字列を設定した場合はFileとして扱う
-   */
-  output?: OutputConfig | string;
-
-  /**
-   * データ書き込み時のエンコーディング
-   * 未指定の場合は読み込み時のエンコーディング
-   */
-  outputEncoding?: string;
 };
 
 /**
