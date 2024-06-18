@@ -1,5 +1,5 @@
 import migrate from './migrate';
-import { MigrationConfig, MigrationResult, MigrationTaskConfig } from './types';
+import { MigrationConfig, MigrationResult, TaskConfig } from './types';
 import asArray from './utils/asArray';
 import throwError from './utils/throwError';
 
@@ -15,7 +15,7 @@ class Migration<C extends MigrationConfig = MigrationConfig> {
   /**
    * タスクのマップ
    */
-  private _tasks: { [id: string]: MigrationTaskConfig };
+  private _tasks: { [id: string]: TaskConfig };
 
   constructor() {}
 
@@ -24,7 +24,7 @@ class Migration<C extends MigrationConfig = MigrationConfig> {
    * @param config 移行設定
    */
   initConfig(config: C) {
-    const _tasks: { [id: string]: MigrationTaskConfig } = {};
+    const _tasks: { [id: string]: TaskConfig } = {};
     for (const task of asArray(config.tasks)) {
       if (task.taskId != null) {
         _tasks[task.taskId] = task;

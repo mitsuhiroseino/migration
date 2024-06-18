@@ -1,5 +1,5 @@
 import { INHERITED_JOB_CONFIGS, MIGRATION_STATUS, MIGRATION_STATUS_PRIORITY } from '../constants';
-import { MigrationJobConfig, MigrationJobResult, MigrationTaskConfig, MigrationTaskResult } from '../types';
+import { JobConfig, MigrationJobResult, MigrationTaskResult, TaskConfig } from '../types';
 import applyIf from '../utils/applyIf';
 import asArray from '../utils/asArray';
 import executeAsyncFunctions from '../utils/executeAsyncFunctions';
@@ -12,7 +12,7 @@ import executeJob from './executeJob';
  * @param configs 移行設定
  * @returns
  */
-export default async function executeTask(config: MigrationTaskConfig): Promise<MigrationTaskResult> {
+export default async function executeTask(config: TaskConfig): Promise<MigrationTaskResult> {
   const { taskId, jobs, parallelJobs, onTaskStart, onTaskEnd, onTaskError, disabled, ...rest } = config;
 
   try {
@@ -28,7 +28,7 @@ export default async function executeTask(config: MigrationTaskConfig): Promise<
     const jobConfigs = asArray(jobs);
     for (const jobConfig of jobConfigs) {
       // ジョブ毎の処理
-      const jobCfg: MigrationJobConfig = inheritConfig(jobConfig, rest, INHERITED_JOB_CONFIGS);
+      const jobCfg: JobConfig = inheritConfig(jobConfig, rest, INHERITED_JOB_CONFIGS);
       // ジョブ実行用の関数を作成
       jobFns.push(async () => await executeJob(jobCfg));
     }

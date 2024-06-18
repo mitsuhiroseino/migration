@@ -1,10 +1,10 @@
 import { DiffParams, IterationParams } from '../types';
-import { Io, IoConfigBase } from './types';
+import { InputOutputConfigBase, Io } from './types';
 
 /**
  * 入出力の基底クラス
  */
-abstract class IoBase<C extends IoConfigBase> implements Io {
+abstract class IoBase<C extends InputOutputConfigBase> implements Io {
   protected _active: boolean;
 
   protected _config: C;

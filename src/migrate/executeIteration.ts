@@ -1,12 +1,6 @@
-import { INHERITED_IO_CONFIGS, MIGRATION_STATUS } from '../constants';
+import { INHERITED_IO_CONFIGS, INHERITED_OPERATE_CONTENT_CONFIGS, MIGRATION_STATUS } from '../constants';
 import { ContentOperator, IoHandler, IoHandlerConfig } from '../io';
-import {
-  Content,
-  IterationParams,
-  MigrationIterationConfig,
-  MigrationIterationResult,
-  OperateContentConfig,
-} from '../types';
+import { Content, IterationConfig, IterationParams, MigrationIterationResult, OperateContentConfig } from '../types';
 import applyIf from '../utils/applyIf';
 import inheritConfig from '../utils/inheritConfig';
 import operateContent from './operateContent';
@@ -42,7 +36,7 @@ const getOperate = (operateEach: boolean, operateContentConfig: OperateContentCo
  * @param params 繰り返し毎のパラメーター
  */
 export default async function executeIteration(
-  config: MigrationIterationConfig,
+  config: IterationConfig,
   params: IterationParams,
 ): Promise<MigrationIterationResult | null> {
   const {
@@ -66,7 +60,7 @@ export default async function executeIteration(
     applyIf(onIterationStart, [config, params]);
 
     // オペレーション実行関数の取得
-    const operationFn = getOperate(operateEach, { ...rest, operations });
+    const operationFn = getOperate(operateEach, inheritConfig({ operations }, rest, INHERITED_OPERATE_CONTENT_CONFIGS));
     // 入出力ハンドラー
     const ioHandlerConfig: IoHandlerConfig = inheritConfig({ operationFn }, rest, INHERITED_IO_CONFIGS);
     const ioHandler = new IoHandler(ioHandlerConfig);

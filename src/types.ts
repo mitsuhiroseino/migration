@@ -7,7 +7,7 @@ import {
   OPERATION_STATUS,
 } from './constants';
 import { Input, InputConfig, InputResultBase, Output, OutputConfig, OutputResultBase } from './io/types';
-import { Operation, OperationConfigBase } from './operate/types';
+import { Operation, OperationConfig, OperationConfigBase } from './operate/types';
 import { FormatOptions } from './utils/format';
 import { Condition } from './utils/isMatch';
 import { DynamicPattern, ReplaceOptions } from './utils/replace';
@@ -54,7 +54,7 @@ export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase
     /**
      * タスクの設定
      */
-    tasks: MigrationTaskConfig<OC>[];
+    tasks: TaskConfig<OC>[];
 
     /**
      * タスクを並列で実行する
@@ -74,7 +74,7 @@ export type MigrationConfig<OC extends OperationConfigBase = OperationConfigBase
 /**
  * タスクの設定
  */
-export type MigrationTaskConfig<OC extends OperationConfigBase = OperationConfigBase> = TaskSpecificConfig<OC> &
+export type TaskConfig<OC extends OperationConfigBase = OperationConfigBase> = TaskSpecificConfig<OC> &
   JobSpecificConfig<OC> &
   IterationSpecificConfig &
   IoSpecificConfig &
@@ -87,13 +87,13 @@ export type MigrationTaskConfig<OC extends OperationConfigBase = OperationConfig
     /**
      * ジョブの設定
      */
-    jobs: MigrationJobConfig<OC>[];
+    jobs: JobConfig<OC>[];
   };
 
 /**
  * ジョブの設定
  */
-export type MigrationJobConfig<OC extends OperationConfigBase = OperationConfigBase> = JobSpecificConfig<OC> &
+export type JobConfig<OC extends OperationConfigBase = OperationConfigBase> = JobSpecificConfig<OC> &
   IterationSpecificConfig &
   IoSpecificConfig &
   OperateContentConfig &
@@ -107,7 +107,7 @@ export type MigrationJobConfig<OC extends OperationConfigBase = OperationConfigB
 /**
  * イテレーションの設定
  */
-export type MigrationIterationConfig = IterationSpecificConfig &
+export type IterationConfig = IterationSpecificConfig &
   IoSpecificConfig &
   OperateContentConfig &
   IoSpecificConfig &
@@ -123,7 +123,7 @@ export type MigrationIterationConfig = IterationSpecificConfig &
 /**
  * 一連のオペレーション実行時の設定
  */
-export type OperateContentConfig = CommonConfig & OperateSpecificConfig & ManipulationSpecificConfig;
+export type OperateContentConfig = CommonConfig & OperateContentSpecificConfig & ManipulativeOperationSpecificConfig;
 
 /**
  * タスク専用の設定
@@ -139,7 +139,7 @@ export type TaskSpecificConfig<OC extends OperationConfigBase = OperationConfigB
    * @param config タスク設定
    * @returns
    */
-  onTaskStart?: (config: MigrationTaskConfig<OC>) => void;
+  onTaskStart?: (config: TaskConfig<OC>) => void;
 
   /**
    * タスク終了時のハンドラー
@@ -147,7 +147,7 @@ export type TaskSpecificConfig<OC extends OperationConfigBase = OperationConfigB
    * @param config タスク設定
    * @returns
    */
-  onTaskEnd?: (result: MigrationTaskResult, config: MigrationTaskConfig<OC>) => void;
+  onTaskEnd?: (result: MigrationTaskResult, config: TaskConfig<OC>) => void;
 
   /**
    * タスクのエラー時
@@ -155,7 +155,7 @@ export type TaskSpecificConfig<OC extends OperationConfigBase = OperationConfigB
    * @param config タスク設定
    * @returns
    */
-  onTaskError?: <E>(error: E, config: MigrationTaskConfig<OC>) => void;
+  onTaskError?: <E>(error: E, config: TaskConfig<OC>) => void;
 };
 
 /**
@@ -163,16 +163,21 @@ export type TaskSpecificConfig<OC extends OperationConfigBase = OperationConfigB
  */
 export type JobSpecificConfig<OC extends OperationConfigBase<any> = OperationConfigBase<any>> = {
   /**
+   * 操作の設定
+   */
+  operations?: OperationConfig[];
+
+  /**
    * 繰り返し処理毎にパラメーターを作成するイテレーターの取得元
    */
-  iteration?: ((config: MigrationJobConfig) => Generator<IterationParams>) | IterationParams[] | IterationParams;
+  iteration?: ((config: JobConfig) => Generator<IterationParams>) | IterationParams[] | IterationParams;
 
   /**
    * ジョブ開始時のハンドラー
    * @param config ジョブ設定
    * @returns
    */
-  onJobStart?: (config: MigrationJobConfig<OC>) => void;
+  onJobStart?: (config: JobConfig<OC>) => void;
 
   /**
    * ジョブ終了時のハンドラー
@@ -180,7 +185,7 @@ export type JobSpecificConfig<OC extends OperationConfigBase<any> = OperationCon
    * @param config ジョブ設定
    * @returns
    */
-  onJobEnd?: (result: MigrationJobResult, config: MigrationJobConfig<OC>) => void;
+  onJobEnd?: (result: MigrationJobResult, config: JobConfig<OC>) => void;
 
   /**
    * ジョブのエラー時
@@ -188,20 +193,20 @@ export type JobSpecificConfig<OC extends OperationConfigBase<any> = OperationCon
    * @param config ジョブ設定
    * @returns
    */
-  onJobError?: <E>(error: E, config: MigrationJobConfig<OC>) => void;
+  onJobError?: <E>(error: E, config: JobConfig<OC>) => void;
 };
 
 /**
  * イテレーション専用の設定
  */
-export type IterationSpecificConfig = HasOperationConfig & {
+export type IterationSpecificConfig = {
   /**
    * イテレーション開始時のハンドラー
    * @param config イテレーション設定
    * @param params イテレーションパラメーター
    * @returns
    */
-  onIterationStart?: (config: MigrationIterationConfig, params: IterationParams) => void;
+  onIterationStart?: (config: IterationConfig, params: IterationParams) => void;
 
   /**
    * イテレーション終了時のハンドラー
@@ -210,11 +215,7 @@ export type IterationSpecificConfig = HasOperationConfig & {
    * @param params イテレーションパラメーター
    * @returns
    */
-  onIterationEnd?: (
-    result: MigrationIterationResult,
-    config: MigrationIterationConfig,
-    params: IterationParams,
-  ) => void;
+  onIterationEnd?: (result: MigrationIterationResult, config: IterationConfig, params: IterationParams) => void;
 
   /**
    * イテレーションのエラー時
@@ -223,7 +224,7 @@ export type IterationSpecificConfig = HasOperationConfig & {
    * @param params イテレーションパラメーター
    * @returns
    */
-  onIterationError?: <E>(error: E, config: MigrationIterationConfig, params: IterationParams) => void;
+  onIterationError?: <E>(error: E, config: IterationConfig, params: IterationParams) => void;
 
   /**
    * コンテンツが配列だった場合には配列の要素に対して操作を行う
@@ -246,7 +247,7 @@ export type IoSpecificConfig = {
    * @param params イテレーションパラメーター
    * @returns
    */
-  onItemStart?: (config: MigrationIterationConfig, params: IterationParams) => void;
+  onItemStart?: (config: IterationConfig, params: IterationParams) => void;
 
   /**
    * 要素処理終了時のハンドラー
@@ -255,7 +256,7 @@ export type IoSpecificConfig = {
    * @param params イテレーションパラメーター
    * @returns
    */
-  onItemEnd?: (result: MigrationItemResult, config: MigrationIterationConfig, params: IterationParams) => void;
+  onItemEnd?: (result: MigrationItemResult, config: IterationConfig, params: IterationParams) => void;
 
   /**
    * 要素処理のエラー時
@@ -264,7 +265,7 @@ export type IoSpecificConfig = {
    * @param params イテレーションパラメーター
    * @returns
    */
-  onItemError?: <E>(error: E, config: MigrationIterationConfig, params: IterationParams) => void;
+  onItemError?: <E>(error: E, config: IterationConfig, params: IterationParams) => void;
 };
 
 /**
@@ -313,7 +314,12 @@ export type OutputSpecificConfig = {
 /**
  * 一連のオペレーション実行時専用の設定
  */
-export type OperateSpecificConfig = HasOperationConfig & {
+export type OperateContentSpecificConfig = {
+  /**
+   * 操作の設定
+   */
+  operations?: Operation[];
+
   /**
    * 操作前に実行される任意の処理
    * @param content コンテンツ
@@ -359,19 +365,9 @@ export type OperateSpecificConfig = HasOperationConfig & {
 };
 
 /**
- * オペレーションを持つ処理専用の設定
+ * マニピュレーションを持つオペレーション実行時専用の設定
  */
-export type HasOperationConfig = {
-  /**
-   * 操作の設定
-   */
-  operations?: Operation[];
-};
-
-/**
- * 一連のマニピュレーション実行時専用の設定
- */
-export type ManipulationSpecificConfig = {
+export type ManipulativeOperationSpecificConfig = {
   /**
    * フォーマットもや編集処理前に実行される任意の処理
    * @param content コンテンツ

@@ -4,8 +4,8 @@ import {
   IoSpecificConfig,
   IterationSpecificConfig,
   JobSpecificConfig,
-  ManipulationSpecificConfig,
-  OperateSpecificConfig,
+  ManipulativeOperationSpecificConfig,
+  OperateContentSpecificConfig,
   OutputSpecificConfig,
   TaskSpecificConfig,
 } from './types';
@@ -98,17 +98,18 @@ export const INHERITED_COMMON_CONFIGS: Required<{
 } as const;
 
 /**
- * オペレーションからマニピュレーションに引き継ぐ設定
+ * イテレーションからオペレーション実行関数に引き継ぐ設定
  */
-export const INHERITED_MANIPULATION_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_COMMON_CONFIGS & ManipulationSpecificConfig)]:
+export const INHERITED_OPERATE_CONTENT_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_COMMON_CONFIGS & OperateContentSpecificConfig)]:
     | boolean
     | ((config: any, baseConfig: any) => any);
 }> = {
   ...INHERITED_COMMON_CONFIGS,
-  onManipulationsStart: true,
-  onManipulationsEnd: true,
-  onManipulationsError: true,
+  onOperationsStart: true,
+  onOperationsEnd: true,
+  onOperationsError: true,
+  operations: true,
 } as const;
 
 /**
@@ -167,38 +168,37 @@ export const INHERITED_ITERATION_CONFIGS: Required<{
   onIterationEnd: true,
   onIterationError: true,
   operateEach: true,
-  operations: true,
 } as const;
 
 /**
- * ジョブからオペレーションに引き継ぐ設定
+ * ジョブからマニピュレーションを持つオペレーションに引き継ぐ設定
  */
-export const INHERITED_OPERATION_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_MANIPULATION_CONFIGS & OperateSpecificConfig)]:
+export const INHERITED_MANIPULATIVE_OPERATION_CONFIGS: Required<{
+  [K in keyof (typeof INHERITED_COMMON_CONFIGS & ManipulativeOperationSpecificConfig)]:
     | boolean
     | ((config: any, baseConfig: any) => any);
 }> = {
-  ...INHERITED_MANIPULATION_CONFIGS,
-  onOperationsStart: true,
-  onOperationsEnd: true,
-  onOperationsError: true,
-  operations: true,
+  ...INHERITED_COMMON_CONFIGS,
+  onManipulationsStart: true,
+  onManipulationsEnd: true,
+  onManipulationsError: true,
 } as const;
 
 /**
  * タスクからジョブに引き継ぐ設定
  */
 export const INHERITED_JOB_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_ITERATION_CONFIGS & typeof INHERITED_OPERATION_CONFIGS & JobSpecificConfig)]:
+  [K in keyof (typeof INHERITED_ITERATION_CONFIGS & typeof INHERITED_OPERATE_CONTENT_CONFIGS & JobSpecificConfig)]:
     | boolean
     | ((config: any, baseConfig: any) => any);
 }> = {
   ...INHERITED_ITERATION_CONFIGS,
-  ...INHERITED_OPERATION_CONFIGS,
+  ...INHERITED_OPERATE_CONTENT_CONFIGS,
+  operations: true,
+  iteration: true,
   onJobStart: true,
   onJobEnd: true,
   onJobError: true,
-  iteration: true,
 } as const;
 
 /**

@@ -28,10 +28,7 @@ export type IoType = (typeof IO_TYPE)[keyof typeof IO_TYPE];
 /**
  * 入出力の設定
  */
-export type IoConfigBase<T = IoType> = CommonReplacementConfig &
-  CommonDevelopmentConfig &
-  CommonLogConfig &
-  FactoriableConfig<T>;
+export type InputOutputConfigBase<T = IoType> = CommonConfig & FactoriableConfig<T>;
 
 /**
  * 入出力関連の共通メソッド
@@ -72,11 +69,16 @@ export interface Io {
  * 入力の設定
  */
 export type InputConfigBase<T = IoType> = InputSpecificConfig &
-  IoConfigBase<T> & {
+  InputOutputConfigBase<T> & {
     /**
      * 入力ID
      */
     inputId?: string;
+
+    /**
+     * 読み込んだデータを何として扱うか
+     */
+    readAs?: 'text' | 'data' | 'binary';
   };
 
 /**
@@ -184,7 +186,7 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
  * 出力の設定
  */
 export type OutputConfigBase<T = IoType> = OutputSpecificConfig &
-  IoConfigBase<T> & {
+  InputOutputConfigBase<T> & {
     /**
      * 出力ID
      */

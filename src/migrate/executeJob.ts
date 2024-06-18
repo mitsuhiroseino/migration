@@ -1,5 +1,5 @@
 import { INHERITED_ITERATION_CONFIGS, MIGRATION_STATUS, MIGRATION_STATUS_PRIORITY } from '../constants';
-import { MigrationIterationConfig, MigrationIterationResult, MigrationJobConfig, MigrationJobResult } from '../types';
+import { IterationConfig, JobConfig, MigrationIterationResult, MigrationJobResult } from '../types';
 import applyIf from '../utils/applyIf';
 import inheritConfig from '../utils/inheritConfig';
 import toOperations from '../utils/toOperations';
@@ -12,7 +12,7 @@ import getIterator from './helpers/getIterator';
  * @param config 移行対象の設定
  * @param params 繰り返し毎のパラメーター
  */
-export default async function executeJob(config: MigrationJobConfig): Promise<MigrationJobResult | null> {
+export default async function executeJob(config: JobConfig): Promise<MigrationJobResult | null> {
   const {
     jobId,
     operations,
@@ -32,7 +32,8 @@ export default async function executeJob(config: MigrationJobConfig): Promise<Mi
       return result;
     }
 
-    const cfg: MigrationIterationConfig = rest;
+    const cfg: IterationConfig = rest;
+    //
     cfg.operations = toOperations(operations, cfg);
 
     // 対象が存在する場合

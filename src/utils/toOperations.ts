@@ -1,4 +1,4 @@
-import { INHERITED_OPERATION_CONFIGS } from '../constants';
+import { INHERITED_MANIPULATIVE_OPERATION_CONFIGS } from '../constants';
 import OperationBase from '../operate/OperationBase';
 import OperationFactory from '../operate/OperationFactory';
 import { Operation, OperationConfig } from '../operate/types';
@@ -14,7 +14,7 @@ export default function toOperations(
     if (operation instanceof OperationBase) {
       return operation;
     } else {
-      return OperationFactory.create(inheritConfig(operation, config, INHERITED_OPERATION_CONFIGS));
+      return OperationFactory.create(inheritConfig(operation, config, INHERITED_MANIPULATIVE_OPERATION_CONFIGS));
     }
   });
 }

@@ -1,4 +1,4 @@
-import { INHERITED_MANIPULATION_CONFIGS, OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
+import { INHERITED_MANIPULATIVE_OPERATION_CONFIGS, OPERATION_STATUS, OPERATION_STATUS_PRIORITY } from '../constants';
 import { Content, OperationResult, OperationStatus, Optional } from '../types';
 import applyIf from '../utils/applyIf';
 import asArray from '../utils/asArray';
@@ -49,7 +49,7 @@ abstract class ManipulativeOperationBase<
    */
   protected _create(config: ManipulationConfigBase, params: OperationParams): M {
     const manipulation = this._createManipuration(
-      inheritConfig(config, this._config, INHERITED_MANIPULATION_CONFIGS),
+      inheritConfig(config, this._config, INHERITED_MANIPULATIVE_OPERATION_CONFIGS),
       params,
     );
     if (manipulation) {
@@ -98,8 +98,13 @@ abstract class ManipulativeOperationBase<
     try {
       applyIf(onManipulationsStart, [content, config, params]);
       const setupResult = await this._setup(content, params);
-      const manipulatedContent = await this._manipulateContent(setupResult.content, params);
-      const operationResult = await this._teardown(manipulatedContent, params);
+      const manipulationResult = await this._manipulateContent(setupResult.content, params);
+      this._operationStatus = updateStatus(
+        this._operationStatus,
+        manipulationResult.operationStatus,
+        OPERATION_STATUS_PRIORITY,
+      );
+      const operationResult = await this._teardown(manipulationResult.content, params);
       applyIf(onManipulationsEnd, [this._operationStatus, content, config, params]);
       return operationResult;
     } catch (error) {
@@ -108,15 +113,16 @@ abstract class ManipulativeOperationBase<
     }
   }
 
-  protected async _manipulateContent(content: I, params: OperationParams) {
+  protected async _manipulateContent(content: I, params: OperationParams): Promise<OperationResult<I>> {
+    let operationStatus: OperationStatus = OPERATION_STATUS.UNPROCESSED;
     for (const manipulation of this._manipulations) {
       if (manipulation.isManipulatable(content, params)) {
         const result = await manipulation.manipulate(content, params);
         content = result.content;
-        this._operationStatus = updateStatus(this._operationStatus, result.operationStatus, OPERATION_STATUS_PRIORITY);
+        operationStatus = updateStatus(operationStatus, result.operationStatus, OPERATION_STATUS_PRIORITY);
       }
     }
-    return content;
+    return { content, operationStatus };
   }
 
   /**

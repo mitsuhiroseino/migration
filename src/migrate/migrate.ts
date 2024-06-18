@@ -1,5 +1,5 @@
 import { INHERITED_TASK_CONFIGS, MIGRATION_STATUS, MIGRATION_STATUS_PRIORITY } from '../constants';
-import { MigrationConfig, MigrationResult, MigrationTaskConfig, MigrationTaskResult } from '../types';
+import { MigrationConfig, MigrationResult, MigrationTaskResult, TaskConfig } from '../types';
 import applyIf from '../utils/applyIf';
 import asArray from '../utils/asArray';
 import executeAsyncFunctions from '../utils/executeAsyncFunctions';
@@ -33,7 +33,7 @@ export default async function migrate<C extends MigrationConfig = MigrationConfi
 
     // タスク処理の開始
     for (const task of asArray(tasks)) {
-      const taskConfig: MigrationTaskConfig = inheritConfig(task, rest, INHERITED_TASK_CONFIGS);
+      const taskConfig: TaskConfig = inheritConfig(task, rest, INHERITED_TASK_CONFIGS);
       // タスク実行用の関数を作成
       taskFns.push(async () => await executeTask(taskConfig));
     }
