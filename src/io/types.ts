@@ -12,6 +12,8 @@ import {
   OutputSpecificConfig,
 } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
+import { ParseOptions } from '../utils/parse';
+import { StringifyOption } from '../utils/stringify';
 import { IO_TYPE } from './constants';
 
 export { default as InputConfig } from './InputConfig';
@@ -73,9 +75,9 @@ export type InputConfigBase<T = IoType> = InputSpecificConfig &
     inputId?: string;
 
     /**
-     * 読み込んだデータを何として扱うか
+     * 読み込んだ値が文字列でパースする場合の設定
      */
-    readAs?: 'text' | 'data' | 'binary';
+    parser?: ParseOptions;
   };
 
 /**
@@ -188,6 +190,11 @@ export type OutputConfigBase<T = IoType> = OutputSpecificConfig &
      * 出力ID
      */
     outputId?: string;
+
+    /**
+     * 出力対象の値の型がデータで文字列化する場合の設定
+     */
+    stringifier?: StringifyOption;
   };
 
 /**

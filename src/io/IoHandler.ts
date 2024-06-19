@@ -106,6 +106,7 @@ export default class IoHandler {
       const activatedParams = assignParams(params, activateResult);
       // イテレーターを取得
       const inputIterator = this._read(activatedParams, rest);
+
       // 入力を回す
       while (true) {
         let currentParams = activatedParams;

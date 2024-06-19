@@ -1,5 +1,7 @@
+import isBuffer from 'lodash/isBuffer';
 import { MIGRATION_ITEM_STATUS } from '../constants';
 import { Content, DiffParams, IterationParams } from '../types';
+import stringify from '../utils/stringify';
 import IoBase from './IoBase';
 import { Output, OutputConfigBase, OutputResultBase, OutputReturnValue } from './types';
 
@@ -17,7 +19,11 @@ abstract class OutputBase<
   async prepare(params: IterationParams): Promise<DiffParams | void> {}
 
   async write(content: C, params: IterationParams): Promise<OutputReturnValue<OR>> {
-    if (!this._config.dryRun) {
+    const { dryRun, stringifier } = this._config;
+    if (!dryRun) {
+      if (stringifier && !isBuffer(content)) {
+        content = stringify(content, stringifier) as C;
+      }
       await this._write(content, params);
     }
     return this._getWriteResult(content, params);

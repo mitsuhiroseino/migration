@@ -8,7 +8,6 @@ import getEncoding from '../../utils/getEncoding';
 import isMatch from '../../utils/isMatch';
 import readAnyFile from '../../utils/readAnyFile';
 import removeExtension from '../../utils/removeExtension';
-import throwError from '../../utils/throwError';
 import toString from '../../utils/toString';
 import InputBase from '../InputBase';
 import InputFactory from '../InputFactory';

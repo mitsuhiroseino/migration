@@ -1,5 +1,7 @@
+import isString from 'lodash/isString';
 import { MIGRATION_ITEM_STATUS } from '../constants';
 import { Content, DiffParams, IterationParams } from '../types';
+import parse from '../utils/parse';
 import throwError from '../utils/throwError';
 import IoBase from './IoBase';
 import { Input, InputConfigBase, InputResultBase, InputReturnValue } from './types';
@@ -21,7 +23,20 @@ abstract class InputBase<
   protected _deleteResult: DiffParams;
 
   read(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>> {
-    return this._read(params);
+    const { parser } = this._config;
+    if (parser) {
+      const iterator = this._read(params);
+      return (async function* () {
+        for await (const item of iterator) {
+          if (isString(item.content)) {
+            item.content = parse(item.content);
+          }
+          yield item;
+        }
+      })();
+    } else {
+      return this._read(params);
+    }
   }
 
   /**

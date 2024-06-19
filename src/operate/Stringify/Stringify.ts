@@ -1,10 +1,10 @@
 import { CONTENT_TYPE } from '../../constants';
 import { Content } from '../../types';
+import stringify from '../../utils/stringify';
 import ImmutableOperationBase from '../ImmutableOperationBase';
 import OperationFactory from '../OperationFactory';
 import { OPERATION_TYPE } from '../constants';
 import { OperationParams } from '../types';
-import { STRINGIFIER } from './constants';
 import { StringifyConfig } from './types';
 
 /**
@@ -14,8 +14,8 @@ class Stringify extends ImmutableOperationBase<Exclude<Content, Buffer>, Stringi
   readonly contentTypes = [CONTENT_TYPE.DATA, CONTENT_TYPE.TEXT];
 
   protected async _operateContent(content: Exclude<Content, Buffer>, params: OperationParams): Promise<string> {
-    const { stringifier = 'json', args } = this._config;
-    return STRINGIFIER[stringifier](content, args);
+    const { stringifier: stringifierOptions } = this._config;
+    return stringify(content, stringifierOptions);
   }
 }
 export default Stringify;
