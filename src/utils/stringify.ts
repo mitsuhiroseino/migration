@@ -22,9 +22,10 @@ export type StringifyOption =
   | StringifierType
   | {
       /**
-       * ストリンギファー
+       * ストリンギファー種別
+       * デフォルトは'json'
        */
-      stringifier?: StringifierType;
+      type?: StringifierType;
 
       /**
        * ストリンギファーに渡す引数
@@ -39,12 +40,12 @@ export type StringifyOption =
  * @returns
  */
 export default function stringify<V = any>(value: V, options?: StringifyOption): string {
-  let stringifier, args;
+  let type, args;
   if (isPlainObject(options)) {
-    stringifier = options['stringifier'];
+    type = options['type'];
     args = options['args'];
   } else {
-    stringifier = options;
+    type = options;
   }
-  return STRINGIFIER[stringifier || 'json'](value, args);
+  return STRINGIFIER[type || 'json'](value, args);
 }

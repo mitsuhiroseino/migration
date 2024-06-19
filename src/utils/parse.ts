@@ -21,10 +21,10 @@ export type ParseOptions =
   | ParserType
   | {
       /**
-       * 使用するパーサー
+       * パーサー種別
        * デフォルトは'json'
        */
-      parser?: ParserType;
+      type?: ParserType;
 
       /**
        * パーサーに渡す引数
@@ -39,12 +39,12 @@ export type ParseOptions =
  * @returns
  */
 export default function parse<R = any>(str: string, options?: ParseOptions): R {
-  let parser, args;
+  let type, args;
   if (isPlainObject(options)) {
-    parser = options['parser'];
+    type = options['type'];
     args = options['args'];
   } else {
-    parser = options;
+    type = options;
   }
-  return PARSER[parser || 'json'](str, args);
+  return PARSER[type || 'json'](str, args);
 }
