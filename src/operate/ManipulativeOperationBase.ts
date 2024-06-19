@@ -94,21 +94,28 @@ abstract class ManipulativeOperationBase<
 
   protected async _operate(content: C, params: OperationParams): Promise<OperationResult<C>> {
     const config = this._config;
-    const { onManipulationsStart, onManipulationsEnd, onManipulationsError } = config;
+    const { onManipulationsStart, onManipulationsEnd, onManipulationsError, scopedParams } = config;
+    let currentParams = { ...params };
     try {
-      applyIf(onManipulationsStart, [content, config, params]);
-      const setupResult = await this._setup(content, params);
-      const manipulationResult = await this._manipulateContent(setupResult.content, params);
+      applyIf(onManipulationsStart, [content, config, currentParams]);
+      const setupResult = await this._setup(content, currentParams);
+      currentParams = { ...currentParams, ...setupResult.params };
+      const manipulationResult = await this._manipulateContent(setupResult.content, currentParams);
+      currentParams = { ...currentParams, ...manipulationResult.params };
       this._operationStatus = updateStatus(
         this._operationStatus,
         manipulationResult.operationStatus,
         OPERATION_STATUS_PRIORITY,
       );
-      const operationResult = await this._teardown(manipulationResult.content, params);
-      applyIf(onManipulationsEnd, [this._operationStatus, content, config, params]);
+      const operationResult = await this._teardown(manipulationResult.content, currentParams);
+      currentParams = { ...currentParams, ...operationResult.params };
+      applyIf(onManipulationsEnd, [this._operationStatus, content, config, currentParams]);
+      if (!scopedParams) {
+        operationResult.params = currentParams;
+      }
       return operationResult;
     } catch (error) {
-      applyIf(onManipulationsError, [error, content, config, params]);
+      applyIf(onManipulationsError, [error, content, config, currentParams]);
       throw error;
     }
   }

@@ -57,6 +57,14 @@ export type OperationBundlerConfig = {
    * 操作
    */
   operations: (OperationConfigBase | OperationBase)[];
+
+  /**
+   * パラメーターの追加があった場合の影響範囲
+   *
+   * - true: 配下のオペレーションに影響する
+   * - false: 配下のオペレーションと後続のオペレーションに影響する
+   */
+  scopedParams?: boolean;
 };
 
 /**
@@ -141,6 +149,14 @@ export type ManipulativeOperationConfig<MC extends ManipulationConfigBase = Mani
      * 詳細な操作
      */
     manipulations: MC[];
+
+    /**
+     * パラメーターの追加があった場合の影響範囲
+     *
+     * - true: 配下のマニピュレーションに影響する
+     * - false: 配下のマニピュレーションと後続のオペレーションに影響する
+     */
+    scopedParams?: boolean;
   };
 
 /**

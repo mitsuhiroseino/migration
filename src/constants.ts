@@ -149,25 +149,26 @@ export const INHERITED_IO_CONFIGS: Required<{
 }> = {
   ...INHERITED_INPUT_CONFIGS,
   ...INHERITED_OUTPUT_CONFIGS,
+  handlingType: true,
   onItemStart: true,
   onItemEnd: true,
   onItemError: true,
-  handlingType: true,
 } as const;
 
 /**
  * ジョブからイテレーションに引き継ぐ設定
  */
 export const INHERITED_ITERATION_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_IO_CONFIGS & IterationSpecificConfig)]:
+  [K in keyof (typeof INHERITED_OPERATE_CONTENT_CONFIGS & typeof INHERITED_IO_CONFIGS & IterationSpecificConfig)]:
     | boolean
     | ((config: any, baseConfig: any) => any);
 }> = {
+  ...INHERITED_OPERATE_CONTENT_CONFIGS,
   ...INHERITED_IO_CONFIGS,
+  operateEach: true,
   onIterationStart: true,
   onIterationEnd: true,
   onIterationError: true,
-  operateEach: true,
 } as const;
 
 /**

@@ -18,12 +18,14 @@ export default async function operate<C>(
   // 処理対象の操作を行う
   let status: OperationStatus = OPERATION_STATUS.UNPROCESSED;
   let currentContent = content;
+  let currentParams = { ...params };
   for (const operation of operations) {
     // 操作
-    if (operation && operation.isOperable(currentContent, params)) {
+    if (operation && operation.isOperable(currentContent, currentParams)) {
       // オペレーションを直列で実行
-      const result = await operation.operate(currentContent, params);
+      const result = await operation.operate(currentContent, currentParams);
       currentContent = result.content;
+      currentParams = { ...currentParams, ...result.params };
       status = updateStatus(status, result.operationStatus, OPERATION_STATUS_PRIORITY);
     }
   }

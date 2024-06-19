@@ -213,6 +213,11 @@ export type JobSpecificConfig = {
  */
 export type IterationSpecificConfig = {
   /**
+   * コンテンツが配列だった場合には配列の要素に対して操作を行う
+   */
+  operateEach?: boolean;
+
+  /**
    * イテレーション開始時のハンドラー
    * @param config イテレーション設定
    * @param params イテレーションパラメーター
@@ -237,11 +242,6 @@ export type IterationSpecificConfig = {
    * @returns
    */
   onIterationError?: <E>(error: E, config: IterationConfig, params: IterationParams) => void;
-
-  /**
-   * コンテンツが配列だった場合には配列の要素に対して操作を行う
-   */
-  operateEach?: boolean;
 };
 
 /**
@@ -543,6 +543,11 @@ export type OperationResult<C extends Content = Content> = {
    * 処理後のコンテンツ
    */
   content: C;
+
+  /**
+   * 追加されたパラメーター
+   */
+  params?: IterationParams;
 };
 
 /**

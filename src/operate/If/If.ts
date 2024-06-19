@@ -29,8 +29,7 @@ class If extends OperationBase<Content, IfConfig> {
     } else {
       operations = this._else;
     }
-    const result = await operate(content, operations, params);
-    return result;
+    return await operate(content, operations, params);
   }
 }
 

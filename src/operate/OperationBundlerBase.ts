@@ -26,6 +26,10 @@ export default abstract class OperationBundlerBase<
    */
   protected async _operate(content: C, params: OperationParams): Promise<OperationResult<C | Content>> {
     const result = await operate(content, this._operations, params);
+    if (!this._config.scopedParams) {
+      // 現在のパラメーターを後続のオペレーションにも適用する
+      result.params = params;
+    }
     return result;
   }
 }

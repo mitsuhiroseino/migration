@@ -57,7 +57,7 @@ class Read extends OperationBundlerBase<Content, ReadConfig> {
     await this._ioHandler.handle(params, { operationFn });
 
     // 子要素で処理
-    return super._operate(content, { ...params, ...resources });
+    return await super._operate(content, { ...params, ...resources });
   }
 }
 export default Read;
