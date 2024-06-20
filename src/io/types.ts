@@ -195,6 +195,16 @@ export type OutputConfigBase<T = IoType> = OutputSpecificConfig &
      * 出力対象の値の型がデータで文字列化する場合の設定
      */
     stringifier?: StringifyOption;
+
+    /**
+     * コンテンツがnullの場合の処理
+     *
+     * - process: 出力する
+     * - error: エラーをスローする
+     * - skip: 対象をスキップする
+     * - break: 繰り返し処理をブレイクする
+     */
+    noContentAction?: 'process' | 'error' | 'skip' | 'break';
   };
 
 /**

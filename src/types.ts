@@ -669,7 +669,7 @@ export type DiffParams = ParamsBase;
  * _で始まるプロパティはシステム側で自動的に設定するもの
  * それ以外はMigrationConfigのiteratorで返された値
  */
-export type IterationParams<AP = AssignedParams<DiffParams>> = AP & ParamsBase;
+export type IterationParams<AP extends AssignedParams<DiffParams> = AssignedParams<DiffParams>> = AP & ParamsBase;
 
 /**
  * 特定の処理で作成されたパラメーターをIterationParamsに設定したもの

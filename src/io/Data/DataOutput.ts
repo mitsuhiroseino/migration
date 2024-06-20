@@ -13,22 +13,20 @@ class DataOutput extends OutputBase<Content, DataOutputConfig, DataOutputResult>
   protected async _write(content: Content, params: IterationParams): Promise<void> {}
 
   protected _getWriteResult(content: Content, params: IterationParams): OutputReturnValue<OutputResultBase> {
-    return this._getResult(params);
+    return this._handleNoContent(content, params, MIGRATION_ITEM_STATUS.UNKNOWN);
   }
 
   protected async _copy(params: IterationParams): Promise<void> {}
 
   protected _getCopyResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
-    return this._getResult(params);
+    return {
+      status: MIGRATION_ITEM_STATUS.UNKNOWN,
+    };
   }
 
   protected async _move(params: IterationParams): Promise<void> {}
 
   protected _getMoveResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
-    return this._getResult(params);
-  }
-
-  private _getResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
       status: MIGRATION_ITEM_STATUS.UNKNOWN,
     };

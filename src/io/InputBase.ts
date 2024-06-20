@@ -23,13 +23,13 @@ abstract class InputBase<
   protected _deleteResult: DiffParams;
 
   read(params: IterationParams): AsyncIterableIterator<InputReturnValue<C, IR>> {
-    const { parser } = this._config;
-    if (parser) {
+    const { parser: parseOptions } = this._config;
+    if (parseOptions) {
       const iterator = this._read(params);
       return (async function* () {
         for await (const item of iterator) {
           if (isString(item.content)) {
-            item.content = parse(item.content);
+            item.content = parse(item.content, parseOptions);
           }
           yield item;
         }

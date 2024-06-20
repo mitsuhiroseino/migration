@@ -75,8 +75,8 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
       }
       await writeAnyFile(_outputItemPath, content, {
         encoding,
+        ensure: true,
         ...rest,
-        ensured: false,
       });
     }
   }

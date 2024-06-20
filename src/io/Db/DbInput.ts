@@ -79,7 +79,7 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
       records = await this._model.findAll(paginationOptions);
     } catch (error) {
       // エラーの場合は対象のテーブルが無かったという扱いでnotFoundAction
-      this._handleNotFound(error);
+      yield this._handleNotFound(error);
     }
 
     if (this._config.single) {
@@ -108,7 +108,7 @@ class DbInput<M extends Model = Model> extends InputBase<M[], DbInputConfig<M>, 
       records = await this._model.findAll(findOptions);
     } catch (error) {
       // エラーの場合は対象のテーブルが無かったという扱いでnotFoundAction
-      this._handleNotFound(error);
+      yield this._handleNotFound(error);
     }
 
     if (this._config.single) {

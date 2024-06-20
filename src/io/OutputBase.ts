@@ -1,7 +1,8 @@
 import isBuffer from 'lodash/isBuffer';
 import { MIGRATION_ITEM_STATUS } from '../constants';
-import { Content, DiffParams, IterationParams } from '../types';
+import { Content, DiffParams, IterationParams, MigrationItemStatus } from '../types';
 import stringify from '../utils/stringify';
+import throwError from '../utils/throwError';
 import IoBase from './IoBase';
 import { Output, OutputConfigBase, OutputResultBase, OutputReturnValue } from './types';
 
@@ -19,10 +20,10 @@ abstract class OutputBase<
   async prepare(params: IterationParams): Promise<DiffParams | void> {}
 
   async write(content: C, params: IterationParams): Promise<OutputReturnValue<OR>> {
-    const { dryRun, stringifier } = this._config;
-    if (!dryRun) {
-      if (stringifier && !isBuffer(content)) {
-        content = stringify(content, stringifier) as C;
+    const { dryRun, stringifier: stringifyOptions, noContentAction } = this._config;
+    if (!dryRun && (content != null || noContentAction === 'process')) {
+      if (stringifyOptions && !isBuffer(content)) {
+        content = stringify(content, stringifyOptions) as C;
       }
       await this._write(content, params);
     }
@@ -43,9 +44,7 @@ abstract class OutputBase<
    * @returns
    */
   protected _getWriteResult(content: C, params: IterationParams): OutputReturnValue<OR> {
-    return {
-      status: MIGRATION_ITEM_STATUS.CONVERTED,
-    };
+    return this._handleNoContent(content, params);
   }
 
   async copy(params: IterationParams): Promise<OutputReturnValue<OR>> {
@@ -96,6 +95,38 @@ abstract class OutputBase<
     return {
       status: MIGRATION_ITEM_STATUS.MOVED,
     };
+  }
+
+  /**
+   * 対象がnullの場合の処理
+   * @param params
+   * @returns
+   */
+  protected _handleNoContent(
+    content: unknown,
+    params: IterationParams,
+    defaultStatus: MigrationItemStatus = MIGRATION_ITEM_STATUS.CONVERTED,
+  ) {
+    const { noContentAction } = this._config;
+    if (content != null || noContentAction === 'process') {
+      // 出力する場合
+      return {
+        status: defaultStatus,
+      };
+    } else if (noContentAction === 'break') {
+      // breakする場合
+      return {
+        status: MIGRATION_ITEM_STATUS.BREAK,
+      };
+    } else if (noContentAction === 'skip') {
+      // skipする場合
+      return {
+        status: MIGRATION_ITEM_STATUS.SKIPPED,
+      };
+    } else {
+      // 上記以外はエラー
+      throwError(`The content is null: ${params._outputItem}`, this._config);
+    }
   }
 }
 export default OutputBase;

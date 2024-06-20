@@ -87,9 +87,11 @@ class DbOutput<M extends Model = Model> extends OutputBase<M[], DbOutputConfig<M
   }
 
   protected _getWriteResult(content: M | M[], params: IterationParams): OutputReturnValue<DbOutputResult> {
-    return this._config.create
-      ? { status: MIGRATION_ITEM_STATUS.CREATED }
-      : { status: MIGRATION_ITEM_STATUS.CONVERTED };
+    return this._handleNoContent(
+      content,
+      params,
+      this._config.create ? MIGRATION_ITEM_STATUS.CREATED : MIGRATION_ITEM_STATUS.CONVERTED,
+    );
   }
 
   protected async _copy(params: DbAssignedParams): Promise<void> {
