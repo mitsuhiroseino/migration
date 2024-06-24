@@ -15,7 +15,9 @@ class NoopOutput extends OutputBase<Content, NoopOutputConfig, NoopOutputResult>
   protected async _write(content: Content, params: IterationParams): Promise<void> {}
 
   protected _getWriteResult(content: Content, params: IterationParams): OutputReturnValue<OutputResultBase> {
-    return this._handleNoContent(content, params, MIGRATION_ITEM_STATUS.NONE);
+    return {
+      status: MIGRATION_ITEM_STATUS.NONE,
+    };
   }
 
   protected async _copy(params: IterationParams): Promise<void> {}

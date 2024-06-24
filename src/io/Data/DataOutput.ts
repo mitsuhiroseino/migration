@@ -13,14 +13,16 @@ class DataOutput extends OutputBase<Content, DataOutputConfig, DataOutputResult>
   protected async _write(content: Content, params: IterationParams): Promise<void> {}
 
   protected _getWriteResult(content: Content, params: IterationParams): OutputReturnValue<OutputResultBase> {
-    return this._handleNoContent(content, params, MIGRATION_ITEM_STATUS.UNKNOWN);
+    return {
+      status: MIGRATION_ITEM_STATUS.NONE,
+    };
   }
 
   protected async _copy(params: IterationParams): Promise<void> {}
 
   protected _getCopyResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      status: MIGRATION_ITEM_STATUS.UNKNOWN,
+      status: MIGRATION_ITEM_STATUS.NONE,
     };
   }
 
@@ -28,7 +30,7 @@ class DataOutput extends OutputBase<Content, DataOutputConfig, DataOutputResult>
 
   protected _getMoveResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      status: MIGRATION_ITEM_STATUS.UNKNOWN,
+      status: MIGRATION_ITEM_STATUS.NONE,
     };
   }
 }
