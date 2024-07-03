@@ -36,15 +36,13 @@ export type Content = string | Buffer | any;
 /**
  * 移行の設定
  */
-export type MigrationConfig = CommonConfig &
-  TaskSpecificConfig &
-  JobSpecificConfig &
-  IterationSpecificConfig &
-  IoSpecificConfig &
-  InputSpecificConfig &
-  OutputSpecificConfig &
-  OperateContentSpecificConfig &
-  ManipulativeOperationSpecificConfig & {
+export type MigrationConfig<OP extends OperationConfig = OperationConfig> = CommonConfig &
+  TaskEventHandlerConfig &
+  JobEventHandlerConfig &
+  IterationEventHandlerConfig &
+  IoEventHandlerConfig &
+  OperateContentEventHandlerConfig &
+  ManipulativeOperationEventHandlerConfig & {
     /**
      * ID
      */
@@ -58,7 +56,7 @@ export type MigrationConfig = CommonConfig &
     /**
      * タスクの設定
      */
-    tasks: TaskConfig[];
+    tasks: TaskConfig<OP>[];
 
     /**
      * タスクを並列で実行する
@@ -78,15 +76,13 @@ export type MigrationConfig = CommonConfig &
 /**
  * タスクの設定
  */
-export type TaskConfig = CommonConfig &
-  TaskSpecificConfig &
-  JobSpecificConfig &
-  IterationSpecificConfig &
-  IoSpecificConfig &
-  InputSpecificConfig &
-  OutputSpecificConfig &
-  OperateContentSpecificConfig &
-  ManipulativeOperationSpecificConfig & {
+export type TaskConfig<OP extends OperationConfig = OperationConfig> = CommonConfig &
+  TaskEventHandlerConfig &
+  JobEventHandlerConfig &
+  IterationEventHandlerConfig &
+  IoEventHandlerConfig &
+  OperateContentEventHandlerConfig &
+  ManipulativeOperationEventHandlerConfig & {
     /**
      * タスクID
      */
@@ -96,35 +92,49 @@ export type TaskConfig = CommonConfig &
      * ジョブの設定
      */
     jobs: JobConfig[];
+
+    /**
+     * ジョブを並列で実行する
+     */
+    parallelJobs?: boolean;
   };
 
 /**
  * ジョブの設定
  */
-export type JobConfig = CommonConfig &
-  JobSpecificConfig &
-  IterationSpecificConfig &
-  IoSpecificConfig &
-  InputSpecificConfig &
-  OutputSpecificConfig &
-  OperateContentSpecificConfig &
-  ManipulativeOperationSpecificConfig & {
+export type JobConfig<
+  OP extends OperationConfig = OperationConfig,
+  I extends InputConfig = InputConfig,
+  O extends OutputConfig = OutputConfig,
+> = CommonConfig &
+  JobEventHandlerConfig &
+  IterationEventHandlerConfig &
+  IoEventHandlerConfig &
+  OperateContentEventHandlerConfig &
+  ManipulativeOperationEventHandlerConfig &
+  OperationsConfigBase<Operation | OP> &
+  IoHandlerConfigBase<I, O> & {
     /**
      *  ジョブID
      */
     jobId?: string;
+
+    /**
+     * 繰り返し処理毎にパラメーターを作成するイテレーターの取得元
+     */
+    iteration?: ((config: JobConfig) => Generator<IterationParams>) | IterationParams[] | IterationParams;
   };
 
 /**
  * イテレーションの設定
  */
-export type IterationConfig = CommonConfig &
-  IterationSpecificConfig &
-  IoSpecificConfig &
-  InputSpecificConfig &
-  OutputSpecificConfig &
-  OperateContentSpecificConfig &
-  ManipulativeOperationSpecificConfig & {
+export type IterationConfig<I extends InputConfig = InputConfig, O extends OutputConfig = OutputConfig> = CommonConfig &
+  IterationEventHandlerConfig &
+  IoEventHandlerConfig &
+  OperateContentEventHandlerConfig &
+  ManipulativeOperationEventHandlerConfig &
+  OperationsConfigBase<Operation> &
+  IoHandlerConfigBase<I, O> & {
     /**
      * イテレーションのID
      * ジョブID+連番
@@ -133,19 +143,58 @@ export type IterationConfig = CommonConfig &
   };
 
 /**
- * 一連のオペレーション実行時の設定
+ * operationsを持つ設定
  */
-export type OperateContentConfig = CommonConfig & OperateContentSpecificConfig & ManipulativeOperationSpecificConfig;
+export type OperationsConfigBase<OP = Operation> = {
+  /**
+   * 操作の設定
+   */
+  operations?: OP[];
+
+  /**
+   * コンテンツが配列だった場合には配列の要素に対して操作を行う
+   */
+  operateEach?: boolean;
+};
 
 /**
- * タスク専用の設定
+ * 入出力を持つ設定
  */
-export type TaskSpecificConfig = {
+export type IoHandlerConfigBase<I extends InputConfig = InputConfig, O extends OutputConfig = OutputConfig> = {
   /**
-   * ジョブを並列で実行する
+   * 入力の設定
+   * 文字列を設定した場合はFileとして扱う
    */
-  parallelJobs?: boolean;
+  input?: I | string;
 
+  /**
+   * 出力の設定
+   * 文字列を設定した場合はFileとして扱う
+   */
+  output?: O | string;
+
+  /**
+   * 入出力の対象そのものに対する操作
+   */
+  handlingType?: HandlingType;
+};
+
+/**
+ * 一連のオペレーション実行時の設定
+ */
+export type OperateContentConfig = CommonConfig &
+  OperateContentEventHandlerConfig &
+  ManipulativeOperationEventHandlerConfig & {
+    /**
+     * 操作
+     */
+    operations?: Operation[];
+  };
+
+/**
+ * タスクのイベントハンドラーの設定
+ */
+export type TaskEventHandlerConfig = {
   /**
    * タスク開始時のハンドラー
    * @param config タスク設定
@@ -171,19 +220,9 @@ export type TaskSpecificConfig = {
 };
 
 /**
- * ジョブ専用の設定
+ * ジョブのイベントハンドラーの設定
  */
-export type JobSpecificConfig = {
-  /**
-   * 操作の設定
-   */
-  operations?: (OperationConfig | Operation)[];
-
-  /**
-   * 繰り返し処理毎にパラメーターを作成するイテレーターの取得元
-   */
-  iteration?: ((config: JobConfig) => Generator<IterationParams>) | IterationParams[] | IterationParams;
-
+export type JobEventHandlerConfig = {
   /**
    * ジョブ開始時のハンドラー
    * @param config ジョブ設定
@@ -209,14 +248,9 @@ export type JobSpecificConfig = {
 };
 
 /**
- * イテレーション専用の設定
+ * イテレーションのイベントハンドラーの設定
  */
-export type IterationSpecificConfig = {
-  /**
-   * コンテンツが配列だった場合には配列の要素に対して操作を行う
-   */
-  operateEach?: boolean;
-
+export type IterationEventHandlerConfig = {
   /**
    * イテレーション開始時のハンドラー
    * @param config イテレーション設定
@@ -245,14 +279,9 @@ export type IterationSpecificConfig = {
 };
 
 /**
- * 入出力処理専用の設定
+ * 入出力のイベントハンドラーの設定
  */
-export type IoSpecificConfig = {
-  /**
-   * 入出力の対象そのものに対する操作
-   */
-  handlingType?: HandlingType;
-
+export type IoEventHandlerConfig = {
   /**
    * 要素処理開始時のハンドラー
    * @param config イテレーション設定
@@ -281,57 +310,9 @@ export type IoSpecificConfig = {
 };
 
 /**
- * 入力処理専用の設定
+ * 一連のオペレーション実行時のイベントハンドラーの設定
  */
-export type InputSpecificConfig = {
-  /**
-   * 入力の設定
-   * 文字列を設定した場合はFileとして扱う
-   */
-  input?: InputConfig | string;
-
-  /**
-   * データ読み込み時のエンコーディング
-   * 未指定の場合は読み込み元の内容から判断する
-   */
-  inputEncoding?: string;
-
-  /**
-   * 対象が存在しない場合の処理
-   *
-   * - error: エラーをスローする
-   * - skip: 対象をスキップする
-   * - break: 繰り返し処理をブレイクする
-   */
-  notFoundAction?: 'error' | 'skip' | 'break';
-};
-
-/**
- * 出力処理専用の設定
- */
-export type OutputSpecificConfig = {
-  /**
-   * 出力の設定
-   * 文字列を設定した場合はFileとして扱う
-   */
-  output?: OutputConfig | string;
-
-  /**
-   * データ書き込み時のエンコーディング
-   * 未指定の場合は読み込み時のエンコーディング
-   */
-  outputEncoding?: string;
-};
-
-/**
- * 一連のオペレーション実行時専用の設定
- */
-export type OperateContentSpecificConfig = {
-  /**
-   * 操作の設定
-   */
-  operations?: Operation[];
-
+export type OperateContentEventHandlerConfig = {
   /**
    * 操作前に実行される任意の処理
    * @param content コンテンツ
@@ -377,9 +358,9 @@ export type OperateContentSpecificConfig = {
 };
 
 /**
- * マニピュレーションを持つオペレーション実行時専用の設定
+ * マニピュレーションを持つオペレーションのイベントハンドラーの設定
  */
-export type ManipulativeOperationSpecificConfig = {
+export type ManipulativeOperationEventHandlerConfig = {
   /**
    * フォーマットもや編集処理前に実行される任意の処理
    * @param content コンテンツ
@@ -423,6 +404,10 @@ export type ManipulativeOperationSpecificConfig = {
     params: IterationParams,
   ) => void;
 };
+
+export type InheritConfigMap<BASE extends object = {}> = Required<{
+  [K in keyof BASE]: boolean | ((config: any, baseConfig: any) => any);
+}>;
 
 /**
  * 内容の処理結果

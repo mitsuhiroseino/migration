@@ -1,31 +1,37 @@
-import { OutputSpecificConfig, VariableString } from '../../types';
+import { OutputConfig } from '../../io';
+import { VariableString } from '../../types';
 import { OPERATION_TYPE } from '../constants';
 import { OperationConfigBase, OperationParams } from '../types';
 
 /**
  * ファイルを出力する操作
  */
-export type WriteConfig = OperationConfigBase<typeof OPERATION_TYPE.WRITE> &
-  OutputSpecificConfig & {
-    /**
-     * リソースの取得元
-     * 未指定の場合はparams
-     */
-    resourceType?: 'params' | 'content';
+export type WriteConfig<O extends OutputConfig = OutputConfig> = OperationConfigBase<typeof OPERATION_TYPE.WRITE> & {
+  /**
+   * 出力の設定
+   * 文字列を設定した場合はFileとして扱う
+   */
+  output?: O | string;
 
-    /**
-     * paramsからファイルの内容を取得する際のプロパティ名
-     * デフォルトは_resource
-     */
-    paramName?: VariableString<OperationParams>;
+  /**
+   * リソースの取得元
+   * 未指定の場合はparams
+   */
+  resourceType?: 'params' | 'content';
 
-    /**
-     * paramNameの要素のプレイスホルダーを置換するなどの前処理を行わない
-     */
-    preserveParamName?: boolean;
+  /**
+   * paramsからファイルの内容を取得する際のプロパティ名
+   * デフォルトは_resource
+   */
+  paramName?: VariableString<OperationParams>;
 
-    /**
-     * リソースが配列の場合は配列の要素毎に出力する
-     */
-    writeEach?: boolean;
-  };
+  /**
+   * paramNameの要素のプレイスホルダーを置換するなどの前処理を行わない
+   */
+  preserveParamName?: boolean;
+
+  /**
+   * リソースが配列の場合は配列の要素毎に出力する
+   */
+  writeEach?: boolean;
+};

@@ -125,7 +125,7 @@ abstract class OutputBase<
       };
     } else {
       // 上記以外はエラー
-      throwError(`The content is null: ${params._outputItem}`, this._config);
+      throwError(`The content is null or undefined: ${params._outputItem}`, this._config);
     }
   }
 }

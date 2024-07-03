@@ -1,13 +1,14 @@
 import {
   CommonConfig,
-  InputSpecificConfig,
-  IoSpecificConfig,
-  IterationSpecificConfig,
-  JobSpecificConfig,
-  ManipulativeOperationSpecificConfig,
-  OperateContentSpecificConfig,
-  OutputSpecificConfig,
-  TaskSpecificConfig,
+  InheritConfigMap,
+  IoEventHandlerConfig,
+  IoHandlerConfigBase,
+  IterationEventHandlerConfig,
+  JobEventHandlerConfig,
+  ManipulativeOperationEventHandlerConfig,
+  OperateContentEventHandlerConfig,
+  OperationsConfigBase,
+  TaskEventHandlerConfig,
 } from './types';
 
 /**
@@ -80,9 +81,7 @@ export const MIGRATION_STATUS_PRIORITY = {
 /**
  * 親から引き継ぐ設定
  */
-export const INHERITED_COMMON_CONFIGS: Required<{
-  [K in keyof CommonConfig]: boolean | ((config: any, baseConfig: any) => any);
-}> = {
+export const INHERITED_COMMON_CONFIGS: InheritConfigMap<CommonConfig> = {
   formatterOptions: true,
   replacementBracket: true,
   removePlaceholders: true,
@@ -100,56 +99,37 @@ export const INHERITED_COMMON_CONFIGS: Required<{
 /**
  * イテレーションからオペレーション実行関数に引き継ぐ設定
  */
-export const INHERITED_OPERATE_CONTENT_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_COMMON_CONFIGS & OperateContentSpecificConfig)]:
-    | boolean
-    | ((config: any, baseConfig: any) => any);
-}> = {
+export const INHERITED_OPERATE_CONTENT_CONFIGS: InheritConfigMap<
+  typeof INHERITED_COMMON_CONFIGS & OperateContentEventHandlerConfig
+> = {
   ...INHERITED_COMMON_CONFIGS,
   onOperationsStart: true,
   onOperationsEnd: true,
   onOperationsError: true,
-  operations: true,
 } as const;
 
 /**
  * 入出力から入力に引き継ぐ設定
  */
-export const INHERITED_INPUT_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_COMMON_CONFIGS & InputSpecificConfig)]:
-    | boolean
-    | ((config: any, baseConfig: any) => any);
-}> = {
+export const INHERITED_INPUT_CONFIGS: InheritConfigMap<typeof INHERITED_COMMON_CONFIGS> = {
   ...INHERITED_COMMON_CONFIGS,
-  input: true,
-  inputEncoding: true,
-  notFoundAction: true,
 } as const;
 
 /**
  * 入出力から出力に引き継ぐ設定
  */
-export const INHERITED_OUTPUT_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_COMMON_CONFIGS & OutputSpecificConfig)]:
-    | boolean
-    | ((config: any, baseConfig: any) => any);
-}> = {
+export const INHERITED_OUTPUT_CONFIGS: InheritConfigMap<typeof INHERITED_COMMON_CONFIGS> = {
   ...INHERITED_COMMON_CONFIGS,
-  output: true,
-  outputEncoding: true,
 } as const;
 
 /**
  * イテレーションから入出力に引き継ぐ設定
  */
-export const INHERITED_IO_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_INPUT_CONFIGS & typeof INHERITED_OUTPUT_CONFIGS & IoSpecificConfig)]:
-    | boolean
-    | ((config: any, baseConfig: any) => any);
-}> = {
+export const INHERITED_IO_CONFIGS: InheritConfigMap<
+  typeof INHERITED_INPUT_CONFIGS & typeof INHERITED_OUTPUT_CONFIGS & IoEventHandlerConfig
+> = {
   ...INHERITED_INPUT_CONFIGS,
   ...INHERITED_OUTPUT_CONFIGS,
-  handlingType: true,
   onItemStart: true,
   onItemEnd: true,
   onItemError: true,
@@ -158,27 +138,31 @@ export const INHERITED_IO_CONFIGS: Required<{
 /**
  * ジョブからイテレーションに引き継ぐ設定
  */
-export const INHERITED_ITERATION_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_OPERATE_CONTENT_CONFIGS & typeof INHERITED_IO_CONFIGS & IterationSpecificConfig)]:
-    | boolean
-    | ((config: any, baseConfig: any) => any);
-}> = {
+export const INHERITED_ITERATION_CONFIGS: InheritConfigMap<
+  typeof INHERITED_OPERATE_CONTENT_CONFIGS &
+    typeof INHERITED_IO_CONFIGS &
+    IterationEventHandlerConfig &
+    OperationsConfigBase &
+    IoHandlerConfigBase
+> = {
   ...INHERITED_OPERATE_CONTENT_CONFIGS,
   ...INHERITED_IO_CONFIGS,
-  operateEach: true,
   onIterationStart: true,
   onIterationEnd: true,
   onIterationError: true,
+  operations: true,
+  operateEach: true,
+  input: true,
+  output: true,
+  handlingType: true,
 } as const;
 
 /**
  * ジョブからマニピュレーションを持つオペレーションに引き継ぐ設定
  */
-export const INHERITED_MANIPULATIVE_OPERATION_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_COMMON_CONFIGS & ManipulativeOperationSpecificConfig)]:
-    | boolean
-    | ((config: any, baseConfig: any) => any);
-}> = {
+export const INHERITED_MANIPULATIVE_OPERATION_CONFIGS: InheritConfigMap<
+  typeof INHERITED_COMMON_CONFIGS & ManipulativeOperationEventHandlerConfig
+> = {
   ...INHERITED_COMMON_CONFIGS,
   onManipulationsStart: true,
   onManipulationsEnd: true,
@@ -188,15 +172,11 @@ export const INHERITED_MANIPULATIVE_OPERATION_CONFIGS: Required<{
 /**
  * タスクからジョブに引き継ぐ設定
  */
-export const INHERITED_JOB_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_ITERATION_CONFIGS & typeof INHERITED_OPERATE_CONTENT_CONFIGS & JobSpecificConfig)]:
-    | boolean
-    | ((config: any, baseConfig: any) => any);
-}> = {
+export const INHERITED_JOB_CONFIGS: InheritConfigMap<
+  typeof INHERITED_ITERATION_CONFIGS & typeof INHERITED_OPERATE_CONTENT_CONFIGS & JobEventHandlerConfig
+> = {
   ...INHERITED_ITERATION_CONFIGS,
   ...INHERITED_OPERATE_CONTENT_CONFIGS,
-  operations: true,
-  iteration: true,
   onJobStart: true,
   onJobEnd: true,
   onJobError: true,
@@ -205,14 +185,11 @@ export const INHERITED_JOB_CONFIGS: Required<{
 /**
  * マイグレーションからタスクに引き継ぐ設定
  */
-export const INHERITED_TASK_CONFIGS: Required<{
-  [K in keyof (typeof INHERITED_JOB_CONFIGS & TaskSpecificConfig)]: boolean | ((config: any, baseConfig: any) => any);
-}> = {
+export const INHERITED_TASK_CONFIGS: InheritConfigMap<typeof INHERITED_JOB_CONFIGS & TaskEventHandlerConfig> = {
   ...INHERITED_JOB_CONFIGS,
   onTaskStart: true,
   onTaskEnd: true,
   onTaskError: true,
-  parallelJobs: true,
 } as const;
 
 /**
@@ -229,6 +206,7 @@ export const DEFAULT_BRACKET = ['{{', '}}'];
  * テキストファイルを入出力する際のデフォルトエンコーディング
  */
 export const DEFAULT_TEXT_ENCODING = 'utf8';
+
 /**
  * デフォルトの設定
  */

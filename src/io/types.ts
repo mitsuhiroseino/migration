@@ -3,18 +3,20 @@ import {
   Content,
   ContentType,
   DiffParams,
-  InputSpecificConfig,
-  IoSpecificConfig,
+  HandlingType,
+  IoEventHandlerConfig,
+  IoHandlerConfigBase,
   ItemType,
   IterationParams,
   MigrationItemStatus,
   OperationResult,
-  OutputSpecificConfig,
 } from '../types';
 import { FactoriableConfig } from '../utils/Factory';
 import { ParseOptions } from '../utils/parse';
 import { StringifyOption } from '../utils/stringify';
 import { IO_TYPE } from './constants';
+import InputConfig from './InputConfig';
+import OutputConfig from './OutputConfig';
 
 export { default as InputConfig } from './InputConfig';
 export { default as OutputConfig } from './OutputConfig';
@@ -67,18 +69,32 @@ export interface Io {
 /**
  * 入力の設定
  */
-export type InputConfigBase<T = IoType> = InputSpecificConfig &
-  InputOutputConfigBase<T> & {
-    /**
-     * 入力ID
-     */
-    inputId?: string;
+export type InputConfigBase<T = IoType> = InputOutputConfigBase<T> & {
+  /**
+   * 入力ID
+   */
+  inputId?: string;
 
-    /**
-     * 読み込んだ値が文字列でパースする場合の設定
-     */
-    parser?: ParseOptions;
-  };
+  /**
+   * 読み込んだ値が文字列の場合にパースする際の設定
+   */
+  parser?: ParseOptions;
+
+  /**
+   * データ読み込み時のエンコーディング
+   * 未指定の場合は読み込み元の内容から判断する
+   */
+  inputEncoding?: string;
+
+  /**
+   * 対象が存在しない場合の処理
+   *
+   * - error: エラーをスローする
+   * - skip: 対象をスキップする
+   * - break: 繰り返し処理をブレイクする
+   */
+  notFoundAction?: 'error' | 'skip' | 'break';
+};
 
 /**
  * 入力した場合の処理結果
@@ -184,28 +200,33 @@ export interface Input<C extends Content, IR extends InputResultBase = InputResu
 /**
  * 出力の設定
  */
-export type OutputConfigBase<T = IoType> = OutputSpecificConfig &
-  InputOutputConfigBase<T> & {
-    /**
-     * 出力ID
-     */
-    outputId?: string;
+export type OutputConfigBase<T = IoType> = InputOutputConfigBase<T> & {
+  /**
+   * 出力ID
+   */
+  outputId?: string;
 
-    /**
-     * 出力対象の値の型がデータで文字列化する場合の設定
-     */
-    stringifier?: StringifyOption;
+  /**
+   * 出力対象の値の型がデータで文字列化する場合の設定
+   */
+  stringifier?: StringifyOption;
 
-    /**
-     * コンテンツがnullの場合の処理
-     *
-     * - process: 出力する
-     * - error: エラーをスローする
-     * - skip: 対象をスキップする
-     * - break: 繰り返し処理をブレイクする
-     */
-    noContentAction?: 'process' | 'error' | 'skip' | 'break';
-  };
+  /**
+   * コンテンツがnullの場合の処理
+   *
+   * - process: 出力する
+   * - error: エラーをスローする
+   * - skip: 対象をスキップする
+   * - break: 繰り返し処理をブレイクする
+   */
+  noContentAction?: 'process' | 'error' | 'skip' | 'break';
+
+  /**
+   * データ書き込み時のエンコーディング
+   * 未指定の場合は読み込み時のエンコーディング
+   */
+  outputEncoding?: string;
+};
 
 /**
  * 出力した場合の処理結果
@@ -309,10 +330,9 @@ export type ContentOperator = <C>(content: C, params: IterationParams) => Promis
 /**
  * 入出力の設定
  */
-export type IoHandlerConfig = CommonConfig &
-  IoSpecificConfig &
-  InputSpecificConfig &
-  OutputSpecificConfig & {
+export type IoHandlerConfig<I extends InputConfig = InputConfig, O extends OutputConfig = OutputConfig> = CommonConfig &
+  IoEventHandlerConfig &
+  IoHandlerConfigBase<I, O> & {
     /**
      * 読み込んだコンテンツへの処理を行う関数
      * @param content

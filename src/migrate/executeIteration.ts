@@ -46,6 +46,9 @@ export default async function executeIteration(
     onIterationEnd,
     onIterationError,
     disabled,
+    input,
+    output,
+    handlingType,
     operations = [],
     ...rest
   } = config;
@@ -62,7 +65,11 @@ export default async function executeIteration(
     // オペレーション実行関数の取得
     const operationFn = getOperate(operateEach, inheritConfig({ operations }, rest, INHERITED_OPERATE_CONTENT_CONFIGS));
     // 入出力ハンドラー
-    const ioHandlerConfig: IoHandlerConfig = inheritConfig({ operationFn }, rest, INHERITED_IO_CONFIGS);
+    const ioHandlerConfig: IoHandlerConfig = inheritConfig(
+      { input, output, handlingType, operationFn },
+      rest,
+      INHERITED_IO_CONFIGS,
+    );
     const ioHandler = new IoHandler(ioHandlerConfig);
 
     // オペレーションの前処理

@@ -15,13 +15,13 @@ import getIterator from './helpers/getIterator';
 export default async function executeJob(config: JobConfig): Promise<MigrationJobResult | null> {
   const {
     jobId,
-    operations,
     iteration,
     params: jobParams,
     onJobStart,
     onJobEnd,
     onJobError,
     disabled,
+    operations,
     ...rest
   } = config;
 

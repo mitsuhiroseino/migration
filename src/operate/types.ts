@@ -2,7 +2,7 @@ import {
   CommonConfig,
   Content,
   ContentType,
-  ManipulativeOperationSpecificConfig,
+  ManipulativeOperationEventHandlerConfig,
   OperationResult,
   OperationStatus,
   Optional,
@@ -144,7 +144,7 @@ export type ManipulationConfigBase<T = string> = CommonConfig &
  * 詳細な操作を持つ操作の設定
  */
 export type ManipulativeOperationConfig<MC extends ManipulationConfigBase = ManipulationConfigBase> =
-  ManipulativeOperationSpecificConfig & {
+  ManipulativeOperationEventHandlerConfig & {
     /**
      * 詳細な操作
      */
