@@ -16,7 +16,7 @@ class NoopOutput extends OutputBase<Content, NoopOutputConfig, NoopOutputResult>
 
   protected _getWriteResult(content: Content, params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      status: MIGRATION_ITEM_STATUS.NONE,
+      status: MIGRATION_ITEM_STATUS.NOTHING,
     };
   }
 
@@ -24,7 +24,7 @@ class NoopOutput extends OutputBase<Content, NoopOutputConfig, NoopOutputResult>
 
   protected _getCopyResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      status: MIGRATION_ITEM_STATUS.NONE,
+      status: MIGRATION_ITEM_STATUS.NOTHING,
     };
   }
 
@@ -32,7 +32,7 @@ class NoopOutput extends OutputBase<Content, NoopOutputConfig, NoopOutputResult>
 
   protected _getMoveResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      status: MIGRATION_ITEM_STATUS.NONE,
+      status: MIGRATION_ITEM_STATUS.NOTHING,
     };
   }
 }

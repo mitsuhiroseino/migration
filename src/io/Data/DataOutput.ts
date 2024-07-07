@@ -14,7 +14,7 @@ class DataOutput extends OutputBase<Content, DataOutputConfig, DataOutputResult>
 
   protected _getWriteResult(content: Content, params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      status: MIGRATION_ITEM_STATUS.NONE,
+      status: MIGRATION_ITEM_STATUS.NOTHING,
     };
   }
 
@@ -22,7 +22,7 @@ class DataOutput extends OutputBase<Content, DataOutputConfig, DataOutputResult>
 
   protected _getCopyResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      status: MIGRATION_ITEM_STATUS.NONE,
+      status: MIGRATION_ITEM_STATUS.NOTHING,
     };
   }
 
@@ -30,7 +30,7 @@ class DataOutput extends OutputBase<Content, DataOutputConfig, DataOutputResult>
 
   protected _getMoveResult(params: IterationParams): OutputReturnValue<OutputResultBase> {
     return {
-      status: MIGRATION_ITEM_STATUS.NONE,
+      status: MIGRATION_ITEM_STATUS.NOTHING,
     };
   }
 }

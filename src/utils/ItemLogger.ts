@@ -8,7 +8,7 @@ const FORMAT = '[{{status}}] {{item}}';
 
 const COLOR = {
   [MIGRATION_ITEM_STATUS.PROCESSING]: (message: string) => colors.yellow(message),
-  [MIGRATION_ITEM_STATUS.NONE]: (message: string) => colors.gray(message),
+  [MIGRATION_ITEM_STATUS.NOTHING]: (message: string) => colors.gray(message),
   [MIGRATION_ITEM_STATUS.BREAK]: (message: string) => colors.gray(message),
   [MIGRATION_ITEM_STATUS.SKIPPED]: (message: string) => colors.gray(message),
   [MIGRATION_ITEM_STATUS.UNKNOWN]: (message: string) => colors.white(message),
