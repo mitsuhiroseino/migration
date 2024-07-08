@@ -109,7 +109,7 @@ export default class IoHandler {
 
       // 入力を回す
       while (true) {
-        let currentParams = activatedParams;
+        let currentParams = { ...activatedParams };
         try {
           // 前処理
           const startResult = await this._start(currentParams, rest);
@@ -129,7 +129,8 @@ export default class IoHandler {
           const prepareResult = await this._afterRead(currentParams, rest);
           currentParams = assignParams(currentParams, prepareResult);
 
-          applyIf(onItemStart, [config, currentParams]);
+          const itemStartResult = applyIf(onItemStart, [config, currentParams]);
+          currentParams = { ...currentParams, ...itemStartResult };
 
           if (inputItem.status === MIGRATION_ITEM_STATUS.BREAK) {
             // 読み込み処理でブレイクした場合

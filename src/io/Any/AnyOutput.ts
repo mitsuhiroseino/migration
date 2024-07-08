@@ -1,5 +1,5 @@
-import { ReplaceOptions } from 'src/utils/replace';
 import { Content, IterationParams } from '../../types';
+import { ReplaceOptions } from '../../utils/replace';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
 import { IO_TYPE } from '../constants';

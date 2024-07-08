@@ -53,6 +53,8 @@ export default async function executeIteration(
     ...rest
   } = config;
 
+  let currentParams = { ...params };
+
   try {
     let result: MigrationIterationResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
     if (disabled) {
@@ -60,7 +62,8 @@ export default async function executeIteration(
       return result;
     }
 
-    applyIf(onIterationStart, [config, params]);
+    const iterationStartResult = applyIf(onIterationStart, [config, currentParams]);
+    currentParams = { ...currentParams, ...iterationStartResult };
 
     // オペレーション実行関数の取得
     const operationFn = getOperate(operateEach, inheritConfig({ operations }, rest, INHERITED_OPERATE_CONTENT_CONFIGS));
@@ -73,18 +76,18 @@ export default async function executeIteration(
     const ioHandler = new IoHandler(ioHandlerConfig);
 
     // オペレーションの前処理
-    await Promise.all(operations.map((operation) => operation.initialize(params)));
+    await Promise.all(operations.map((operation) => operation.initialize(currentParams)));
     // 入出力処理
-    result = await ioHandler.handle(params);
+    result = await ioHandler.handle(currentParams);
     // オペレーションの後処理
-    await Promise.all(operations.map((operation) => operation.finalize(params)));
-    applyIf(onIterationEnd, [result, config, params]);
+    await Promise.all(operations.map((operation) => operation.finalize(currentParams)));
+    applyIf(onIterationEnd, [result, config, currentParams]);
 
     return result;
   } catch (error) {
     // オペレーションのエラー処理
-    await Promise.all(operations.map((operation) => operation.error(params)));
-    applyIf(onIterationError, [error, config, params]);
+    await Promise.all(operations.map((operation) => operation.error(currentParams)));
+    applyIf(onIterationError, [error, config, currentParams]);
     throw error;
   }
 }

@@ -257,7 +257,7 @@ export type IterationEventHandlerConfig = {
    * @param params イテレーションパラメーター
    * @returns
    */
-  onIterationStart?: (config: IterationConfig, params: IterationParams) => void;
+  onIterationStart?: (config: IterationConfig, params: IterationParams) => IterationParams | void;
 
   /**
    * イテレーション終了時のハンドラー
@@ -288,7 +288,7 @@ export type IoEventHandlerConfig = {
    * @param params イテレーションパラメーター
    * @returns
    */
-  onItemStart?: (config: IterationConfig, params: IterationParams) => void;
+  onItemStart?: (config: IterationConfig, params: IterationParams) => IterationParams | void;
 
   /**
    * 要素処理終了時のハンドラー

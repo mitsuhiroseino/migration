@@ -38,8 +38,8 @@ const getConfig = (input, output, format, ext, dev = false) => ({
       exclude: [TEST_FILE],
       outDir: output,
       ...(dev
-        ? { declaration: true, declarationMap: true, declarationDir: output, sourceMap: true }
-        : { declaration: false, declarationMap: false, sourceMap: false }),
+        ? { declaration: true, declarationMap: true, sourceMap: true, inlineSources: true, declarationDir: output }
+        : { declaration: false, declarationMap: false, sourceMap: false, inlineSources: false }),
     }),
     babel({
       extensions: EXTENTIONS,
