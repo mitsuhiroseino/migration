@@ -112,7 +112,7 @@ export type JobConfig<
   IoEventHandlerConfig &
   OperateContentEventHandlerConfig &
   ManipulativeOperationEventHandlerConfig &
-  OperationsConfigBase<Operation | OP> &
+  OperationsConfigBase<OP> &
   IoHandlerConfigBase<I, O> & {
     /**
      *  ジョブID
@@ -145,7 +145,7 @@ export type IterationConfig<I extends InputConfig = InputConfig, O extends Outpu
 /**
  * operationsを持つ設定
  */
-export type OperationsConfigBase<OP = Operation> = {
+export type OperationsConfigBase<OP = OperationConfig> = {
   /**
    * 操作の設定
    */
