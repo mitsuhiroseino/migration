@@ -93,17 +93,19 @@ abstract class InputBase<
    * @param errorMessage
    * @returns
    */
-  protected _handleNotFound<E>(error: E) {
+  protected _handleNotFound<E>(error: E, result?: InputResultBase) {
     const { notFoundAction } = this._config;
     if (notFoundAction === 'break') {
       // breakする場合
       return {
         status: MIGRATION_ITEM_STATUS.BREAK,
+        result,
       };
     } else if (notFoundAction === 'skip') {
       // skipする場合
       return {
         status: MIGRATION_ITEM_STATUS.SKIPPED,
+        result,
       };
     } else {
       // 上記以外はエラー

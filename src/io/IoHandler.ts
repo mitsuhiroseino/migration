@@ -7,7 +7,14 @@ import {
   MIGRATION_STATUS,
   OPERATION_STATUS,
 } from '../constants';
-import { AssignedParams, DiffParams, IterationParams, MigrationItemResult, MigrationIterationResult } from '../types';
+import {
+  AssignedParams,
+  DiffParams,
+  IterationParams,
+  MigrationItemResult,
+  MigrationItemStatus,
+  MigrationIterationResult,
+} from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
 import inheritConfig from '../utils/inheritConfig';

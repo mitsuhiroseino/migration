@@ -216,20 +216,23 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
   private async *_generateFsInputResult(params: FsAssignedParams): InputGenerator<Content, FsInputResult> {
     const inputRootPath: string = params._inputRootPath;
     const stats = await fsStat(inputRootPath);
+    const result: FsInputResult = {
+      // コピー・移動はルートパス＝処理対象の要素のパス
+      inputItemPath: inputRootPath,
+      inputItem: path.basename(inputRootPath),
+      inputRootPath,
+    };
     if (stats) {
       yield {
         status: MIGRATION_ITEM_STATUS.PROCESSED,
         result: {
-          // コピー・移動はルートパス＝処理対象の要素のパス
-          inputItemPath: inputRootPath,
-          inputItem: path.basename(inputRootPath),
+          ...result,
           inputItemType: stats.isFile() ? ITEM_TYPE.LEAF : ITEM_TYPE.NODE,
-          inputRootPath,
         },
       };
     } else {
       // 対象が無い場合
-      yield this._handleNotFound(`"${inputRootPath}" does not exist.`);
+      yield this._handleNotFound(`"${inputRootPath}" does not exist.`, result);
     }
   }
 }

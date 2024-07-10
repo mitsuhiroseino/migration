@@ -17,7 +17,7 @@ export type FsStatOptions = fs.StatOptions & { ignoreSymlinks?: boolean };
  */
 export default async function fsStat(
   filePath: string,
-  options?: FsStatOptions,
+  options: FsStatOptions = {},
 ): Promise<fs.Stats | fs.BigIntStats | null> {
   const { ignoreSymlinks, ...rest } = options;
   if (ignoreSymlinks) {
