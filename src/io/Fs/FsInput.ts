@@ -126,13 +126,16 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
     depth: number = 0,
   ): InputGenerator<Content, FsInputResult> {
     const config = this._config;
-    const { filter, itemType = ITEM_TYPE.LEAF, ignoreSymlinks } = config;
+    const { itemType = ITEM_TYPE.LEAF, filter, filterTarget = ITEM_TYPE.LEAF, ignoreSymlinks } = config;
+    const stat = await fsStat(inputItemPath, { ignoreSymlinks });
     const isTarget = isMatch(inputItemPath, filter, params);
 
-    const stat = await fsStat(inputItemPath, { ignoreSymlinks });
     if (stat.isDirectory()) {
       // ディレクトリの場合
-      if (isTarget && (itemType === ITEM_TYPE.ANY || itemType === ITEM_TYPE.NODE)) {
+      const isYieldTarget = itemType === ITEM_TYPE.ANY || itemType === ITEM_TYPE.NODE;
+      const isFilterTarget = filterTarget === ITEM_TYPE.ANY || filterTarget === ITEM_TYPE.NODE;
+      // NODEが取得対象 and (NODEはフィルタリング対象ではない or フィルタリングされなかった)
+      if (isYieldTarget && (!isFilterTarget || isTarget)) {
         // ディレクトリ自身を返す
         yield {
           status: MIGRATION_ITEM_STATUS.PROCESSED,
@@ -148,7 +151,10 @@ class FsInput extends InputBase<Content, FsInputConfig, FsInputResult> {
       yield* this._toNextDeps(this._readFs, inputItemPath, params, inputRootPath, depth);
     } else if (stat.isFile()) {
       // ファイルの場合
-      if (isTarget && (itemType === ITEM_TYPE.ANY || itemType === ITEM_TYPE.LEAF)) {
+      const isYieldTarget = itemType === ITEM_TYPE.ANY || itemType === ITEM_TYPE.LEAF;
+      const isFilterTarget = filterTarget === ITEM_TYPE.ANY || filterTarget === ITEM_TYPE.LEAF;
+      // LEAFが取得対象 and (LEAFはフィルタリング対象ではない or フィルタリングされなかった)
+      if (isYieldTarget && (!isFilterTarget || isTarget)) {
         // ファイルを読み込んで返す
         const { inputEncoding, removeExtensions } = config;
         // ファイルの入力

@@ -28,6 +28,15 @@ export type FsInputConfig = InputConfigBase<typeof IO_TYPE.FS> &
     itemType?: ItemType;
 
     /**
+     * フィルターを適用する種別
+     * node: ディレクトリ
+     * leaf: ファイル
+     * any: ディレクトリ・ファイル
+     * 未指定: ファイル
+     */
+    filterTarget?: ItemType;
+
+    /**
      * 入力のファイル名から削除する拡張子
      * handlebarsの拡張子`.hbs`を削除したい場合などに利用可能
      */
