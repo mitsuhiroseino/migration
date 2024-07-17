@@ -527,7 +527,7 @@ export type OperationResult<C extends Content = Content> = {
   /**
    * 処理後のコンテンツ
    */
-  content: C;
+  content?: C;
 
   /**
    * 追加されたパラメーター

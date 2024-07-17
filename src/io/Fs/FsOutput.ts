@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import isString from 'lodash/isString';
 import path from 'path';
 import { ITEM_TYPE } from '../../constants';
-import { Content, DiffParams, IterationParams } from '../../types';
+import { Content, ContentType, DiffParams, IterationParams } from '../../types';
 import finishDynamicValue from '../../utils/finishDynamicValue';
 import replacePlaceholders from '../../utils/replacePlaceholders';
 import replaceWithConfigs from '../../utils/replaceWithConfigs';
@@ -10,6 +10,7 @@ import writeAnyFile from '../../utils/writeAnyFile';
 import OutputBase from '../OutputBase';
 import OutputFactory from '../OutputFactory';
 import { IO_TYPE } from '../constants';
+import { OutputReturnValue } from '../types';
 import { FsAssignedParams, FsOutputConfig, FsOutputResult } from './types';
 
 /**
@@ -22,6 +23,8 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
    * アイテム名を取得する関数
    */
   private _getItemName: (outputItem: string, params: FsAssignedParams) => string;
+
+  private _outputContentType: ContentType;
 
   /**
    * コンストラクター
@@ -73,12 +76,23 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
         // エンコーディングの指定が無い場合は入力時のエンコーディングで出力
         encoding = _inputEncoding;
       }
-      await writeAnyFile(_outputItemPath, content, {
+      this._outputContentType = await writeAnyFile(_outputItemPath, content, {
         encoding,
         ensure: true,
         ...rest,
       });
     }
+  }
+
+  protected _getWriteResult(content: any, params: IterationParams): OutputReturnValue<FsOutputResult> {
+    const outputContentType = this._outputContentType;
+    this._outputContentType = null;
+    return {
+      ...this._handleNoContent(content, params),
+      result: {
+        outputContentType,
+      },
+    };
   }
 
   /**
@@ -107,6 +121,17 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
     await fs.move(_inputItemPath, _outputItemPath, {});
   }
 
+  protected async _end(params: IterationParams): Promise<DiffParams | void> {
+    // 次のループへ渡す値
+    return {
+      lastOutputItemPath: params._outputItemPath,
+      lastOutputItem: params._outputItem,
+      lastOutputParentPath: params._outputParentPath,
+      lastOutputItemType: params._outputItemType,
+      lastOutputContentType: params._outputContentType,
+    };
+  }
+
   /**
    * 出力先の情報を取得する
    * @param params
@@ -114,7 +139,7 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
    * @returns
    */
   private _getOutputInfo(params: FsAssignedParams): FsOutputResult {
-    const { _inputItemPath, _inputRootPath, _inputItem, _outputRootPath } = params;
+    const { _inputItemPath, _inputRootPath, _inputItem, _inputItemType, _inputContentType, _outputRootPath } = params;
 
     // 出力の親ディレクトリパス
     let outputParentPath: string;
@@ -148,6 +173,8 @@ class FsOutput extends OutputBase<Content, FsOutputConfig, FsOutputResult> {
       outputItem,
       // 現在処理中の出力先のファイル or ディレクトリの親ディレクトリのパス
       outputParentPath,
+      // 出力のアイテムタイプ＝入力のアイテムタイプ
+      outputItemType: _inputItemType,
     };
   }
 }

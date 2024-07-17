@@ -3,6 +3,7 @@ import {
   HANDLING_TYPE,
   INHERITED_INPUT_CONFIGS,
   INHERITED_OUTPUT_CONFIGS,
+  ITEM_TYPE,
   MIGRATION_ITEM_STATUS,
   MIGRATION_STATUS,
   OPERATION_STATUS,
@@ -12,8 +13,8 @@ import {
   DiffParams,
   IterationParams,
   MigrationItemResult,
-  MigrationItemStatus,
   MigrationIterationResult,
+  OperationResult,
 } from '../types';
 import applyIf from '../utils/applyIf';
 import assignParams from '../utils/assignParams';
@@ -114,9 +115,11 @@ export default class IoHandler {
       // イテレーターを取得
       const inputIterator = this._read(activatedParams, rest);
 
+      let endResult: DiffParams;
       // 入力を回す
       while (true) {
-        let currentParams = { ...activatedParams };
+        // activate後のパラメーターと前回終了時のパラメーターをマージしたもので開始
+        let currentParams = { ...activatedParams, ...endResult };
         try {
           // 前処理
           const startResult = await this._start(currentParams, rest);
@@ -129,6 +132,7 @@ export default class IoHandler {
             break;
           }
           const inputItem = next.value;
+          const inputItemType = inputItem.result.inputItemType;
           // 入力時の結果をパラメーターにマージ
           currentParams = assignParams(currentParams, inputItem.result);
 
@@ -162,8 +166,15 @@ export default class IoHandler {
             continue;
           }
 
-          // コンテンツを処理
-          const operationResult = await operationFn(inputItem.content, currentParams);
+          let operationResult: OperationResult;
+          if (inputItemType === ITEM_TYPE.NODE) {
+            // NODEの場合
+            operationResult = { operationStatus: OPERATION_STATUS.UNPROCESSED, content: {} };
+          } else {
+            // LEAFの場合
+            // コンテンツを処理
+            operationResult = await operationFn(inputItem.content, currentParams);
+          }
 
           // 出力処理
           const outputItem = await this._write(operationResult.content, currentParams, rest);
@@ -189,7 +200,7 @@ export default class IoHandler {
           }
 
           // 後処理
-          const endResult = await this._end(currentParams, rest);
+          endResult = await this._end(currentParams, rest);
           currentParams = assignParams(currentParams, endResult);
 
           applyIf(onItemEnd, [itemResult, config, currentParams]);

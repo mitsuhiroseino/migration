@@ -21,9 +21,11 @@ abstract class OutputBase<
 
   async write(content: C, params: IterationParams): Promise<OutputReturnValue<OR>> {
     const { dryRun, stringifier: stringifyOptions, noContentAction } = this._config;
-    if (!dryRun && (content != null || noContentAction === 'process')) {
-      if (stringifyOptions && !isBuffer(content)) {
-        content = stringify(content, stringifyOptions) as C;
+    if (!dryRun) {
+      if (content != null || noContentAction === 'process') {
+        if (stringifyOptions && !isBuffer(content)) {
+          content = stringify(content, stringifyOptions) as C;
+        }
       }
       await this._write(content, params);
     }
@@ -94,6 +96,13 @@ abstract class OutputBase<
   protected _getMoveResult(params: IterationParams): OutputReturnValue<OR> {
     return {
       status: MIGRATION_ITEM_STATUS.MOVED,
+    };
+  }
+
+  protected async _end(params: IterationParams): Promise<DiffParams | void> {
+    // 次のループへ渡す値
+    return {
+      lastOutputItem: params._outputItem,
     };
   }
 

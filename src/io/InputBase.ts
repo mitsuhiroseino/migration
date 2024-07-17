@@ -88,6 +88,13 @@ abstract class InputBase<
 
   async complete(params: IterationParams): Promise<DiffParams | void> {}
 
+  protected async _end(params: IterationParams): Promise<DiffParams | void> {
+    // 次のループへ渡す値
+    return {
+      lastInputItem: params._inputItem,
+    };
+  }
+
   /**
    * 対象が存在しなかった場合の処理
    * @param errorMessage
