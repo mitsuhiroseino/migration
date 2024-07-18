@@ -23,11 +23,11 @@ abstract class OutputBase<
     const { dryRun, stringifier: stringifyOptions, noContentAction } = this._config;
     if (!dryRun) {
       if (content != null || noContentAction === 'process') {
-        if (stringifyOptions && !isBuffer(content)) {
+        if (stringifyOptions && content !== undefined && !isBuffer(content)) {
           content = stringify(content, stringifyOptions) as C;
         }
+        await this._write(content, params);
       }
-      await this._write(content, params);
     }
     return this._getWriteResult(content, params);
   }

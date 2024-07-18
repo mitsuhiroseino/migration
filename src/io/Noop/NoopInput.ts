@@ -29,5 +29,5 @@ InputFactory.register(IO_TYPE.NOOP, NoopInput);
 export default NoopInput;
 
 function getAsyncGenerator() {
-  return toAsyncGenerator({ status: MIGRATION_ITEM_STATUS.PROCESSED })();
+  return toAsyncGenerator({ status: MIGRATION_ITEM_STATUS.PROCESSED, content: null })();
 }

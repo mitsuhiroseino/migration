@@ -1,6 +1,6 @@
 {
   "name": "@visue/migration",
-  "version": "0.5.25",
+  "version": "0.5.26",
   "author": "Mitsuhiro Seino",
   "license": "MIT",
   "main": "build/index.cjs",
