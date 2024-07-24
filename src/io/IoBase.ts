@@ -13,9 +13,9 @@ abstract class IoBase<C extends InputOutputConfigBase> implements Io {
     this._config = config;
   }
 
-  activate(params: IterationParams): Promise<DiffParams | void> {
+  async activate(params: IterationParams): Promise<DiffParams> {
     this._active = true;
-    return this._activate(params);
+    return (await this._activate(params)) || {};
   }
 
   /**
@@ -25,8 +25,8 @@ abstract class IoBase<C extends InputOutputConfigBase> implements Io {
    */
   protected async _activate(params: IterationParams): Promise<DiffParams | void> {}
 
-  start(params: IterationParams): Promise<DiffParams | void> {
-    return this._start(params);
+  async start(params: IterationParams): Promise<DiffParams> {
+    return (await this._start(params)) || {};
   }
 
   /**
@@ -36,8 +36,8 @@ abstract class IoBase<C extends InputOutputConfigBase> implements Io {
    */
   protected async _start(params: IterationParams): Promise<DiffParams | void> {}
 
-  end(params: IterationParams): Promise<DiffParams | void> {
-    return this._end(params);
+  async end(params: IterationParams): Promise<DiffParams> {
+    return (await this._end(params)) || {};
   }
 
   /**
@@ -47,10 +47,10 @@ abstract class IoBase<C extends InputOutputConfigBase> implements Io {
    */
   protected async _end(params: IterationParams): Promise<DiffParams | void> {}
 
-  async deactivate(params: IterationParams): Promise<DiffParams | void> {
+  async deactivate(params: IterationParams): Promise<DiffParams> {
     const result = await this._deactivate(params);
     this._active = false;
-    return result;
+    return result || {};
   }
 
   /**
@@ -60,9 +60,9 @@ abstract class IoBase<C extends InputOutputConfigBase> implements Io {
    */
   protected async _deactivate(params: IterationParams): Promise<DiffParams | void> {}
 
-  async error(params: IterationParams): Promise<DiffParams | void> {
+  async error(params: IterationParams): Promise<DiffParams> {
     if (this._active) {
-      return this._error(params);
+      return (await this._error(params)) || {};
     }
   }
 

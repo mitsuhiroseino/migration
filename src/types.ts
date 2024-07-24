@@ -36,7 +36,11 @@ export type Content = string | Buffer | any;
 /**
  * 移行の設定
  */
-export type MigrationConfig<OP extends OperationConfig = OperationConfig> = CommonConfig &
+export type MigrationConfig<
+  OP extends OperationConfig = OperationConfig,
+  I extends InputConfig = InputConfig,
+  O extends OutputConfig = OutputConfig,
+> = CommonConfig &
   TaskEventHandlerConfig &
   JobEventHandlerConfig &
   IterationEventHandlerConfig &
@@ -56,7 +60,7 @@ export type MigrationConfig<OP extends OperationConfig = OperationConfig> = Comm
     /**
      * タスクの設定
      */
-    tasks: TaskConfig<OP>[];
+    tasks: TaskConfig<OP, I, O>[];
 
     /**
      * タスクを並列で実行する
@@ -76,7 +80,11 @@ export type MigrationConfig<OP extends OperationConfig = OperationConfig> = Comm
 /**
  * タスクの設定
  */
-export type TaskConfig<OP extends OperationConfig = OperationConfig> = CommonConfig &
+export type TaskConfig<
+  OP extends OperationConfig = OperationConfig,
+  I extends InputConfig = InputConfig,
+  O extends OutputConfig = OutputConfig,
+> = CommonConfig &
   TaskEventHandlerConfig &
   JobEventHandlerConfig &
   IterationEventHandlerConfig &
@@ -91,7 +99,7 @@ export type TaskConfig<OP extends OperationConfig = OperationConfig> = CommonCon
     /**
      * ジョブの設定
      */
-    jobs: JobConfig[];
+    jobs: JobConfig<OP, I, O>[];
 
     /**
      * ジョブを並列で実行する

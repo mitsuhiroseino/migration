@@ -31,6 +31,7 @@ abstract class InputBase<
           if (isString(item.content)) {
             item.content = parse(item.content, parseOptions);
           }
+          item.result = item.result || ({} as IR);
           yield item;
         }
       })();

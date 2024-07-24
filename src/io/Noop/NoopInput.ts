@@ -1,4 +1,4 @@
-import { MIGRATION_ITEM_STATUS } from '../../constants';
+import { ITEM_TYPE, MIGRATION_ITEM_STATUS } from '../../constants';
 import { Content, IterationParams } from '../../types';
 import toAsyncGenerator from '../../utils/toAsyncGenerator';
 import InputBase from '../InputBase';
@@ -29,5 +29,11 @@ InputFactory.register(IO_TYPE.NOOP, NoopInput);
 export default NoopInput;
 
 function getAsyncGenerator() {
-  return toAsyncGenerator({ status: MIGRATION_ITEM_STATUS.PROCESSED, content: null })();
+  return toAsyncGenerator({
+    status: MIGRATION_ITEM_STATUS.PROCESSED,
+    content: null,
+    result: {
+      inputItemType: ITEM_TYPE.LEAF,
+    },
+  })();
 }
