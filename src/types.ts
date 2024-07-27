@@ -185,6 +185,16 @@ export type IoHandlerConfigBase<I extends InputConfig = InputConfig, O extends O
    * 入出力の対象そのものに対する操作
    */
   handlingType?: HandlingType;
+
+  /**
+   * 前回処理したcontentをparams._contentに保持する
+   */
+  holdLastContent?: boolean;
+
+  /**
+   * 繰り返し処理の最後に出力処理を行う
+   */
+  reducedOutput?: boolean;
 };
 
 /**

@@ -155,6 +155,8 @@ export const INHERITED_ITERATION_CONFIGS: InheritConfigMap<
   input: true,
   output: true,
   handlingType: true,
+  holdLastContent: true,
+  reducedOutput: true,
 } as const;
 
 /**
@@ -268,6 +270,11 @@ export const MIGRATION_ITEM_STATUS = {
    * 処理済
    */
   PROCESSED: 'processed',
+
+  /**
+   * 出力保留
+   */
+  PENDING: 'pending',
 
   /**
    * 変換済

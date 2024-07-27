@@ -103,9 +103,10 @@ export default class IoHandler {
    */
   async handle(params: IterationParams, options: HandleOptions = {}): Promise<MigrationIterationResult> {
     const config = this._config;
-    const { handlingType, onItemStart, onItemEnd, onItemError } = this._config;
+    const { handlingType, holdLastContent, reducedOutput, onItemStart, onItemEnd, onItemError } = this._config;
     const { operationFn = this._operationFn, ...rest } = options;
 
+    let lastContent: any;
     try {
       const result: MigrationIterationResult = { status: MIGRATION_STATUS.SUCCESS, results: [] };
 
@@ -128,6 +129,11 @@ export default class IoHandler {
           const next = await inputIterator.next();
 
           if (next.done) {
+            if (reducedOutput) {
+              // 出力処理
+              const outputItem = await this._write(lastContent, currentParams, rest);
+              currentParams = assignParams(currentParams, outputItem.result);
+            }
             // イテレーターが終わった時はbreak
             break;
           }
@@ -176,9 +182,16 @@ export default class IoHandler {
             operationResult = await operationFn(inputItem.content, currentParams);
           }
 
-          // 出力処理
-          const outputItem = await this._write(operationResult.content, currentParams, rest);
-          currentParams = assignParams(currentParams, outputItem.result);
+          let outputItem;
+          if (!reducedOutput) {
+            // 出力処理
+            outputItem = await this._write(operationResult.content, currentParams, rest);
+            currentParams = assignParams(currentParams, outputItem.result);
+          } else {
+            // 最後に出力
+            lastContent = operationResult.content;
+            outputItem = { status: MIGRATION_ITEM_STATUS.PENDING };
+          }
 
           // 入力を削除
           let deleteResult;
@@ -201,6 +214,9 @@ export default class IoHandler {
 
           // 後処理
           endResult = await this._end(currentParams, rest);
+          if (holdLastContent) {
+            endResult._content = operationResult.content;
+          }
           currentParams = assignParams(currentParams, endResult);
 
           applyIf(onItemEnd, [itemResult, config, currentParams]);
